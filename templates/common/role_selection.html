@@ -2,626 +2,1524 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-<title>Horizon — Skill Gap Analysis</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5" />
+<title>Horizon — Bridge the Skill Gap</title>
+<meta name="description" content="Horizon is a skill gap analysis platform that maps current competencies against future requirements — for individuals and enterprises." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    --bg:       #0a0705;
-    --bg-2:     #120b06;
-    --white:    #ffffff;
-    --yellow:   #ffc107;
-    --yellow-2: #ffd54f;
-    --orange:   #ff5722;
-    --orange-2: #ff7043;
+    --white:      #ffffff;
+    --grey-50:    #f8f9fa;
+    --grey-100:   #f1f3f5;
+    --grey-200:   #e5e7eb;
+    --slate-900:  #0f172a;
+    --slate-800:  #1e293b;
+    --slate-700:  #334155;
+    --slate-600:  #475569;
+    --slate-500:  #64748b;
+    --slate-400:  #94a3b8;
+    --orange:     #ff5722;
+    --orange-2:   #f97316;
+    --amber:      #eab308;
+    --amber-2:    #ffc107;
+    --amber-soft: #fef3c7;
+    --orange-soft:#fee7de;
+
+    --sans-display: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --sans-body:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    --radius-sm: 8px;
+    --radius:    14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.05);
+    --shadow:    0 4px 12px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 12px 28px rgba(15, 23, 42, 0.08), 0 4px 10px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 24px 48px rgba(15, 23, 42, 0.12), 0 8px 16px rgba(15, 23, 42, 0.06);
+
+    --accent-gradient: linear-gradient(135deg, #eab308 0%, #ff5722 100%);
+    --orange-gradient: linear-gradient(135deg, #f97316 0%, #ff5722 100%);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: var(--bg);
-    color: var(--white);
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+  }
+
+  body {
+    font-family: var(--sans-body);
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--slate-700);
+    background: var(--white);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
   }
 
-  /* ═══ ambient background glow ═══ */
-  .ambient {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(ellipse 60% 45% at 50% 50%, rgba(255, 193, 7, 0.10) 0%, transparent 65%),
-      radial-gradient(ellipse 40% 30% at 20% 25%, rgba(255, 87, 34, 0.08) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 35% at 82% 78%, rgba(255, 193, 7, 0.06) 0%, transparent 70%),
-      linear-gradient(180deg, #0a0705 0%, #0c0806 50%, #0a0705 100%);
+  h1, h2, h3, h4 {
+    font-family: var(--sans-display);
+    color: var(--slate-900);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
   }
 
-  /* ═══ vignette ═══ */
-  .vignette {
-    position: fixed;
-    inset: 0;
-    z-index: 3;
-    pointer-events: none;
-    background: radial-gradient(ellipse 90% 80% at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%);
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+  /* ═══════════════ NAVIGATION ═══════════════ */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: saturate(180%) blur(16px);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 240ms ease, box-shadow 240ms ease;
+  }
+  .nav.scrolled {
+    border-bottom-color: var(--grey-200);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
   }
 
-  /* ═══ canvas ═══ */
-  #scene {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-    z-index: 2;
-    opacity: 0;
-    animation: canvasIn 1.6s 0.05s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  }
-  @keyframes canvasIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-
-  /* ═══ layout ═══ */
-  .stage {
-    position: fixed;
-    inset: 0;
-    z-index: 4;
-    display: grid;
-    grid-template-rows: 1fr auto;
-    pointer-events: none;
-  }
-
-  /* ── centered brand ── */
-  .center {
+  .nav-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 16px 24px;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 0 24px;
-    transform: translateY(-2vh);
+    justify-content: space-between;
+    gap: 24px;
   }
 
-  .brand {
-    opacity: 0;
-    animation: brandIn 1.4s 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--sans-display);
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.03em;
   }
-
-  .brand h1 {
-    font-family: "Poppins", sans-serif;
-    font-size: clamp(56px, 11vw, 132px);
-    font-weight: 700;
-    letter-spacing: -0.035em;
-    line-height: 0.95;
-    background: linear-gradient(
-      135deg,
-      #ffffff 0%,
-      #ffe082 28%,
-      #ffc107 52%,
-      #ff7043 78%,
-      #ff5722 100%
-    );
+  .logo-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: var(--accent-gradient);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.28);
+    position: relative;
+    overflow: hidden;
+  }
+  .logo-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.5), transparent 55%);
+  }
+  .logo-text {
+    background: linear-gradient(135deg, var(--slate-900) 0%, var(--slate-900) 55%, var(--orange) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    filter: drop-shadow(0 0 42px rgba(255, 193, 7, 0.42))
-            drop-shadow(0 0 90px rgba(255, 87, 34, 0.22));
   }
 
-  .brand .sub {
-    margin-top: 18px;
-    font-family: "Inter", sans-serif;
-    font-size: clamp(10px, 1.1vw, 12px);
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 14px;
     font-weight: 500;
-    letter-spacing: 0.5em;
-    text-indent: 0.5em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.55);
+    color: var(--slate-600);
+    transition: color 180ms ease;
+    position: relative;
   }
+  .nav-links a:hover { color: var(--slate-900); }
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -6px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--accent-gradient);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 240ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .nav-links a:hover::after { transform: scaleX(1); }
 
-  .brand .rule {
-    width: 42px;
-    height: 1px;
-    margin: 22px auto 0;
-    background: linear-gradient(90deg, transparent, #ffc107, transparent);
-    opacity: 0.75;
-  }
-
-  @keyframes brandIn {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── bottom loader ── */
-  .loader {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding: 0 24px 44px;
-    opacity: 0;
-    animation: loaderIn 1.2s 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  }
-  @keyframes loaderIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .dots {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  .dots span {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--yellow);
-    box-shadow: 0 0 12px rgba(255, 193, 7, 0.8);
-    animation: dotPulse 1.6s ease-in-out infinite;
-  }
-  .dots span:nth-child(2) {
-    background: var(--yellow-2);
-    box-shadow: 0 0 12px rgba(255, 213, 79, 0.8);
-    animation-delay: 0.18s;
-  }
-  .dots span:nth-child(3) {
-    background: var(--orange-2);
-    box-shadow: 0 0 12px rgba(255, 112, 67, 0.85);
-    animation-delay: 0.36s;
-  }
-  .dots span:nth-child(4) {
-    background: var(--orange);
-    box-shadow: 0 0 12px rgba(255, 87, 34, 0.9);
-    animation-delay: 0.54s;
-  }
-  @keyframes dotPulse {
-    0%, 100% { opacity: 0.22; transform: scale(0.78); }
-    50%      { opacity: 1;    transform: scale(1.18); }
-  }
-
-  .loader .txt {
-    font-family: "Inter", sans-serif;
-    font-size: 10.5px;
-    font-weight: 500;
-    letter-spacing: 0.34em;
-    text-indent: 0.34em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.42);
-    animation: txtBreathe 2.6s ease-in-out infinite;
-  }
-  @keyframes txtBreathe {
-    0%, 100% { opacity: 0.55; }
-    50%      { opacity: 0.95; }
-  }
-
-  /* ── top mark ── */
-  .corner {
-    position: fixed;
-    top: 22px;
-    left: 26px;
-    z-index: 5;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    font-family: "Poppins", sans-serif;
-    font-size: 11px;
+  .nav-cta {
+    font-size: 14px;
     font-weight: 600;
-    letter-spacing: 0.24em;
-    color: rgba(255, 255, 255, 0.6);
-    opacity: 0;
-    animation: cornerIn 1.2s 0.9s ease forwards;
+    color: #fff;
+    background: var(--orange-gradient);
+    padding: 10px 20px;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+    transition: transform 200ms ease, box-shadow 200ms ease;
   }
-  .corner::before {
+  .nav-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(249, 115, 22, 0.35);
+  }
+
+  /* ═══════════════ HERO ═══════════════ */
+  .hero {
+    position: relative;
+    padding: 96px 24px 120px;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 55% 45% at 50% 0%, rgba(255, 193, 7, 0.14) 0%, transparent 65%),
+      radial-gradient(ellipse 60% 50% at 90% 100%, rgba(249, 115, 22, 0.09) 0%, transparent 65%),
+      linear-gradient(180deg, #ffffff 0%, #fafafc 100%);
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+    background-size: 30px 30px;
+    mask-image: radial-gradient(ellipse 70% 65% at 50% 40%, #000 0%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 65% at 50% 40%, #000 0%, transparent 78%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    max-width: 940px;
+    margin: 0 auto;
+    text-align: center;
+    z-index: 1;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px 7px 10px;
+    border-radius: 999px;
+    background: var(--amber-soft);
+    border: 1px solid rgba(234, 179, 8, 0.25);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #854d0e;
+    letter-spacing: 0.01em;
+    margin-bottom: 28px;
+    animation: fadeUp 800ms 100ms ease both;
+  }
+  .eyebrow::before {
     content: "";
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ffc107, #ff5722);
-    box-shadow: 0 0 12px rgba(255, 193, 7, 0.7);
-    animation: cornerPulse 2s ease-in-out infinite;
+    background: var(--orange);
+    box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.18);
+    animation: pulse 2.2s ease-in-out infinite;
   }
-  @keyframes cornerIn {
-    from { opacity: 0; transform: translateY(-6px); }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.2); opacity: 0.65; }
+  }
+
+  .hero h1 {
+    font-size: clamp(38px, 6.4vw, 76px);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    margin-bottom: 24px;
+    animation: fadeUp 900ms 180ms ease both;
+  }
+  .hero h1 .accent {
+    background: linear-gradient(135deg, var(--amber) 0%, var(--orange) 75%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+    display: inline-block;
+  }
+  .hero h1 .accent::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 6px;
+    height: 8px;
+    background: linear-gradient(90deg, rgba(234, 179, 8, 0.28), rgba(255, 87, 34, 0.28));
+    border-radius: 4px;
+    z-index: -1;
+  }
+
+  .hero-sub {
+    font-size: clamp(16px, 1.6vw, 19px);
+    line-height: 1.65;
+    color: var(--slate-600);
+    max-width: 640px;
+    margin: 0 auto 40px;
+    animation: fadeUp 900ms 280ms ease both;
+  }
+
+  .hero-actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    animation: fadeUp 900ms 380ms ease both;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 26px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: var(--sans-display);
+    letter-spacing: -0.005em;
+    transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 200ms ease,
+                background 200ms ease,
+                color 200ms ease,
+                border-color 200ms ease;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--orange-gradient);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.30);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(249, 115, 22, 0.40);
+  }
+  .btn-secondary {
+    background: #fff;
+    color: var(--slate-800);
+    border: 1px solid var(--grey-200);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-secondary:hover {
+    transform: translateY(-2px);
+    border-color: rgba(234, 179, 8, 0.55);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06), 0 0 0 4px rgba(234, 179, 8, 0.10);
+  }
+  .btn svg { transition: transform 200ms ease; }
+  .btn:hover svg { transform: translateX(2px); }
+
+  .hero-stats {
+    margin-top: 72px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeUp 900ms 480ms ease both;
+  }
+  .hero-stat {
+    padding: 20px;
+    text-align: center;
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--grey-200);
+    backdrop-filter: blur(8px);
+  }
+  .hero-stat .num {
+    font-family: var(--sans-display);
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--amber) 0%, var(--orange) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1.1;
+  }
+  .hero-stat .lbl {
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--slate-500);
+    letter-spacing: 0.02em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  @keyframes cornerPulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 193, 7, 0.55); }
-    50%      { transform: scale(1.18); box-shadow: 0 0 18px rgba(255, 193, 7, 0.95); }
+
+  /* ═══════════════ SECTION SHELL ═══════════════ */
+  section { position: relative; }
+
+  .section {
+    padding: 96px 24px;
+  }
+  .section--grey { background: var(--grey-50); }
+  .section--white { background: var(--white); }
+
+  .section-inner {
+    max-width: 1180px;
+    margin: 0 auto;
   }
 
-  .corner-right {
-    position: fixed;
-    top: 22px;
-    right: 26px;
-    z-index: 5;
-    font-family: "Inter", sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.28em;
+  .section-head {
+    max-width: 720px;
+    margin-bottom: 56px;
+  }
+  .section-head--center {
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .kicker {
+    display: inline-block;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.32);
+    color: var(--orange-2);
+    margin-bottom: 14px;
+    padding-left: 24px;
+    position: relative;
+  }
+  .kicker::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 50%;
+    width: 16px; height: 2px;
+    background: var(--orange-2);
+    border-radius: 2px;
+    transform: translateY(-50%);
+  }
+  .section-head--center .kicker {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .section-head--center .kicker::before { display: none; }
+
+  .section-head h2 {
+    font-size: clamp(28px, 3.6vw, 44px);
+    font-weight: 800;
+    letter-spacing: -0.028em;
+    line-height: 1.15;
+  }
+  .section-head h2 .dim { color: var(--slate-500); font-weight: 700; }
+  .section-head p {
+    margin-top: 16px;
+    font-size: 17px;
+    color: var(--slate-600);
+    line-height: 1.7;
+    max-width: 640px;
+  }
+  .section-head--center p { margin-left: auto; margin-right: auto; }
+
+  /* ═══════════════ SCROLL REVEAL ═══════════════ */
+  .reveal {
     opacity: 0;
-    animation: cornerIn 1.2s 1s ease forwards;
+    transform: translateY(24px);
+    transition: opacity 700ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                transform 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: opacity, transform;
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .reveal.d1 { transition-delay: 80ms; }
+  .reveal.d2 { transition-delay: 160ms; }
+  .reveal.d3 { transition-delay: 240ms; }
+  .reveal.d4 { transition-delay: 320ms; }
+  .reveal.d5 { transition-delay: 400ms; }
+
+  /* ═══════════════ SECTION 1 — TWO COLUMN ═══════════════ */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 72px;
+    align-items: center;
   }
 
-  @media (max-width: 640px) {
-    .center { transform: translateY(-1vh); }
-    .brand .sub { letter-spacing: 0.4em; text-indent: 0.4em; }
-    .loader { padding-bottom: 34px; gap: 14px; }
-    .corner, .corner-right { font-size: 9px; }
-    .corner { left: 20px; }
-    .corner-right { right: 20px; }
+  .prose p {
+    font-size: 16.5px;
+    line-height: 1.8;
+    color: var(--slate-600);
+    margin-bottom: 20px;
+  }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong { color: var(--slate-900); font-weight: 600; }
+
+  .callout {
+    margin-top: 28px;
+    padding: 22px 24px 22px 28px;
+    border-radius: var(--radius);
+    background: var(--amber-soft);
+    border-left: 3px solid var(--amber);
+    font-size: 15.5px;
+    color: #713f12;
+    line-height: 1.65;
+  }
+  .callout strong { color: #422006; font-weight: 700; }
+
+  /* visual: gap diagram */
+  .gap-visual {
+    position: relative;
+    aspect-ratio: 1;
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 40px;
+  }
+  .gap-ring {
+    position: absolute;
+    inset: 40px;
+    border-radius: 50%;
+    border: 2px dashed rgba(234, 179, 8, 0.45);
+    animation: slowSpin 60s linear infinite;
+  }
+  .gap-ring--inner {
+    inset: 100px;
+    border-style: solid;
+    border-color: rgba(249, 115, 22, 0.55);
+    animation: slowSpin 40s linear infinite reverse;
+  }
+  @keyframes slowSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  .gap-center {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+  .gap-card {
+    background: #fff;
+    border: 1px solid var(--grey-200);
+    border-radius: var(--radius-lg);
+    padding: 18px 22px;
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    min-width: 180px;
+  }
+  .gap-card .tag {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--orange-2);
+  }
+  .gap-card .val {
+    font-family: var(--sans-display);
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--slate-900);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-top: 4px;
+  }
+  .gap-card .sub {
+    font-size: 12px;
+    color: var(--slate-500);
+    margin-top: 2px;
+  }
+
+  .gap-label {
+    position: absolute;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #fff;
+    border: 1px solid var(--grey-200);
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+  }
+  .gap-label.l1 { top: 8%; left: 50%; transform: translateX(-50%); color: var(--orange-2); border-color: rgba(249, 115, 22, 0.35); }
+  .gap-label.l2 { bottom: 8%; left: 50%; transform: translateX(-50%); color: #854d0e; border-color: rgba(234, 179, 8, 0.45); background: var(--amber-soft); }
+  .gap-label.l3 { top: 50%; left: 2%; transform: translateY(-50%); color: var(--slate-600); }
+  .gap-label.l4 { top: 50%; right: 2%; transform: translateY(-50%); color: var(--slate-600); }
+
+  /* ═══════════════ SECTION 2 — BENEFIT GRID ═══════════════ */
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .benefit {
+    padding: 32px;
+    border-radius: var(--radius-lg);
+    background: #fff;
+    border: 1px solid var(--grey-200);
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 300ms ease,
+                border-color 300ms ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .benefit::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--accent-gradient);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .benefit:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(234, 179, 8, 0.35);
+  }
+  .benefit:hover::before { transform: scaleY(1); }
+
+  .benefit-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.14), rgba(255, 87, 34, 0.14));
+    color: var(--orange-2);
+    border: 1px solid rgba(234, 179, 8, 0.22);
+  }
+  .benefit h3 {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -0.015em;
+  }
+  .benefit p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--slate-600);
+  }
+
+  /* ═══════════════ SECTION 3 — FEATURES ═══════════════ */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .feature {
+    padding: 28px;
+    border-radius: var(--radius-lg);
+    background: #fff;
+    border: 1px solid var(--grey-200);
+    display: flex;
+    gap: 20px;
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 300ms ease,
+                border-color 300ms ease;
+  }
+  .feature:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(249, 115, 22, 0.30);
+  }
+  .feature-num {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: var(--slate-900);
+    color: #fff;
+    font-family: var(--sans-display);
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+  }
+  .feature:nth-child(1) .feature-num { background: linear-gradient(135deg, #eab308, #f97316); box-shadow: 0 6px 16px rgba(234, 179, 8, 0.30); }
+  .feature:nth-child(2) .feature-num { background: linear-gradient(135deg, #f97316, #ff5722); box-shadow: 0 6px 16px rgba(249, 115, 22, 0.30); }
+  .feature:nth-child(3) .feature-num { background: linear-gradient(135deg, #ffc107, #eab308); box-shadow: 0 6px 16px rgba(255, 193, 7, 0.30); }
+  .feature:nth-child(4) .feature-num { background: linear-gradient(135deg, #ff5722, #d84315); box-shadow: 0 6px 16px rgba(255, 87, 34, 0.30); }
+
+  .feature h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.012em;
+  }
+  .feature p {
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--slate-600);
+  }
+
+  /* ═══════════════ SECTION 4 — FRAMEWORK STEPS ═══════════════ */
+  .framework {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    position: relative;
+    margin-top: 40px;
+  }
+
+  .framework::before {
+    content: "";
+    position: absolute;
+    top: 30px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(234, 179, 8, 0.35) 0%, rgba(255, 87, 34, 0.35) 100%);
+    border-radius: 2px;
+    z-index: 0;
+  }
+
+  .step {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 0 12px;
+  }
+  .step-num {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 22px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--grey-200);
+    display: grid;
+    place-items: center;
+    font-family: var(--sans-display);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--slate-900);
+    letter-spacing: -0.02em;
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+  }
+  .step:hover .step-num {
+    transform: scale(1.08);
+    border-color: transparent;
+    background: var(--accent-gradient);
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(249, 115, 22, 0.35);
+  }
+  .step h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .step p {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--slate-600);
+  }
+
+  .framework-note {
+    margin-top: 72px;
+    padding: 28px 32px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, #fffbeb 0%, #fff7ed 100%);
+    border: 1px solid rgba(234, 179, 8, 0.22);
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .framework-note-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--accent-gradient);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.28);
+  }
+  .framework-note h4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .framework-note p {
+    font-size: 14.5px;
+    color: #78350f;
+    line-height: 1.7;
+  }
+
+  /* ═══════════════ ROLE SELECTION ═══════════════ */
+  .roles {
+    padding: 112px 24px;
+    background:
+      radial-gradient(ellipse 60% 55% at 50% 0%, rgba(255, 193, 7, 0.10) 0%, transparent 65%),
+      linear-gradient(180deg, #ffffff 0%, #fafafc 100%);
+    border-top: 1px solid var(--grey-200);
+  }
+
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+    max-width: 960px;
+    margin: 56px auto 0;
+  }
+
+  .role-card {
+    position: relative;
+    padding: 44px 36px 40px;
+    border-radius: var(--radius-xl);
+    background: #fff;
+    border: 1px solid var(--grey-200);
+    display: flex;
+    flex-direction: column;
+    transition: transform 400ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 400ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                border-color 400ms ease;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .role-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: var(--accent-gradient);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 400ms ease;
+    pointer-events: none;
+  }
+  .role-card:hover::before { opacity: 1; }
+  .role-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 32px 64px rgba(15, 23, 42, 0.14), 0 12px 24px rgba(249, 115, 22, 0.08);
+    border-color: transparent;
+  }
+  .role-card::after {
+    content: "";
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 193, 7, 0.14), transparent 70%);
+    opacity: 0;
+    transition: opacity 500ms ease;
+    pointer-events: none;
+  }
+  .role-card:hover::after { opacity: 1; }
+
+  .role-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 28px;
+    transition: transform 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative;
+    z-index: 1;
+  }
+  .role-card:hover .role-icon { transform: scale(1.06) rotate(-3deg); }
+
+  .role-card--trainee .role-icon {
+    background: linear-gradient(135deg, #f97316 0%, #ff5722 100%);
+    color: #fff;
+    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.35);
+  }
+  .role-card--admin .role-icon {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color: var(--amber-2);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.28);
+    border: 1px solid rgba(234, 179, 8, 0.25);
+  }
+
+  .role-card h3 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+    position: relative;
+    z-index: 1;
+  }
+  .role-card p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--slate-600);
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 1;
+    flex-grow: 1;
+  }
+
+  .role-features {
+    list-style: none;
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .role-features li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--slate-600);
+  }
+  .role-features li svg {
+    flex-shrink: 0;
+    color: var(--orange-2);
+  }
+
+  .role-btn {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 28px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: var(--sans-display);
+    letter-spacing: -0.005em;
+    transition: all 260ms cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+  }
+
+  .role-card--trainee .role-btn {
+    background: var(--orange-gradient);
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(249, 115, 22, 0.30);
+  }
+  .role-card--trainee .role-btn:hover {
+    box-shadow: 0 16px 32px rgba(249, 115, 22, 0.42);
+    transform: translateY(-1px);
+  }
+
+  .role-card--admin .role-btn {
+    background: transparent;
+    color: var(--slate-900);
+    border: 1.5px solid var(--slate-900);
+  }
+  .role-card--admin .role-btn:hover {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border-color: var(--amber);
+    color: #713f12;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(234, 179, 8, 0.20);
+  }
+
+  .role-btn svg { transition: transform 240ms ease; }
+  .role-btn:hover svg { transform: translateX(3px); }
+
+  /* ═══════════════ FOOTER ═══════════════ */
+  .footer {
+    padding: 40px 24px;
+    background: var(--slate-900);
+    color: var(--slate-400);
+    text-align: center;
+    font-size: 13px;
+  }
+  .footer .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-family: var(--sans-display);
+    font-weight: 700;
+    color: #fff;
+    font-size: 15px;
+  }
+  .footer .brand-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background: var(--accent-gradient);
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+    color: #fff;
+  }
+  .footer p { line-height: 1.7; }
+  .footer .divider {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(234, 179, 8, 0.5), transparent);
+    margin: 20px auto;
+  }
+
+  /* ═══════════════ RESPONSIVE ═══════════════ */
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .two-col { grid-template-columns: 1fr; gap: 56px; }
+    .framework { grid-template-columns: 1fr; gap: 32px; }
+    .framework::before { display: none; }
+    .framework-note { flex-direction: column; }
+  }
+
+  @media (max-width: 720px) {
+    .hero { padding: 64px 20px 88px; }
+    .section { padding: 72px 20px; }
+    .roles { padding: 88px 20px; }
+
+    .hero-stats { grid-template-columns: 1fr; gap: 12px; margin-top: 56px; }
+    .benefits-grid { grid-template-columns: 1fr; }
+    .features { grid-template-columns: 1fr; }
+    .role-grid { grid-template-columns: 1fr; gap: 20px; }
+    .role-card { padding: 36px 28px 32px; }
+    .gap-visual { max-width: 340px; padding: 24px; }
+    .gap-ring { inset: 24px; }
+    .gap-ring--inner { inset: 72px; }
+    .section-head { margin-bottom: 40px; }
+    .framework-note { padding: 22px 24px; }
+  }
+
+  @media (max-width: 460px) {
+    .hero-actions { flex-direction: column; align-items: stretch; }
+    .btn { justify-content: center; }
+    .gap-label.l3, .gap-label.l4 { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .reveal { opacity: 1; transform: none; }
   }
 </style>
 </head>
 <body>
 
-<div class="ambient"></div>
+<!-- ═══════════════ NAVIGATION ═══════════════ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#top" class="logo">
+      <span class="logo-dot">H</span>
+      <span class="logo-text">Horizon</span>
+    </a>
 
-<canvas id="scene" aria-hidden="true"></canvas>
+    <ul class="nav-links">
+      <li><a href="#about">About Skill Gap Analysis</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#start">Get Started</a></li>
+    </ul>
 
-<div class="vignette"></div>
+    <a href="#start" class="nav-cta">Get Started</a>
+  </div>
+</nav>
 
-<div class="corner">HORIZON</div>
-<div class="corner-right">v2.0 · Live</div>
+<!-- ═══════════════ HERO ═══════════════ -->
+<header class="hero" id="top">
+  <div class="hero-inner">
+    <div class="eyebrow">Live skill intelligence · built for modern teams</div>
 
-<div class="stage">
-  <div class="center">
-    <div class="brand">
-      <h1>Horizon</h1>
-      <div class="sub">Skill Gap Analysis</div>
-      <div class="rule"></div>
+    <h1>
+      Bridge the gap between<br>
+      <span class="accent">what your people know</span><br>
+      and what the future demands.
+    </h1>
+
+    <p class="hero-sub">
+      Horizon turns competency data into clear, actionable decisions —
+      mapping current skills against tomorrow's requirements so individuals grow
+      and organisations stay competitive.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#about" class="btn btn-primary">
+        Learn More
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+      <a href="#start" class="btn btn-secondary">
+        Select Role
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">4,281</div>
+        <div class="lbl">Skills indexed</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">92%</div>
+        <div class="lbl">Assessment accuracy</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">3.4×</div>
+        <div class="lbl">Faster upskilling</div>
+      </div>
     </div>
   </div>
+</header>
 
-  <div class="loader">
-    <div class="dots">
-      <span></span><span></span><span></span><span></span>
+<!-- ═══════════════ SECTION 1 ═══════════════ -->
+<section class="section section--white" id="about">
+  <div class="section-inner">
+    <div class="two-col">
+      <div class="reveal">
+        <div class="section-head">
+          <div class="kicker">What it is</div>
+          <h2>What is <span class="dim">Skill Gap Analysis?</span></h2>
+        </div>
+
+        <div class="prose">
+          <p>
+            Skill gap analysis is the systematic practice of identifying the distance
+            between <strong>what someone can do today</strong> and <strong>what their role,
+            team, or industry will require tomorrow</strong>. It replaces guesswork with
+            measurable evidence. Instead of assuming a designer can lead a design system,
+            or that a salesperson can pitch a new product line, you map the specific
+            competencies each role demands — and then you check, honestly, which of those
+            competencies the person actually has.
+          </p>
+
+          <p>
+            The power of this approach comes from treating skills as data. Every role
+            becomes a set of requirements: technical proficiencies, tool familiarity,
+            communication abilities, domain knowledge, leadership behaviours. Every
+            individual becomes a profile: verified skills, self-reported skills, latent
+            strengths, demonstrated weaknesses. When you overlay these two maps, the
+            gaps — the missing competencies — become visible, quantified, and prioritized.
+          </p>
+
+          <p>
+            This matters at every scale. For an individual, it means a career path that is
+            actually grounded in where they are weak, not in generic advice. For a team
+            manager, it means knowing precisely who needs what before a project starts.
+            For an organisation, it means training budgets that go where they close the
+            largest gaps — not where vendors happen to be selling courses.
+          </p>
+
+          <p>
+            Horizon was designed around a simple insight: the fastest way to grow people
+            is to stop treating learning as a fixed curriculum and start treating it as a
+            <strong>closing of the gap</strong>. Every recommendation you'll see on this
+            platform traces back to a specific, identified skill delta — nothing generic,
+            nothing wasted.
+          </p>
+        </div>
+
+        <div class="callout">
+          <strong>The core idea:</strong> a gap only becomes actionable once it is named,
+          measured, and connected to a pathway that closes it. That's what Horizon does.
+        </div>
+      </div>
+
+      <div class="gap-visual reveal d2">
+        <div class="gap-ring"></div>
+        <div class="gap-ring gap-ring--inner"></div>
+        <div class="gap-label l1">Required</div>
+        <div class="gap-label l2">Current</div>
+        <div class="gap-label l3">Assessment</div>
+        <div class="gap-label l4">Upskilling</div>
+
+        <div class="gap-center">
+          <div class="gap-card">
+            <div class="tag">Gap Index</div>
+            <div class="val">37%</div>
+            <div class="sub">Needs closure</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="txt">Analyzing Skills…</div>
   </div>
-</div>
+</section>
 
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
-  }
-}
-</script>
+<!-- ═══════════════ SECTION 2 ═══════════════ -->
+<section class="section section--grey">
+  <div class="section-inner">
+    <div class="section-head section-head--center reveal">
+      <div class="kicker">Why Horizon</div>
+      <h2>Modern industry benefits.</h2>
+      <p>
+        Traditional training programmes fail because they teach everything to everyone.
+        Horizon fixes that by connecting every learning action to a specific, measured
+        business outcome.
+      </p>
+    </div>
 
-<script type="module">
-import * as THREE from 'three';
+    <div class="benefits-grid">
+      <article class="benefit reveal d1">
+        <div class="benefit-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3v18h18"/><path d="M7 12l4-4 4 4 5-5"/>
+          </svg>
+        </div>
+        <h3>Data-driven decisions</h3>
+        <p>
+          Every training recommendation is anchored to a measured competency delta.
+          Leadership sees exactly which investments move the needle — and by how much.
+          No more gut-feel budgets.
+        </p>
+      </article>
 
+      <article class="benefit reveal d2">
+        <div class="benefit-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2l3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/>
+          </svg>
+        </div>
+        <h3>Personalised learning paths</h3>
+        <p>
+          Each learner receives a pathway shaped by their own verified gaps — not a
+          one-size-fits-all catalogue. Learning becomes faster, more relevant, and
+          measurably more effective.
+        </p>
+      </article>
+
+      <article class="benefit reveal d3">
+        <div class="benefit-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <h3>Real ROI on training</h3>
+        <p>
+          Track skill uplift against cost, time, and business impact. Horizon shows
+          which programmes produce measurable change — and which quietly waste budget
+          without moving a single competency.
+        </p>
+      </article>
+
+      <article class="benefit reveal d4">
+        <div class="benefit-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>
+          </svg>
+        </div>
+        <h3>Real-time skill mapping</h3>
+        <p>
+          As markets shift, the required-skill map shifts with them. Horizon updates
+          role requirements continuously, so your workforce never drifts behind the
+          needs of the business.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SECTION 3 ═══════════════ -->
+<section class="section section--white">
+  <div class="section-inner">
+    <div class="section-head section-head--center reveal">
+      <div class="kicker">Key features</div>
+      <h2>Built on analytics that act.</h2>
+      <p>
+        Every feature in Horizon exists to turn skill data into a decision — one that
+        a learner, a manager, or a CHRO can make with confidence.
+      </p>
+    </div>
+
+    <div class="features">
+      <article class="feature reveal d1">
+        <div class="feature-num">01</div>
+        <div>
+          <h3>Interactive analytics dashboard</h3>
+          <p>
+            A live view of skill coverage across teams, departments, and roles. Filter
+            by cohort, seniority, region, or project. Spot the gaps before they become
+            bottlenecks.
+          </p>
+        </div>
+      </article>
+
+      <article class="feature reveal d2">
+        <div class="feature-num">02</div>
+        <div>
+          <h3>Predictive AI recommendations</h3>
+          <p>
+            The platform predicts which skills will be needed based on role trajectory,
+            industry signals, and internal mobility patterns — then recommends the
+            highest-leverage learning actions.
+          </p>
+        </div>
+      </article>
+
+      <article class="feature reveal d3">
+        <div class="feature-num">03</div>
+        <div>
+          <h3>Skill matrix visualisation</h3>
+          <p>
+            Every person, every team, every department rendered as a heat-mapped
+            matrix. Strengths, gaps, and overlaps visible at a glance — no spreadsheets
+            required.
+          </p>
+        </div>
+      </article>
+
+      <article class="feature reveal d4">
+        <div class="feature-num">04</div>
+        <div>
+          <h3>Continuous assessment loops</h3>
+          <p>
+            Skills are re-measured as people work, learn, and grow — not once a year.
+            Horizon keeps the map current so decisions are always made against reality.
+          </p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SECTION 4 — FRAMEWORK ═══════════════ -->
+<section class="section section--grey" id="how">
+  <div class="section-inner">
+    <div class="section-head section-head--center reveal">
+      <div class="kicker">Strategic framework</div>
+      <h2>Five steps. One continuous cycle.</h2>
+      <p>
+        Horizon operates on a proven five-stage methodology. Each step feeds the next,
+        and every cycle sharpens the accuracy of the last.
+      </p>
+    </div>
+
+    <div class="framework">
+      <div class="step reveal d1">
+        <div class="step-num">1</div>
+        <h4>Identification</h4>
+        <p>Define the skills each role actually requires — technical, behavioural, and domain-specific.</p>
+      </div>
+      <div class="step reveal d2">
+        <div class="step-num">2</div>
+        <h4>Assessment</h4>
+        <p>Measure each individual's real competencies through tests, projects, and peer validation.</p>
+      </div>
+      <div class="step reveal d3">
+        <div class="step-num">3</div>
+        <h4>Quantification</h4>
+        <p>Compute the exact delta between current and required — prioritised by business impact.</p>
+      </div>
+      <div class="step reveal d4">
+        <div class="step-num">4</div>
+        <h4>Upskilling</h4>
+        <p>Deliver targeted learning paths that close the specific, highest-value gaps identified.</p>
+      </div>
+      <div class="step reveal d5">
+        <div class="step-num">5</div>
+        <h4>Re-evaluation</h4>
+        <p>Re-measure continuously. The framework is a loop — every cycle improves the next.</p>
+      </div>
+    </div>
+
+    <div class="framework-note reveal">
+      <div class="framework-note-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 12l2 2 4-4"/>
+          <path d="M21 12c0 5-3.5 8-9 9-5.5-1-9-4-9-9 0-6 4.5-8 9-8s9 2 9 8z"/>
+        </svg>
+      </div>
+      <div>
+        <h4>Why the loop matters</h4>
+        <p>
+          Skills do not stay still — neither should the analysis. Most platforms stop
+          at assessment. Horizon keeps running, so every new hire, project, or market
+          shift automatically re-shapes what the organisation knows about itself.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ROLE SELECTION ═══════════════ -->
+<section class="roles" id="start">
+  <div class="section-inner">
+    <div class="section-head section-head--center reveal">
+      <div class="kicker">Get started</div>
+      <h2>Choose your portal to continue.</h2>
+      <p>
+        Horizon adapts to how you work. Pick the portal that fits your role — you can
+        always switch later.
+      </p>
+    </div>
+
+    <div class="role-grid">
+      <!-- Trainee -->
+      <a href="#" class="role-card role-card--trainee reveal d1" aria-label="Open trainee portal">
+        <div class="role-icon">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c0 1.7 3 3 6 3s6-1.3 6-3v-5"/>
+          </svg>
+        </div>
+        <h3>Trainee Portal</h3>
+        <p>
+          Access personalised skill paths, take assessments, and track your career
+          growth — all in one place.
+        </p>
+
+        <ul class="role-features">
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Personalised learning pathways
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Live skill gap scorecard
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Progress tracking &amp; certifications
+          </li>
+        </ul>
+
+        <span class="role-btn">
+          Login / Access Portal
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </a>
+
+      <!-- Admin -->
+      <a href="#" class="role-card role-card--admin reveal d2" aria-label="Open admin portal">
+        <div class="role-icon">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
+        <h3>Admin Portal</h3>
+        <p>
+          Manage team skill matrices, view enterprise analytics, and assign training
+          modules across your entire organisation.
+        </p>
+
+        <ul class="role-features">
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Enterprise skill matrix &amp; heat maps
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Analytics &amp; ROI dashboards
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Assign &amp; manage training modules
+          </li>
+        </ul>
+
+        <span class="role-btn">
+          Login / Access Portal
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+  <div class="brand">
+    <span class="brand-dot">H</span>
+    Horizon
+  </div>
+  <p>Bridging the gap between skill and demand.</p>
+  <div class="divider"></div>
+  <p>© 2026 Horizon — Skill Gap Analysis Platform. All rights reserved.</p>
+</footer>
+
+<script>
 (() => {
   'use strict';
 
   // ═══════════════════════════════════════════════════════════
-  //  Renderer & scene
+  //  Nav — add shadow when scrolled
   // ═══════════════════════════════════════════════════════════
-  const canvas = document.getElementById('scene');
-  const renderer = new THREE.WebGLRenderer({
-    canvas,
-    antialias: true,
-    alpha: true,
-    powerPreference: 'high-performance',
-  });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(window.innerWidth, window.innerHeight, false);
+  const nav = document.getElementById('nav');
+  let lastScrolled = false;
 
-  const scene = new THREE.Scene();
-
-  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.set(0, 0, 6);
-
-  // ═══════════════════════════════════════════════════════════
-  //  Lights (used subtly; most materials are additive)
-  // ═══════════════════════════════════════════════════════════
-  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-
-  const lightY = new THREE.PointLight(0xffc107, 1.4, 30, 2);
-  lightY.position.set(3, 3, 4);
-  scene.add(lightY);
-
-  const lightO = new THREE.PointLight(0xff5722, 1.1, 30, 2);
-  lightO.position.set(-3.5, -2, 3);
-  scene.add(lightO);
-
-  // ═══════════════════════════════════════════════════════════
-  //  Root group — receives cursor tilt
-  // ═══════════════════════════════════════════════════════════
-  const root = new THREE.Group();
-  root.scale.setScalar(0.7);
-  scene.add(root);
-
-  // ── outer icosahedron wireframe (yellow) ──
-  const outerGeo = new THREE.IcosahedronGeometry(1.9, 1);
-  const outerWire = new THREE.LineSegments(
-    new THREE.WireframeGeometry(outerGeo),
-    new THREE.LineBasicMaterial({
-      color: 0xffc107,
-      transparent: true,
-      opacity: 0.30,
-      blending: THREE.AdditiveBlending,
-    })
-  );
-  root.add(outerWire);
-
-  // ── inner icosahedron wireframe (orange) ──
-  const innerGeo = new THREE.IcosahedronGeometry(1.35, 0);
-  const innerWire = new THREE.LineSegments(
-    new THREE.WireframeGeometry(innerGeo),
-    new THREE.LineBasicMaterial({
-      color: 0xff7043,
-      transparent: true,
-      opacity: 0.55,
-      blending: THREE.AdditiveBlending,
-    })
-  );
-  root.add(innerWire);
-
-  // ═══════════════════════════════════════════════════════════
-  //  Skill-node network — vertices of the outer icosahedron,
-  //  connected to 3 nearest neighbors with warm-yellow lines.
-  // ═══════════════════════════════════════════════════════════
-  const positions = outerGeo.attributes.position;
-  const uniqueVerts = [];
-  const seen = new Set();
-  for (let i = 0; i < positions.count; i++) {
-    const x = positions.getX(i);
-    const y = positions.getY(i);
-    const z = positions.getZ(i);
-    const key = `${x.toFixed(3)}|${y.toFixed(3)}|${z.toFixed(3)}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      uniqueVerts.push(new THREE.Vector3(x, y, z));
+  function onScroll() {
+    const scrolled = window.scrollY > 8;
+    if (scrolled !== lastScrolled) {
+      nav.classList.toggle('scrolled', scrolled);
+      lastScrolled = scrolled;
     }
   }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-  // build edges — each vertex to its 3 nearest neighbors, dedup by order
-  const edgePositions = [];
-  for (let i = 0; i < uniqueVerts.length; i++) {
-    const v = uniqueVerts[i];
-    const near = [];
-    for (let j = 0; j < uniqueVerts.length; j++) {
-      if (i === j) continue;
-      near.push({ idx: j, d: v.distanceToSquared(uniqueVerts[j]) });
-    }
-    near.sort((a, b) => a.d - b.d);
+  // ═══════════════════════════════════════════════════════════
+  //  Scroll reveal
+  // ═══════════════════════════════════════════════════════════
+  const reveals = document.querySelectorAll('.reveal');
 
-    for (let k = 0; k < Math.min(3, near.length); k++) {
-      const j = near[k].idx;
-      if (i < j) {
-        const u = uniqueVerts[j];
-        edgePositions.push(v.x, v.y, v.z, u.x, u.y, u.z);
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, {
+      rootMargin: '0px 0px -80px 0px',
+      threshold: 0.12,
+    });
+
+    reveals.forEach((el) => io.observe(el));
+  } else {
+    // fallback
+    reveals.forEach((el) => el.classList.add('in'));
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  Smooth scroll for in-page anchors
+  //  (native CSS scroll-behavior handles most; this ensures
+  //   offset for the sticky nav is respected everywhere)
+  // ═══════════════════════════════════════════════════════════
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      const id = link.getAttribute('href');
+      if (!id || id === '#') return;
+      const target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+
+      const top = target.getBoundingClientRect().top + window.scrollY - 72;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+  });
+
+  // ═══════════════════════════════════════════════════════════
+  //  Role card keyboard accessibility — Enter/Space triggers click
+  // ═══════════════════════════════════════════════════════════
+  document.querySelectorAll('.role-card').forEach((card) => {
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        card.click();
       }
-    }
-  }
-
-  const networkGeo = new THREE.BufferGeometry();
-  networkGeo.setAttribute(
-    'position',
-    new THREE.Float32BufferAttribute(edgePositions, 3)
-  );
-  const network = new THREE.LineSegments(
-    networkGeo,
-    new THREE.LineBasicMaterial({
-      color: 0xffd54f,
-      transparent: true,
-      opacity: 0.42,
-      blending: THREE.AdditiveBlending,
-    })
-  );
-  root.add(network);
-
-  // ── soft circular dot texture (used for nodes + particles) ──
-  function makeDotTexture() {
-    const size = 64;
-    const c = document.createElement('canvas');
-    c.width = c.height = size;
-    const ctx = c.getContext('2d');
-    const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-    g.addColorStop(0.00, 'rgba(255, 255, 255, 1)');
-    g.addColorStop(0.35, 'rgba(255, 213, 79, 0.85)');
-    g.addColorStop(0.70, 'rgba(255, 112, 67, 0.35)');
-    g.addColorStop(1.00, 'rgba(255, 87, 34, 0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, size, size);
-    const tex = new THREE.CanvasTexture(c);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    return tex;
-  }
-  const dotTex = makeDotTexture();
-
-  // ── nodes — points at every icosahedron vertex ──
-  const nodePositions = [];
-  for (const v of uniqueVerts) {
-    nodePositions.push(v.x, v.y, v.z);
-  }
-  const nodeGeo = new THREE.BufferGeometry();
-  nodeGeo.setAttribute(
-    'position',
-    new THREE.Float32BufferAttribute(nodePositions, 3)
-  );
-  const nodes = new THREE.Points(
-    nodeGeo,
-    new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.16,
-      sizeAttenuation: true,
-      transparent: true,
-      opacity: 0.95,
-      map: dotTex,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-    })
-  );
-  root.add(nodes);
-
-  // ── core pulse — small glowing sphere in the middle ──
-  const coreMat = new THREE.MeshBasicMaterial({
-    color: 0xffc107,
-    transparent: true,
-    opacity: 0.9,
-    blending: THREE.AdditiveBlending,
-  });
-  const core = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 16), coreMat);
-  root.add(core);
-
-  // ── distant particles (ambient depth) ──
-  const PARTICLE_COUNT = 500;
-  const pPositions = new Float32Array(PARTICLE_COUNT * 3);
-  for (let i = 0; i < PARTICLE_COUNT; i++) {
-    // random point on shell between r=2.4 and r=3.4
-    const r = 2.4 + Math.random() * 1.0;
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos(2 * Math.random() - 1);
-    pPositions[i * 3 + 0] = r * Math.sin(phi) * Math.cos(theta);
-    pPositions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-    pPositions[i * 3 + 2] = r * Math.cos(phi);
-  }
-  const pGeo = new THREE.BufferGeometry();
-  pGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
-  const particles = new THREE.Points(
-    pGeo,
-    new THREE.PointsMaterial({
-      color: 0xffd54f,
-      size: 0.045,
-      sizeAttenuation: true,
-      transparent: true,
-      opacity: 0.55,
-      map: dotTex,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-    })
-  );
-  root.add(particles);
-
-  // ═══════════════════════════════════════════════════════════
-  //  Cursor parallax
-  // ═══════════════════════════════════════════════════════════
-  const mouse = { x: 0, y: 0 };      // raw target from event (range -1..1)
-  const tilt  = { x: 0, y: 0 };      // smoothed value applied to root
-
-  function onPointerMove(clientX, clientY) {
-    mouse.x = (clientX / window.innerWidth) * 2 - 1;
-    mouse.y = (clientY / window.innerHeight) * 2 - 1;
-  }
-
-  window.addEventListener('pointermove', (e) => onPointerMove(e.clientX, e.clientY), { passive: true });
-  window.addEventListener('pointerleave', () => { mouse.x = 0; mouse.y = 0; });
-
-  // gentle drift for touch devices / idle state
-  let idlePhase = 0;
-
-  // ═══════════════════════════════════════════════════════════
-  //  Resize
-  // ═══════════════════════════════════════════════════════════
-  function resize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const aspect = w / h;
-
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(w, h, false);
-
-    camera.aspect = aspect;
-    // pull camera back on narrow (portrait) screens so sphere fits nicely
-    camera.position.z = aspect < 0.9 ? 7.4 : aspect < 1.3 ? 6.6 : 6.0;
-    camera.updateProjectionMatrix();
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  // ═══════════════════════════════════════════════════════════
-  //  Animation loop
-  // ═══════════════════════════════════════════════════════════
-  const clock = new THREE.Clock();
-  let entryT = 0;
-  const ENTRY_DURATION = 1.6; // seconds
-
-  // respect reduced-motion preference
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const rotationSpeed = prefersReduced ? 0.0 : 1.0;
-
-  function tick() {
-    const dt = Math.min(0.05, clock.getDelta());
-    const t = clock.getElapsedTime();
-
-    // entry: scale from 0.7 → 1.0, ease-out cubic
-    if (entryT < 1) {
-      entryT = Math.min(1, entryT + dt / ENTRY_DURATION);
-      const ease = 1 - Math.pow(1 - entryT, 3);
-      root.scale.setScalar(0.7 + 0.3 * ease);
-    }
-
-    // smoothed cursor tilt
-    const targetX = mouse.y * 0.55;
-    const targetY = mouse.x * 0.85;
-    tilt.x += (targetX - tilt.x) * 0.06;
-    tilt.y += (targetY - tilt.y) * 0.06;
-
-    // idle drift (very slow) — keeps scene alive when mouse is still
-    idlePhase += dt * 0.35;
-    const driftX = Math.sin(idlePhase) * 0.06;
-    const driftY = Math.cos(idlePhase * 0.7) * 0.08;
-
-    // apply parallax tilt + float
-    root.rotation.x = tilt.x + driftX;
-    root.rotation.y = tilt.y + driftY;
-    root.position.x = tilt.y * 0.22;
-    root.position.y = -tilt.x * 0.18 + Math.sin(t * 0.9) * 0.07;
-
-    // continuous internal rotations (independent of cursor)
-    outerWire.rotation.y += dt * 0.16 * rotationSpeed;
-    outerWire.rotation.x += dt * 0.05 * rotationSpeed;
-
-    innerWire.rotation.y -= dt * 0.26 * rotationSpeed;
-    innerWire.rotation.z += dt * 0.10 * rotationSpeed;
-
-    network.rotation.y += dt * 0.10 * rotationSpeed;
-    network.rotation.z -= dt * 0.045 * rotationSpeed;
-
-    particles.rotation.y += dt * 0.045 * rotationSpeed;
-    particles.rotation.x += dt * 0.02 * rotationSpeed;
-
-    // core pulse
-    const pulse = 0.9 + Math.sin(t * 2.4) * 0.35;
-    core.scale.setScalar(pulse);
-    coreMat.opacity = 0.55 + Math.sin(t * 2.4) * 0.35;
-
-    // moving warm lights for subtle color drift
-    lightY.position.x = Math.cos(t * 0.4) * 3.2;
-    lightY.position.z = Math.sin(t * 0.4) * 3.2 + 2;
-    lightO.position.x = Math.cos(t * 0.3 + 2.0) * 3.5;
-    lightO.position.z = Math.sin(t * 0.3 + 2.0) * 3.0 + 2;
-
-    renderer.render(scene, camera);
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-
-  // ═══════════════════════════════════════════════════════════
-  //  Cleanup on page hide (nice for SPA routing)
-  // ═══════════════════════════════════════════════════════════
-  window.addEventListener('pagehide', () => {
-    renderer.dispose();
+    });
   });
 })();
 </script>
