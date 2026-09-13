@@ -29,7 +29,7 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* ═══ ambient background glow — subtle warm washes on white ═══ */
+/* ═══ Ambient background glow ═══ */
 .ambient {
   position: fixed;
   inset: 0;
@@ -42,7 +42,7 @@ html, body {
     linear-gradient(180deg, #ffffff 0%, #fafafc 55%, #f6f4ef 100%);
 }
 
-/* ═══ soft edge fade ═══ */
+/* ═══ Soft edge fade ═══ */
 .vignette {
   position: fixed;
   inset: 0;
@@ -51,7 +51,7 @@ html, body {
   background: radial-gradient(ellipse 95% 85% at 50% 50%, transparent 55%, rgba(120, 100, 70, 0.055) 100%);
 }
 
-/* ═══ canvas ═══ */
+/* ═══ Canvas ═══ */
 #scene {
   position: fixed;
   inset: 0;
@@ -68,7 +68,7 @@ html, body {
   to   { opacity: 1; }
 }
 
-/* ═══ layout ═══ */
+/* ═══ Layout ═══ */
 .stage {
   position: fixed;
   inset: 0;
@@ -78,7 +78,7 @@ html, body {
   pointer-events: none;
 }
 
-/* ── centered brand ── */
+/* ── Centered Brand ── */
 .center {
   display: flex;
   flex-direction: column;
@@ -139,7 +139,7 @@ html, body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── bottom loader ── */
+/* ── Bottom Loader ── */
 .loader {
   display: flex;
   flex-direction: column;
@@ -221,7 +221,7 @@ html, body {
   50%      { opacity: 0.95; }
 }
 
-/* ── top marks ── */
+/* ── Top Marks ── */
 .corner {
   position: fixed;
   top: 22px;

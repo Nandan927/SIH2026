@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Horizon — Skill Gap Analysis</title>
 
   <!-- Google Fonts -->
@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- External Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Flask Static Link to style.css -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
@@ -50,7 +50,14 @@
   }
   </script>
 
-  <!-- External JavaScript Logic -->
-  <script type="module" src="script.js"></script>
+  <!-- Flask Static Link to main.js -->
+  <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+  
+  <!-- Automatic Redirect to Role Selection Page after 3.5 Seconds -->
+  <script>
+    setTimeout(() => {
+      window.location.href = "{{ url_for('common.role_selection') }}";
+    }, 3500);
+  </script>
 </body>
 </html>

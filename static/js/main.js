@@ -3,10 +3,10 @@ import * as THREE from 'three';
 (() => {
   'use strict';
 
-  // ═══════════════════════════════════════════════════════════
-  //  Renderer & scene setup
-  // ═══════════════════════════════════════════════════════════
+  // Renderer & Scene Setup
   const canvas = document.getElementById('scene');
+  if (!canvas) return;
+
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: true,
@@ -22,9 +22,7 @@ import * as THREE from 'three';
   const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
   camera.position.set(0, 0, 6);
 
-  // ═══════════════════════════════════════════════════════════
-  //  Lighting
-  // ═══════════════════════════════════════════════════════════
+  // Lighting
   scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 
   const lightY = new THREE.PointLight(0xf59e0b, 1.1, 30, 2);
@@ -35,14 +33,12 @@ import * as THREE from 'three';
   lightO.position.set(-3.5, -2, 3);
   scene.add(lightO);
 
-  // ═══════════════════════════════════════════════════════════
-  //  Root group & Geometries
-  // ═══════════════════════════════════════════════════════════
+  // Root Group & 3D Objects
   const root = new THREE.Group();
   root.scale.setScalar(0.7);
   scene.add(root);
 
-  // Outer wireframe
+  // Outer Icosahedron
   const outerGeo = new THREE.IcosahedronGeometry(1.9, 1);
   const outerWire = new THREE.LineSegments(
     new THREE.WireframeGeometry(outerGeo),
@@ -54,7 +50,7 @@ import * as THREE from 'three';
   );
   root.add(outerWire);
 
-  // Inner wireframe
+  // Inner Icosahedron
   const innerGeo = new THREE.IcosahedronGeometry(1.35, 0);
   const innerWire = new THREE.LineSegments(
     new THREE.WireframeGeometry(innerGeo),
@@ -66,9 +62,7 @@ import * as THREE from 'three';
   );
   root.add(innerWire);
 
-  // ═══════════════════════════════════════════════════════════
-  //  Skill-node network
-  // ═══════════════════════════════════════════════════════════
+  // Skill Node Network
   const positions = outerGeo.attributes.position;
   const uniqueVerts = [];
   const seen = new Set();
@@ -114,7 +108,7 @@ import * as THREE from 'three';
   );
   root.add(network);
 
-  // Dynamic texture generator
+  // Particle Dot Texture Generator
   function makeDotTexture() {
     const size = 64;
     const c = document.createElement('canvas');
@@ -155,7 +149,7 @@ import * as THREE from 'three';
   );
   root.add(nodes);
 
-  // Center sphere
+  // Central Core Sphere
   const coreMat = new THREE.MeshBasicMaterial({
     color: 0xea580c,
     transparent: true,
@@ -164,7 +158,7 @@ import * as THREE from 'three';
   const core = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 16), coreMat);
   root.add(core);
 
-  // Ambient depth particles
+  // Depth Particles
   const PARTICLE_COUNT = 500;
   const pPositions = new Float32Array(PARTICLE_COUNT * 3);
   for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -191,9 +185,7 @@ import * as THREE from 'three';
   );
   root.add(particles);
 
-  // ═══════════════════════════════════════════════════════════
-  //  Interaction & Resize Listeners
-  // ═══════════════════════════════════════════════════════════
+  // Mouse Parallax & Interactivity
   const mouse = { x: 0, y: 0 };
   const tilt  = { x: 0, y: 0 };
 
@@ -220,9 +212,7 @@ import * as THREE from 'three';
   window.addEventListener('resize', resize);
   resize();
 
-  // ═══════════════════════════════════════════════════════════
-  //  Animation Loop
-  // ═══════════════════════════════════════════════════════════
+  // Animation Loop
   const clock = new THREE.Clock();
   let entryT = 0;
   const ENTRY_DURATION = 1.6;
