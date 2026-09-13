@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def loading():
-    return render_template("loading.html")
+    return render_template("common/loading.html")
 
 
 if __name__ == "__main__":
