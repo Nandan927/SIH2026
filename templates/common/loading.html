@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Horizon — Skill Gap Analysis</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- External Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="ambient"></div>
+
+  <canvas id="scene" aria-hidden="true"></canvas>
+
+  <div class="vignette"></div>
+
+  <div class="corner">HORIZON</div>
+  <div class="corner-right">v2.0 · Live</div>
+
+  <div class="stage">
+    <div class="center">
+      <div class="brand">
+        <h1>Horizon</h1>
+        <div class="sub">Skill Gap Analysis</div>
+        <div class="rule"></div>
+      </div>
+    </div>
+
+    <div class="loader">
+      <div class="dots">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="txt">Analyzing Skills…</div>
+    </div>
+  </div>
+
+  <!-- Three.js Import Map -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
+
+  <!-- External JavaScript Logic -->
+  <script type="module" src="script.js"></script>
+</body>
+</html>
