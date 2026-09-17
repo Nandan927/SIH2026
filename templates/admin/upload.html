@@ -9,16 +9,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- FontAwesome 6 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-<!-- SheetJS for reading & writing .xlsx -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
   /* ═══════════════════════════════════════════════════════════
      Horizon — Admin Upload & Skill Gap Analysis
-     Single-file HTML + CSS + JS
      ═══════════════════════════════════════════════════════════ */
 
   :root {
@@ -62,7 +58,6 @@
 
     --shadow-sm:    0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.05);
     --shadow-card:  0 10px 30px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
-    --shadow-lg:    0 24px 48px -12px rgba(120, 80, 20, 0.14), 0 8px 16px rgba(120, 80, 20, 0.06);
     --shadow-amber: 0 10px 26px -6px rgba(234, 88, 12, 0.32);
   }
 
@@ -79,7 +74,6 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* ═══════════════ PAGE SHELL ═══════════════ */
   body {
     min-height: 100vh;
     padding: 32px 24px 60px;
@@ -132,9 +126,7 @@
     box-shadow: var(--shadow-sm);
     margin-bottom: 24px;
   }
-
   .brand-block { display: flex; align-items: center; gap: 14px; }
-
   .brand-mark {
     position: relative;
     width: 44px;
@@ -174,7 +166,6 @@
     0%, 100% { opacity: 0.7; transform: scale(1); }
     50%      { opacity: 1;   transform: scale(1.08); }
   }
-
   .brand-text { line-height: 1.1; }
   .brand-name {
     font-family: var(--display);
@@ -196,7 +187,6 @@
     margin-top: 3px;
     display: block;
   }
-
   .badge-pill {
     display: inline-flex;
     align-items: center;
@@ -224,7 +214,6 @@
     0%, 100% { transform: scale(1); opacity: 1; }
     50%      { transform: scale(1.18); opacity: 0.7; }
   }
-
   .header-nav { display: flex; gap: 10px; align-items: center; }
   .nav-link {
     display: inline-flex;
@@ -269,7 +258,6 @@
     background: radial-gradient(circle, rgba(251, 191, 36, 0.10), transparent 70%);
     pointer-events: none;
   }
-
   .card-heading {
     font-family: var(--display);
     font-size: 20px;
@@ -281,10 +269,7 @@
     align-items: center;
     gap: 10px;
   }
-  .card-heading i {
-    color: var(--orange);
-    font-size: 18px;
-  }
+  .card-heading i { color: var(--orange); font-size: 18px; }
   .card-sub {
     font-size: 13.5px;
     color: var(--text-2);
@@ -293,7 +278,7 @@
     margin-bottom: 20px;
   }
 
-  /* ═══════════════ PROBLEM STATEMENT INFO GRID ═══════════════ */
+  /* ═══════════════ INFO GRID ═══════════════ */
   .info-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -328,20 +313,18 @@
   .info-tile:nth-child(1) .info-icon { background: linear-gradient(135deg, #fbbf24, #f59e0b); box-shadow: 0 6px 14px -4px rgba(245, 158, 11, 0.5); }
   .info-tile:nth-child(2) .info-icon { background: linear-gradient(135deg, #fb923c, #ea580c); box-shadow: 0 6px 14px -4px rgba(234, 88, 12, 0.5); }
   .info-tile:nth-child(3) .info-icon { background: linear-gradient(135deg, #a78bfa, #7c3aed); box-shadow: 0 6px 14px -4px rgba(124, 58, 237, 0.5); }
-
   .info-tile .t { font-family: var(--display); font-size: 14px; font-weight: 700; color: var(--text-0); margin-bottom: 4px; }
   .info-tile .d { font-size: 12.5px; color: var(--text-2); line-height: 1.55; }
 
-  /* ═══════════════ UPLOAD + FORMAT ROW ═══════════════ */
+  /* ═══════════════ UPLOAD ROW — 2cm gap ═══════════════ */
   .upload-row {
     display: grid;
-    /* ~7cm gap between the two actions */
     grid-template-columns: 1fr 1fr;
-    gap: 7cm;
+    gap: 2cm; /* ← was 7cm, now 2cm */
     align-items: stretch;
   }
-  @media (max-width: 1100px) {
-    .upload-row { gap: 32px; }
+  @media (max-width: 900px) {
+    .upload-row { grid-template-columns: 1fr; gap: 22px; }
   }
 
   .action-box {
@@ -435,7 +418,7 @@
     letter-spacing: 0.02em;
   }
 
-  /* ── File chip (visible after selection) ── */
+  /* ── File chip ── */
   .file-chip {
     display: none;
     align-items: center;
@@ -570,9 +553,10 @@
     opacity: 0.5;
     cursor: not-allowed;
     transform: none !important;
+    box-shadow: none !important;
   }
 
-  /* ── Credentials preview table ── */
+  /* ═══════════════ CREDENTIALS PREVIEW ═══════════════ */
   .creds-wrap {
     display: none;
     margin-top: 18px;
@@ -656,9 +640,14 @@
     text-decoration: none;
     box-shadow: var(--shadow-amber);
     transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 220ms ease;
+                box-shadow 220ms ease,
+                background 220ms ease,
+                filter 220ms ease,
+                opacity 220ms ease;
     position: relative;
     overflow: hidden;
+    border: none;
+    cursor: pointer;
   }
   .cta-full::after {
     content: "";
@@ -668,12 +657,44 @@
     transform: translateX(-100%);
     transition: transform 800ms ease;
   }
-  .cta-full:hover {
+  .cta-full:hover:not([disabled]) {
     transform: translateY(-2px);
     box-shadow: 0 18px 36px -6px rgba(234, 88, 12, 0.5);
     background: var(--accent-gradient-hover);
   }
-  .cta-full:hover::after { transform: translateX(100%); }
+  .cta-full:hover:not([disabled])::after { transform: translateX(100%); }
+
+  .cta-full[disabled],
+  .cta-full[aria-disabled="true"] {
+    cursor: not-allowed;
+    filter: grayscale(0.45);
+    opacity: 0.55;
+    box-shadow: none;
+    transform: none !important;
+    pointer-events: none;
+  }
+
+  .cta-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--amber-soft);
+    border: 1px solid rgba(234, 88, 12, 0.22);
+    font-size: 12px;
+    font-weight: 600;
+    color: #b45309;
+    letter-spacing: 0.01em;
+  }
+  .cta-note i { font-size: 12px; }
+  .cta-note.ready {
+    background: var(--emerald-soft);
+    border-color: #a7f3d0;
+    color: #065f46;
+  }
+  .cta-note.ready i { color: var(--emerald); }
 
   /* ═══════════════ MODAL ═══════════════ */
   .modal-backdrop {
@@ -744,7 +765,6 @@
     border-color: var(--border-warm);
     background: var(--orange-soft);
   }
-
   .modal-body {
     padding: 20px 22px;
     overflow-y: auto;
@@ -789,7 +809,6 @@
     color: #78350f;
     line-height: 1.55;
   }
-
   .modal-foot {
     padding: 14px 22px;
     border-top: 1px solid var(--border);
@@ -809,7 +828,6 @@
   }
   .page-footer strong { color: var(--text-2); font-weight: 600; }
 
-  /* ═══════════════ ANIMATIONS ═══════════════ */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -818,10 +836,8 @@
     * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
 
-  /* ═══════════════ RESPONSIVE ═══════════════ */
   @media (max-width: 900px) {
     .info-grid { grid-template-columns: 1fr; }
-    .upload-row { grid-template-columns: 1fr; gap: 22px; }
     .page-header { padding: 14px 16px; }
     .card { padding: 20px; }
     .header-nav { width: 100%; }
@@ -833,9 +849,7 @@
 
 <div class="page-wrap">
 
-  <!-- ══════════════════════════════════════════
-       A. TOP HEADER NAVIGATION
-       ══════════════════════════════════════════ -->
+  <!-- A. HEADER -->
   <header class="page-header">
     <div class="brand-block">
       <span class="brand-mark">H</span>
@@ -844,18 +858,15 @@
         <span class="brand-tag">Skill Gap Analysis</span>
       </span>
     </div>
-
     <div class="header-nav">
       <span class="badge-pill">Admin Portal · Longitudinal Skill Gap &amp; Outcome Tracking</span>
-      <a href="#" class="nav-link" id="dashboardLink" title="Enter Admin Dashboard">
+      <a href="#" class="nav-link" id="dashboardLink" title="Enter Admin Dashboard" aria-disabled="true" style="pointer-events:none;opacity:0.55;">
         <i class="fa-solid fa-gauge-high"></i> Dashboard
       </a>
     </div>
   </header>
 
-  <!-- ══════════════════════════════════════════
-       B. PROBLEM STATEMENT & IMPACT SUMMARY
-       ══════════════════════════════════════════ -->
+  <!-- B. PROBLEM STATEMENT -->
   <section class="card">
     <h1 class="card-heading">
       <i class="fa-solid fa-compass-drafting"></i>
@@ -866,7 +877,6 @@
       self-employment, and job retention. The system automatically categorizes placed vs. non-placed
       trainees to highlight skill gaps and reason for attrition.
     </p>
-
     <div class="info-grid">
       <div class="info-tile">
         <div class="info-icon"><i class="fa-solid fa-chart-column"></i></div>
@@ -892,9 +902,7 @@
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════
-       C. FILE UPLOAD + FORMAT ROW
-       ══════════════════════════════════════════ -->
+  <!-- C. UPLOAD + FORMAT -->
   <section class="card">
     <h2 class="card-heading">
       <i class="fa-solid fa-file-arrow-up"></i>
@@ -907,7 +915,6 @@
 
     <div class="upload-row">
 
-      <!-- Element 1 — Upload Excel Sheet -->
       <div class="action-box">
         <div class="action-title">
           <i class="fa-solid fa-cloud-arrow-up"></i>
@@ -915,11 +922,7 @@
         </div>
 
         <label class="dropzone" id="dropzone">
-          <input
-            type="file"
-            id="fileInput"
-            accept=".xlsx,.xls"
-          />
+          <input type="file" id="fileInput" accept=".xlsx,.xls" />
           <div class="dz-icon"><i class="fa-solid fa-file-excel"></i></div>
           <div class="dz-title">Drag &amp; drop your Excel file here</div>
           <div class="dz-sub">or</div>
@@ -936,7 +939,6 @@
         </div>
       </div>
 
-      <!-- Element 2 — View Excel Format -->
       <div class="action-box">
         <div class="action-title">
           <i class="fa-solid fa-table-columns"></i>
@@ -958,9 +960,7 @@
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════
-       D. TRAINEE CREDENTIALS MANAGEMENT
-       ══════════════════════════════════════════ -->
+  <!-- D. CREDENTIALS -->
   <section class="card">
     <h2 class="card-heading">
       <i class="fa-solid fa-id-card-clip"></i>
@@ -971,13 +971,11 @@
       a downloadable credential sheet.
     </p>
 
-    <!-- Status box -->
     <div class="status-box" id="statusBox">
       <i class="fa-solid fa-circle-check" id="statusIcon"></i>
       <span id="statusText">Upload successful. 0 trainees parsed.</span>
     </div>
 
-    <!-- Controls -->
     <div class="button-row">
       <button type="button" class="btn btn-primary" id="generateBtn" disabled>
         <i class="fa-solid fa-wand-magic-sparkles"></i>
@@ -989,7 +987,6 @@
       </button>
     </div>
 
-    <!-- Preview table -->
     <div class="creds-wrap" id="credsWrap">
       <div class="creds-head">
         <span>Preview · Credential Sheet</span>
@@ -1006,23 +1003,23 @@
               <th>Password</th>
             </tr>
           </thead>
-          <tbody id="credsBody">
-            <!-- injected -->
-          </tbody>
+          <tbody id="credsBody"></tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════
-       E. FOOTER ACTION — DASHBOARD CTA
-       ══════════════════════════════════════════ -->
+  <!-- E. CTA -->
   <div class="cta-wrap">
-    <a href="#" class="cta-full" id="dashboardCta">
+    <button type="button" class="cta-full" id="dashboardCta" disabled aria-disabled="true">
       <i class="fa-solid fa-arrow-right-to-bracket"></i>
       Enter Admin Dashboard
       <i class="fa-solid fa-arrow-right"></i>
-    </a>
+    </button>
+    <div class="cta-note" id="ctaNote">
+      <i class="fa-solid fa-lock"></i>
+      Upload a sheet and generate credentials to unlock
+    </div>
   </div>
 
   <footer class="page-footer">
@@ -1031,9 +1028,7 @@
 
 </div>
 
-<!-- ══════════════════════════════════════════
-     MODAL — Excel Format
-     ══════════════════════════════════════════ -->
+<!-- MODAL -->
 <div class="modal-backdrop" id="formatModal" role="dialog" aria-modal="true" aria-labelledby="formatModalTitle">
   <div class="modal">
     <div class="modal-head">
@@ -1119,15 +1114,11 @@
   'use strict';
 
   /* ═══════════════════════════════════════════════════════════
-     CONFIG — point these to your Flask routes.
-     In Jinja: {{ url_for('admin.dashboard') }}
+     CONFIG
      ═══════════════════════════════════════════════════════════ */
   const ROUTES = {
     dashboard: 'admin/dashboard'
   };
-
-  document.getElementById('dashboardLink').setAttribute('href', ROUTES.dashboard);
-  document.getElementById('dashboardCta').setAttribute('href', ROUTES.dashboard);
 
   /* ═══════════════════════════════════════════════════════════
      STATE
@@ -1135,31 +1126,34 @@
   const state = {
     fileName: null,
     fileSize: 0,
-    rows: [],          // parsed rows (objects)
-    headers: [],       // header row (strings)
-    credentials: []    // [{traineeId, name, email, password}]
+    rows: [],
+    headers: [],
+    credentials: []
   };
 
   /* ═══════════════════════════════════════════════════════════
      ELEMENTS
      ═══════════════════════════════════════════════════════════ */
-  const dropzone     = document.getElementById('dropzone');
-  const fileInput    = document.getElementById('fileInput');
-  const fileChip     = document.getElementById('fileChip');
-  const fileNameEl   = document.getElementById('fileName');
-  const fileSizeEl   = document.getElementById('fileSize');
-  const statusBox    = document.getElementById('statusBox');
-  const statusText   = document.getElementById('statusText');
-  const statusIcon   = document.getElementById('statusIcon');
-  const generateBtn  = document.getElementById('generateBtn');
-  const downloadBtn  = document.getElementById('downloadBtn');
-  const credsWrap    = document.getElementById('credsWrap');
-  const credsBody    = document.getElementById('credsBody');
-  const credsCount   = document.getElementById('credsCount');
+  const dropzone    = document.getElementById('dropzone');
+  const fileInput   = document.getElementById('fileInput');
+  const fileChip    = document.getElementById('fileChip');
+  const fileNameEl  = document.getElementById('fileName');
+  const fileSizeEl  = document.getElementById('fileSize');
+  const statusBox   = document.getElementById('statusBox');
+  const statusText  = document.getElementById('statusText');
+  const statusIcon  = document.getElementById('statusIcon');
+  const generateBtn = document.getElementById('generateBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const credsWrap   = document.getElementById('credsWrap');
+  const credsBody   = document.getElementById('credsBody');
+  const credsCount  = document.getElementById('credsCount');
 
-  /* Modal */
-  const formatModal   = document.getElementById('formatModal');
-  const openFormatBtn = document.getElementById('openFormatModal');
+  const dashboardLink = document.getElementById('dashboardLink');
+  const dashboardCta  = document.getElementById('dashboardCta');
+  const ctaNote       = document.getElementById('ctaNote');
+
+  const formatModal    = document.getElementById('formatModal');
+  const openFormatBtn  = document.getElementById('openFormatModal');
   const closeModalBtns = [
     document.getElementById('closeFormatModal'),
     document.getElementById('closeFormatFooter')
@@ -1174,7 +1168,6 @@
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + units[i];
   }
-
   function escapeHTML(v) {
     return String(v == null ? '' : v)
       .replace(/&/g, '&amp;')
@@ -1183,32 +1176,20 @@
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
   }
-
-  /**
-   * Generate a secure-ish random alphanumeric password.
-   * Includes at least one uppercase, one lowercase, one digit.
-   * Length 12 by default.
-   */
   function randomPassword(length = 12) {
     const upper  = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
     const lower  = 'abcdefghijkmnopqrstuvwxyz';
     const digit  = '23456789';
     const symbol = '@#$%&*!?';
     const all = upper + lower + digit + symbol;
-
-    // Seed with one of each required class
     let pw = '';
     pw += upper[Math.floor(Math.random() * upper.length)];
     pw += lower[Math.floor(Math.random() * lower.length)];
     pw += digit[Math.floor(Math.random() * digit.length)];
     pw += symbol[Math.floor(Math.random() * symbol.length)];
-
-    // Fill the rest from the full alphabet
     for (let i = pw.length; i < length; i++) {
       pw += all[Math.floor(Math.random() * all.length)];
     }
-
-    // Fisher-Yates shuffle
     const arr = pw.split('');
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -1216,18 +1197,9 @@
     }
     return arr.join('');
   }
-
-  /**
-   * Normalize header strings so we can match despite case / spacing.
-   * "Trainee ID" -> "traineeid"
-   */
   function normHeader(h) {
     return String(h || '').toLowerCase().replace(/[\s_\-]+/g, '');
   }
-
-  /**
-   * Given the header row, find the index of a column by any of its aliases.
-   */
   function findColumn(headers, aliases) {
     const normalized = headers.map(normHeader);
     for (const a of aliases) {
@@ -1236,6 +1208,50 @@
     }
     return -1;
   }
+
+  /* ═══════════════════════════════════════════════════════════
+     DASHBOARD GATE
+     ═══════════════════════════════════════════════════════════ */
+  function refreshDashboardGate() {
+    const hasSheet = state.rows.length > 0;
+    const hasCreds = state.credentials.length > 0;
+    const unlocked = hasSheet && hasCreds;
+
+    dashboardCta.disabled = !unlocked;
+    dashboardCta.setAttribute('aria-disabled', String(!unlocked));
+
+    if (unlocked) {
+      dashboardLink.setAttribute('href', ROUTES.dashboard);
+      dashboardLink.setAttribute('aria-disabled', 'false');
+      dashboardLink.style.pointerEvents = '';
+      dashboardLink.style.opacity = '';
+      dashboardLink.title = 'Enter Admin Dashboard';
+    } else {
+      dashboardLink.removeAttribute('href');
+      dashboardLink.setAttribute('aria-disabled', 'true');
+      dashboardLink.style.pointerEvents = 'none';
+      dashboardLink.style.opacity = '0.55';
+      dashboardLink.title = 'Upload a sheet and generate credentials first';
+    }
+
+    if (unlocked) {
+      ctaNote.className = 'cta-note ready';
+      ctaNote.innerHTML = `<i class="fa-solid fa-circle-check"></i> Ready — you can enter the dashboard now`;
+    } else if (hasSheet && !hasCreds) {
+      ctaNote.className = 'cta-note';
+      ctaNote.innerHTML = `<i class="fa-solid fa-lock"></i> Sheet uploaded — now click <strong>Generate Credential Sheet</strong> to unlock`;
+    } else {
+      ctaNote.className = 'cta-note';
+      ctaNote.innerHTML = `<i class="fa-solid fa-lock"></i> Upload a sheet and generate credentials to unlock`;
+    }
+  }
+
+  dashboardCta.addEventListener('click', () => {
+    if (dashboardCta.disabled) return;
+    window.location.href = ROUTES.dashboard;
+  });
+
+  refreshDashboardGate();
 
   /* ═══════════════════════════════════════════════════════════
      DRAG & DROP
@@ -1254,21 +1270,18 @@
       dropzone.classList.remove('dragging');
     });
   });
-
   dropzone.addEventListener('drop', (e) => {
     const dt = e.dataTransfer;
     if (!dt || !dt.files || !dt.files.length) return;
-    const file = dt.files[0];
-    handleFile(file);
+    handleFile(dt.files[0]);
   });
-
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files && e.target.files[0];
     if (file) handleFile(file);
   });
 
   /* ═══════════════════════════════════════════════════════════
-     FILE HANDLING — parse via SheetJS
+     FILE HANDLING
      ═══════════════════════════════════════════════════════════ */
   function handleFile(file) {
     const nameLower = file.name.toLowerCase();
@@ -1279,7 +1292,6 @@
 
     state.fileName = file.name;
     state.fileSize = file.size;
-
     fileNameEl.textContent = file.name;
     fileSizeEl.textContent = formatBytes(file.size);
     fileChip.classList.add('show');
@@ -1289,32 +1301,29 @@
       try {
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
-        const firstSheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[firstSheetName];
-
-        // Convert to array-of-arrays so we can keep the header row
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const aoa = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false });
+
         if (!aoa.length) {
           showStatus('The Excel sheet appears to be empty.', 'warn');
           return;
         }
 
         const headers = aoa[0].map((h) => String(h).trim());
-        const bodyRows = aoa.slice(1).filter((r) => r.some((cell) => String(cell).trim() !== ''));
+        const bodyRows = aoa.slice(1).filter((r) => r.some((c) => String(c).trim() !== ''));
 
         state.headers = headers;
         state.rows = bodyRows;
 
-        // Reset any previously generated credentials
         state.credentials = [];
         credsWrap.classList.remove('show');
         credsBody.innerHTML = '';
         credsCount.textContent = '0';
         downloadBtn.disabled = true;
-
         generateBtn.disabled = bodyRows.length === 0;
 
         showStatus(`Upload successful. ${bodyRows.length} trainee${bodyRows.length === 1 ? '' : 's'} parsed.`, 'ok');
+        refreshDashboardGate();
       } catch (err) {
         console.error(err);
         showStatus('Could not read the Excel file. Please check the format.', 'warn');
@@ -1323,10 +1332,6 @@
     reader.readAsArrayBuffer(file);
   }
 
-  /**
-   * Show the status box.
-   * kind: 'ok' | 'warn'
-   */
   function showStatus(text, kind) {
     statusBox.classList.add('show');
     statusBox.classList.toggle('warn', kind === 'warn');
@@ -1337,11 +1342,10 @@
   }
 
   /* ═══════════════════════════════════════════════════════════
-     MODAL OPEN / CLOSE
+     MODAL
      ═══════════════════════════════════════════════════════════ */
   function openModal() { formatModal.classList.add('show'); }
   function closeModal() { formatModal.classList.remove('show'); }
-
   openFormatBtn.addEventListener('click', openModal);
   closeModalBtns.forEach((b) => b && b.addEventListener('click', closeModal));
   formatModal.addEventListener('click', (e) => {
@@ -1358,7 +1362,6 @@
     if (!state.rows.length) return;
 
     const headers = state.headers;
-
     const colTraineeId = findColumn(headers, ['Trainee ID', 'TraineeId', 'ID', 'Trainee_ID']);
     const colName      = findColumn(headers, ['Name', 'Full Name', 'Trainee Name']);
     const colEmail     = findColumn(headers, ['Email', 'Email Address', 'Work Email']);
@@ -1368,16 +1371,14 @@
       return;
     }
 
-    // Build credentials with unique passwords per trainee
     const seen = new Set();
     state.credentials = state.rows.map((row, i) => {
       let traineeId = colTraineeId !== -1 ? String(row[colTraineeId] || '').trim() : '';
       if (!traineeId) traineeId = 'HZN-' + String(i + 1).padStart(4, '0');
 
-      let name  = colName  !== -1 ? String(row[colName]  || '').trim() : '';
-      let email = colEmail !== -1 ? String(row[colEmail] || '').trim() : '';
+      const name  = colName  !== -1 ? String(row[colName]  || '').trim() : '';
+      const email = colEmail !== -1 ? String(row[colEmail] || '').trim() : '';
 
-      // Unique password: avoid duplicate with anything already generated
       let password;
       let guard = 0;
       do {
@@ -1393,11 +1394,9 @@
     downloadBtn.disabled = false;
 
     showStatus(`Generated credentials for ${state.credentials.length} trainee${state.credentials.length === 1 ? '' : 's'}.`, 'ok');
+    refreshDashboardGate();
   });
 
-  /* ═══════════════════════════════════════════════════════════
-     RENDER PREVIEW TABLE
-     ═══════════════════════════════════════════════════════════ */
   function renderCredentials(list) {
     credsBody.innerHTML = list.map((c, i) => `
       <tr>
@@ -1413,30 +1412,19 @@
   }
 
   /* ═══════════════════════════════════════════════════════════
-     DOWNLOAD CREDENTIAL SHEET (.xlsx) via SheetJS
+     DOWNLOAD
      ═══════════════════════════════════════════════════════════ */
   downloadBtn.addEventListener('click', () => {
     if (!state.credentials.length) return;
 
-    // Build the export matrix: header + rows
     const aoa = [['Trainee ID', 'Name', 'Email', 'Password']];
-    state.credentials.forEach((c) => {
-      aoa.push([c.traineeId, c.name, c.email, c.password]);
-    });
+    state.credentials.forEach((c) => aoa.push([c.traineeId, c.name, c.email, c.password]));
 
     const ws = XLSX.utils.aoa_to_sheet(aoa);
-
-    // Set column widths for a nicer look when opened
-    ws['!cols'] = [
-      { wch: 14 }, // Trainee ID
-      { wch: 22 }, // Name
-      { wch: 28 }, // Email
-      { wch: 16 }  // Password
-    ];
+    ws['!cols'] = [{ wch: 14 }, { wch: 22 }, { wch: 28 }, { wch: 16 }];
 
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Credentials');
-
     XLSX.writeFile(wb, 'trainee_credentials.xlsx');
 
     showStatus('Credential sheet downloaded as trainee_credentials.xlsx.', 'ok');
