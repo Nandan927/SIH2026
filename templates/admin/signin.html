@@ -662,12 +662,12 @@
        dashboardRoute: {{ url_for('admin.dashboard') }}
      ═══════════════════════════════════════════════════════════ */
   const ROUTES = {
-    signin:    'admin/signin',
-    signup:    'admin/signup',
-    forgot:    'admin/forgot_password',
-    back:      'role-selection',
-    dashboard: 'admin/dashboard'
-  };
+  signin: "{{ url_for('admin_signin') }}",
+  signup: "{{ url_for('admin_signup') }}",
+  back: "{{ url_for('role_selection') }}",
+  dashboard: "{{ url_for('admin_upload') }}",
+  forgot: "#"
+};
 
   /* Wire the links to their destinations */
   document.getElementById('signupLink').setAttribute('href', ROUTES.signup);
@@ -748,58 +748,42 @@
   const validEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
   form.addEventListener('submit', (e) => {
-    e.preventDefault();
 
+    // Remove old validation errors
     emailGrp.classList.remove('has-error');
     passGrp.classList.remove('has-error');
 
-    let ok = true;
-    if (!validEmail(emailInput.value)) { emailGrp.classList.add('has-error'); ok = false; }
-    if (!passInput.value)              { passGrp.classList.add('has-error');  ok = false; }
-    if (!ok) return;
+    let valid = true;
 
-    /* Loading state */
+    // Validate email
+    if (!validEmail(emailInput.value)) {
+        emailGrp.classList.add('has-error');
+        valid = false;
+    }
+
+    // Validate password
+    if (!passInput.value.trim()) {
+        passGrp.classList.add('has-error');
+        valid = false;
+    }
+
+    // If validation fails, stop form submission
+    if (!valid) {
+        e.preventDefault();
+        return;
+    }
+
+    // Disable button while submitting
     submitBtn.disabled = true;
     submitBtn.querySelector('span').textContent = 'Signing in…';
 
-    /* ═══════════════════════════════════════════════════════
-       REAL BACKEND CALL — uncomment when you have a server.
-       ───────────────────────────────────────────────────────
-       const payload = {
-         email:    emailInput.value.trim(),
-         password: passInput.value,
-         remember: form.querySelector('input[name="remember"]').checked
-       };
+    /*
+       Important:
+       Do NOT use e.preventDefault() here.
 
-       fetch(form.getAttribute('action'), {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify(payload)
-       })
-       .then(r => r.ok ? r.json() : Promise.reject(r))
-       .then(data => {
-         if (data.success) {
-           window.location.href = ROUTES.dashboard;
-         } else {
-           window.flash(data.message || 'Invalid credentials', 'error');
-           submitBtn.disabled = false;
-           submitBtn.querySelector('span').textContent = 'Sign In to Dashboard';
-         }
-       })
-       .catch(() => {
-         window.flash('Something went wrong. Please try again.', 'error');
-         submitBtn.disabled = false;
-         submitBtn.querySelector('span').textContent = 'Sign In to Dashboard';
-       });
-       ═══════════════════════════════════════════════════════ */
-
-    /* Demo behaviour — remove these two lines when you wire the backend */
-    setTimeout(() => {
-      window.flash('Demo mode — no backend connected.', 'info');
-      submitBtn.disabled = false;
-      submitBtn.querySelector('span').textContent = 'Sign In to Dashboard';
-    }, 1200);
-  });
+       The browser will submit the form normally to Flask.
+    */
+});
 
   /* Clear inline errors as the user types */
   emailInput.addEventListener('input', () => emailGrp.classList.remove('has-error'));
