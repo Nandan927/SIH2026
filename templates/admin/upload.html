@@ -1,0 +1,1448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Admin · Upload Data · Horizon</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- FontAwesome 6 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<!-- SheetJS for reading & writing .xlsx -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+  /* ═══════════════════════════════════════════════════════════
+     Horizon — Admin Upload & Skill Gap Analysis
+     Single-file HTML + CSS + JS
+     ═══════════════════════════════════════════════════════════ */
+
+  :root {
+    --bg:        #fafafc;
+    --bg-2:      #f4f1ea;
+    --surface:   #ffffff;
+    --surface-2: #fefbf3;
+
+    --border:      #e2e8f0;
+    --border-2:    #e6dcc6;
+    --border-warm: rgba(234, 88, 12, 0.42);
+
+    --text-0: #0f172a;
+    --text-1: #334155;
+    --text-2: #475569;
+    --text-3: #94a3b8;
+
+    --orange:      #ea580c;
+    --orange-2:    #f97316;
+    --amber:       #f59e0b;
+    --amber-2:     #fbbf24;
+    --amber-soft:  #fef3c7;
+    --orange-soft: #fee7d4;
+    --emerald:     #16a34a;
+    --emerald-soft:#dcfce7;
+    --red:         #dc2626;
+    --red-soft:    #fee2e2;
+    --violet:      #7c3aed;
+    --violet-soft: #ede9fe;
+
+    --accent-gradient:       linear-gradient(135deg, #fbbf24 0%, #ea580c 100%);
+    --accent-gradient-hover: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+
+    --sans:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --display: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    --r-sm: 8px;
+    --r:    12px;
+    --r-lg: 16px;
+    --r-xl: 20px;
+
+    --shadow-sm:    0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.05);
+    --shadow-card:  0 10px 30px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
+    --shadow-lg:    0 24px 48px -12px rgba(120, 80, 20, 0.14), 0 8px 16px rgba(120, 80, 20, 0.06);
+    --shadow-amber: 0 10px 26px -6px rgba(234, 88, 12, 0.32);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--text-1);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ═══════════════ PAGE SHELL ═══════════════ */
+  body {
+    min-height: 100vh;
+    padding: 32px 24px 60px;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 45% at 50% -5%,  rgba(245, 158, 11, 0.20) 0%, transparent 62%),
+      radial-gradient(ellipse 55% 45% at 20% 40%,  rgba(234, 88, 12, 0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 45% 35% at 88% 25%,  rgba(251, 191, 36, 0.08) 0%, transparent 65%),
+      linear-gradient(180deg, #fdfbf6 0%, #fafafc 40%, #f6f4ef 100%);
+  }
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse 85% 70% at 50% 40%, #000 0%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 85% 70% at 50% 40%, #000 0%, transparent 78%);
+    opacity: 0.9;
+  }
+  body > * { position: relative; z-index: 1; }
+
+  .page-wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    animation: fadeUp 700ms 100ms ease both;
+  }
+
+  /* ═══════════════ TOP HEADER ═══════════════ */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+  }
+
+  .brand-block { display: flex; align-items: center; gap: 14px; }
+
+  .brand-mark {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    background: var(--accent-gradient);
+    display: grid;
+    place-items: center;
+    color: #ffffff;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 19px;
+    letter-spacing: -0.04em;
+    box-shadow:
+      0 10px 22px -6px rgba(234, 88, 12, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .brand-mark::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.55), transparent 55%);
+  }
+  .brand-mark::before {
+    content: "";
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(249, 168, 37, 0.32), transparent 70%);
+    z-index: -1;
+    filter: blur(9px);
+    animation: backGlow 3.4s ease-in-out infinite;
+  }
+  @keyframes backGlow {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50%      { opacity: 1;   transform: scale(1.08); }
+  }
+
+  .brand-text { line-height: 1.1; }
+  .brand-name {
+    font-family: var(--display);
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--text-0) 0%, var(--text-0) 55%, var(--orange) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: block;
+  }
+  .brand-tag {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-top: 3px;
+    display: block;
+  }
+
+  .badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: var(--amber-soft);
+    border: 1px solid rgba(234, 88, 12, 0.22);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #b45309;
+  }
+  .badge-pill::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--orange);
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.20);
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.18); opacity: 0.7; }
+  }
+
+  .header-nav { display: flex; gap: 10px; align-items: center; }
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: var(--r);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-1);
+    text-decoration: none;
+    background: #fbfaf6;
+    border: 1px solid var(--border);
+    transition: all 200ms ease;
+  }
+  .nav-link:hover {
+    border-color: var(--border-warm);
+    color: var(--orange);
+    background: var(--surface);
+  }
+  .nav-link i { color: var(--orange); }
+
+  /* ═══════════════ CARDS ═══════════════ */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-card);
+    padding: 24px 26px;
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.10), transparent 70%);
+    pointer-events: none;
+  }
+
+  .card-heading {
+    font-family: var(--display);
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--text-0);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-heading i {
+    color: var(--orange);
+    font-size: 18px;
+  }
+  .card-sub {
+    font-size: 13.5px;
+    color: var(--text-2);
+    line-height: 1.6;
+    max-width: 900px;
+    margin-bottom: 20px;
+  }
+
+  /* ═══════════════ PROBLEM STATEMENT INFO GRID ═══════════════ */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 20px;
+  }
+  .info-tile {
+    padding: 18px;
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease;
+  }
+  .info-tile:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-sm);
+    border-color: var(--border-warm);
+  }
+  .info-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    flex-shrink: 0;
+    font-size: 16px;
+  }
+  .info-tile:nth-child(1) .info-icon { background: linear-gradient(135deg, #fbbf24, #f59e0b); box-shadow: 0 6px 14px -4px rgba(245, 158, 11, 0.5); }
+  .info-tile:nth-child(2) .info-icon { background: linear-gradient(135deg, #fb923c, #ea580c); box-shadow: 0 6px 14px -4px rgba(234, 88, 12, 0.5); }
+  .info-tile:nth-child(3) .info-icon { background: linear-gradient(135deg, #a78bfa, #7c3aed); box-shadow: 0 6px 14px -4px rgba(124, 58, 237, 0.5); }
+
+  .info-tile .t { font-family: var(--display); font-size: 14px; font-weight: 700; color: var(--text-0); margin-bottom: 4px; }
+  .info-tile .d { font-size: 12.5px; color: var(--text-2); line-height: 1.55; }
+
+  /* ═══════════════ UPLOAD + FORMAT ROW ═══════════════ */
+  .upload-row {
+    display: grid;
+    /* ~7cm gap between the two actions */
+    grid-template-columns: 1fr 1fr;
+    gap: 7cm;
+    align-items: stretch;
+  }
+  @media (max-width: 1100px) {
+    .upload-row { gap: 32px; }
+  }
+
+  .action-box {
+    padding: 22px;
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .action-title {
+    font-family: var(--display);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-0);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .action-title i { color: var(--orange); }
+
+  /* ── Dropzone ── */
+  .dropzone {
+    position: relative;
+    border: 2px dashed var(--border-2);
+    border-radius: var(--r);
+    background: #fffdf6;
+    padding: 30px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 220ms ease, background 220ms ease, transform 220ms ease;
+  }
+  .dropzone:hover {
+    border-color: var(--border-warm);
+    background: var(--amber-soft);
+  }
+  .dropzone.dragging {
+    border-color: var(--orange);
+    background: var(--amber-soft);
+    transform: scale(1.01);
+  }
+  .dropzone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .dz-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    background: var(--accent-gradient);
+    display: inline-grid;
+    place-items: center;
+    color: #fff;
+    font-size: 22px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-amber);
+  }
+  .dz-title {
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-0);
+    margin-bottom: 4px;
+  }
+  .dz-sub {
+    font-size: 12.5px;
+    color: var(--text-2);
+    margin-bottom: 12px;
+  }
+  .dz-browse {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: var(--r);
+    background: var(--accent-gradient);
+    color: #fff;
+    font-family: var(--display);
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: var(--shadow-amber);
+    pointer-events: none;
+  }
+  .dz-hint {
+    font-size: 11.5px;
+    color: var(--text-3);
+    margin-top: 10px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── File chip (visible after selection) ── */
+  .file-chip {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: var(--r);
+    background: var(--emerald-soft);
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .file-chip.show { display: flex; }
+  .file-chip i { color: var(--emerald); font-size: 16px; }
+  .file-chip .size { color: #059669; font-weight: 500; font-size: 12px; margin-left: auto; }
+
+  /* ── Format button ── */
+  .format-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-radius: var(--r);
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-1);
+    font-family: var(--display);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 220ms ease;
+    width: fit-content;
+  }
+  .format-button:hover {
+    border-color: var(--border-warm);
+    color: var(--orange);
+    background: var(--surface-2);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+  .format-button i:first-child { color: var(--orange); font-size: 15px; }
+  .format-button i:last-child { color: var(--text-3); margin-left: 4px; font-size: 12px; }
+
+  .format-preview {
+    border-radius: var(--r);
+    border: 1px dashed var(--border);
+    background: #fff;
+    padding: 12px 14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    color: var(--text-2);
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+  .format-preview span { color: var(--orange); }
+
+  /* ═══════════════ CREDENTIALS CARD ═══════════════ */
+  .status-box {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: var(--r);
+    background: var(--emerald-soft);
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 18px;
+  }
+  .status-box.show { display: flex; }
+  .status-box.warn { background: var(--amber-soft); border-color: rgba(234, 88, 12, 0.28); color: #b45309; }
+  .status-box i { font-size: 16px; }
+
+  .button-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 12px 22px;
+    border-radius: var(--r);
+    font-family: var(--display);
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    border: none;
+    cursor: pointer;
+    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 220ms ease,
+                background 220ms ease;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary {
+    background: var(--accent-gradient);
+    color: #fff;
+    box-shadow: var(--shadow-amber);
+  }
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 700ms ease;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px -6px rgba(234, 88, 12, 0.48);
+    background: var(--accent-gradient-hover);
+  }
+  .btn-primary:hover::after { transform: translateX(100%); }
+  .btn-secondary {
+    background: #fff;
+    color: var(--text-1);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover {
+    border-color: var(--border-warm);
+    color: var(--orange);
+    background: var(--surface-2);
+    transform: translateY(-1px);
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  /* ── Credentials preview table ── */
+  .creds-wrap {
+    display: none;
+    margin-top: 18px;
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .creds-wrap.show { display: block; }
+  .creds-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-1);
+    letter-spacing: 0.02em;
+  }
+  .creds-head .count { color: var(--orange); }
+  .creds-scroll { max-height: 320px; overflow: auto; }
+  .creds-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .creds-table thead th {
+    text-align: left;
+    padding: 11px 14px;
+    background: #fbfaf6;
+    color: var(--text-2);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+  }
+  .creds-table tbody td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-1);
+    vertical-align: middle;
+  }
+  .creds-table tbody tr:last-child td { border-bottom: none; }
+  .creds-table tbody tr:hover { background: #fffaef; }
+  .creds-table .pw {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--orange);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .creds-table .id {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--text-2);
+  }
+
+  /* ═══════════════ DASHBOARD CTA ═══════════════ */
+  .cta-wrap {
+    text-align: center;
+    margin-top: 26px;
+  }
+  .cta-full {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 640px;
+    height: 54px;
+    margin: 0 auto;
+    border-radius: var(--r);
+    background: var(--accent-gradient);
+    color: #fff;
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    text-decoration: none;
+    box-shadow: var(--shadow-amber);
+    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 220ms ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-full::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 800ms ease;
+  }
+  .cta-full:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 36px -6px rgba(234, 88, 12, 0.5);
+    background: var(--accent-gradient-hover);
+  }
+  .cta-full:hover::after { transform: translateX(100%); }
+
+  /* ═══════════════ MODAL ═══════════════ */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 260ms ease;
+  }
+  .modal-backdrop.show { opacity: 1; pointer-events: auto; }
+
+  .modal {
+    width: 100%;
+    max-width: 720px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: 0 32px 60px -20px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    transform: translateY(12px) scale(0.98);
+    transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    max-height: calc(100vh - 48px);
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-backdrop.show .modal { transform: translateY(0) scale(1); }
+
+  .modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+  .modal-title {
+    font-family: var(--display);
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-0);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .modal-title i { color: var(--orange); }
+  .modal-close {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--text-2);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: all 200ms ease;
+  }
+  .modal-close:hover {
+    color: var(--orange);
+    border-color: var(--border-warm);
+    background: var(--orange-soft);
+  }
+
+  .modal-body {
+    padding: 20px 22px;
+    overflow-y: auto;
+  }
+  .modal-body p { font-size: 13px; color: var(--text-2); line-height: 1.65; margin-bottom: 14px; }
+
+  .format-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+  }
+  .format-table thead th {
+    padding: 11px 14px;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #fff;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-align: left;
+    border-right: 1px solid rgba(255,255,255,0.2);
+  }
+  .format-table thead th:last-child { border-right: none; }
+  .format-table tbody td {
+    padding: 11px 14px;
+    border-top: 1px solid var(--border);
+    color: var(--text-1);
+    font-size: 12.5px;
+  }
+  .format-table tbody tr:nth-child(even) { background: #fffbf1; }
+
+  .format-note {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: var(--r);
+    background: var(--amber-soft);
+    border-left: 3px solid var(--amber);
+    font-size: 12.5px;
+    color: #78350f;
+    line-height: 1.55;
+  }
+
+  .modal-foot {
+    padding: 14px 22px;
+    border-top: 1px solid var(--border);
+    background: var(--surface-2);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  /* ═══════════════ FOOTER ═══════════════ */
+  .page-footer {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--text-3);
+    letter-spacing: 0.03em;
+  }
+  .page-footer strong { color: var(--text-2); font-weight: 600; }
+
+  /* ═══════════════ ANIMATIONS ═══════════════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* ═══════════════ RESPONSIVE ═══════════════ */
+  @media (max-width: 900px) {
+    .info-grid { grid-template-columns: 1fr; }
+    .upload-row { grid-template-columns: 1fr; gap: 22px; }
+    .page-header { padding: 14px 16px; }
+    .card { padding: 20px; }
+    .header-nav { width: 100%; }
+    .nav-link { flex: 1; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ══════════════════════════════════════════
+       A. TOP HEADER NAVIGATION
+       ══════════════════════════════════════════ -->
+  <header class="page-header">
+    <div class="brand-block">
+      <span class="brand-mark">H</span>
+      <span class="brand-text">
+        <span class="brand-name">Horizon</span>
+        <span class="brand-tag">Skill Gap Analysis</span>
+      </span>
+    </div>
+
+    <div class="header-nav">
+      <span class="badge-pill">Admin Portal · Longitudinal Skill Gap &amp; Outcome Tracking</span>
+      <a href="#" class="nav-link" id="dashboardLink" title="Enter Admin Dashboard">
+        <i class="fa-solid fa-gauge-high"></i> Dashboard
+      </a>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════
+       B. PROBLEM STATEMENT & IMPACT SUMMARY
+       ══════════════════════════════════════════ -->
+  <section class="card">
+    <h1 class="card-heading">
+      <i class="fa-solid fa-compass-drafting"></i>
+      Trainee Longitudinal Outcome &amp; Skill Gap Analysis
+    </h1>
+    <p class="card-sub">
+      Upload cohort data to bridge the tracking gap between training completion, employment,
+      self-employment, and job retention. The system automatically categorizes placed vs. non-placed
+      trainees to highlight skill gaps and reason for attrition.
+    </p>
+
+    <div class="info-grid">
+      <div class="info-tile">
+        <div class="info-icon"><i class="fa-solid fa-chart-column"></i></div>
+        <div>
+          <div class="t">Skill Gap Analytics</div>
+          <div class="d">Automatic breakdown of core skills comparing placed vs. non-placed trainees.</div>
+        </div>
+      </div>
+      <div class="info-tile">
+        <div class="info-icon"><i class="fa-solid fa-signal"></i></div>
+        <div>
+          <div class="t">Outcome Signal Tracking</div>
+          <div class="d">Monitor wage progression, retention, and self-employment signals.</div>
+        </div>
+      </div>
+      <div class="info-tile">
+        <div class="info-icon"><i class="fa-solid fa-key"></i></div>
+        <div>
+          <div class="t">Automated Credentials</div>
+          <div class="d">Auto-generate unique login credentials for every trainee in the uploaded sheet.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       C. FILE UPLOAD + FORMAT ROW
+       ══════════════════════════════════════════ -->
+  <section class="card">
+    <h2 class="card-heading">
+      <i class="fa-solid fa-file-arrow-up"></i>
+      Upload Cohort Data
+    </h2>
+    <p class="card-sub">
+      Drop an Excel sheet with trainee records. Columns must match the required format below —
+      we'll parse and categorize them for outcome tracking.
+    </p>
+
+    <div class="upload-row">
+
+      <!-- Element 1 — Upload Excel Sheet -->
+      <div class="action-box">
+        <div class="action-title">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          Upload Excel Sheet
+        </div>
+
+        <label class="dropzone" id="dropzone">
+          <input
+            type="file"
+            id="fileInput"
+            accept=".xlsx,.xls"
+          />
+          <div class="dz-icon"><i class="fa-solid fa-file-excel"></i></div>
+          <div class="dz-title">Drag &amp; drop your Excel file here</div>
+          <div class="dz-sub">or</div>
+          <span class="dz-browse">
+            <i class="fa-solid fa-folder-open"></i> Browse Files
+          </span>
+          <div class="dz-hint">Supported formats: .xlsx, .xls · max 20 MB</div>
+        </label>
+
+        <div class="file-chip" id="fileChip">
+          <i class="fa-solid fa-circle-check"></i>
+          <span class="name" id="fileName">trainees.xlsx</span>
+          <span class="size" id="fileSize">0 KB</span>
+        </div>
+      </div>
+
+      <!-- Element 2 — View Excel Format -->
+      <div class="action-box">
+        <div class="action-title">
+          <i class="fa-solid fa-table-columns"></i>
+          View Excel Sheet Format
+        </div>
+
+        <button type="button" class="format-button" id="openFormatModal">
+          <i class="fa-solid fa-circle-info"></i>
+          See required column structure
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <div class="format-preview">
+          <span>Trainee ID</span> · Name · Email · Branch · Batch ·<br />
+          Training Status · Outcome Status · Skills
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       D. TRAINEE CREDENTIALS MANAGEMENT
+       ══════════════════════════════════════════ -->
+  <section class="card">
+    <h2 class="card-heading">
+      <i class="fa-solid fa-id-card-clip"></i>
+      Trainee Credentials Generation
+    </h2>
+    <p class="card-sub">
+      Generate unique random passwords for every trainee in the uploaded sheet, then export them as
+      a downloadable credential sheet.
+    </p>
+
+    <!-- Status box -->
+    <div class="status-box" id="statusBox">
+      <i class="fa-solid fa-circle-check" id="statusIcon"></i>
+      <span id="statusText">Upload successful. 0 trainees parsed.</span>
+    </div>
+
+    <!-- Controls -->
+    <div class="button-row">
+      <button type="button" class="btn btn-primary" id="generateBtn" disabled>
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        Generate Credential Sheet
+      </button>
+      <button type="button" class="btn btn-secondary" id="downloadBtn" disabled>
+        <i class="fa-solid fa-file-arrow-down"></i>
+        Download Credential Sheet
+      </button>
+    </div>
+
+    <!-- Preview table -->
+    <div class="creds-wrap" id="credsWrap">
+      <div class="creds-head">
+        <span>Preview · Credential Sheet</span>
+        <span><span class="count" id="credsCount">0</span> rows</span>
+      </div>
+      <div class="creds-scroll">
+        <table class="creds-table">
+          <thead>
+            <tr>
+              <th style="width: 40px;">#</th>
+              <th>Trainee ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Password</th>
+            </tr>
+          </thead>
+          <tbody id="credsBody">
+            <!-- injected -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       E. FOOTER ACTION — DASHBOARD CTA
+       ══════════════════════════════════════════ -->
+  <div class="cta-wrap">
+    <a href="#" class="cta-full" id="dashboardCta">
+      <i class="fa-solid fa-arrow-right-to-bracket"></i>
+      Enter Admin Dashboard
+      <i class="fa-solid fa-arrow-right"></i>
+    </a>
+  </div>
+
+  <footer class="page-footer">
+    <strong>Horizon</strong> · Admin Portal · Upload &amp; Skill Gap Analysis
+  </footer>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL — Excel Format
+     ══════════════════════════════════════════ -->
+<div class="modal-backdrop" id="formatModal" role="dialog" aria-modal="true" aria-labelledby="formatModalTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="formatModalTitle">
+        <i class="fa-solid fa-table-columns"></i>
+        Required Excel Sheet Format
+      </div>
+      <button type="button" class="modal-close" id="closeFormatModal" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <p>
+        Your uploaded Excel sheet must contain a header row with the following columns. Column order
+        is not enforced, but <strong>column names must match</strong> (case-insensitive).
+      </p>
+
+      <table class="format-table">
+        <thead>
+          <tr>
+            <th>Trainee ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Branch</th>
+            <th>Batch</th>
+            <th>Training Status</th>
+            <th>Outcome Status</th>
+            <th>Skills</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>HZN-0001</td>
+            <td>Aarav Reddy</td>
+            <td>aarav@example.com</td>
+            <td>Warangal</td>
+            <td>B12</td>
+            <td>Certified</td>
+            <td>Placed</td>
+            <td>Python, SQL</td>
+          </tr>
+          <tr>
+            <td>HZN-0002</td>
+            <td>Divya Iyer</td>
+            <td>divya@example.com</td>
+            <td>Warangal</td>
+            <td>B12</td>
+            <td>Certified</td>
+            <td>Not Placed</td>
+            <td>Python</td>
+          </tr>
+          <tr>
+            <td>HZN-0003</td>
+            <td>Karthik R.</td>
+            <td>karthik@example.com</td>
+            <td>Karimnagar</td>
+            <td>B13</td>
+            <td>In Progress</td>
+            <td>—</td>
+            <td>SQL, Communication</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="format-note">
+        <strong>Tip:</strong> Outcome Status can be <em>Placed</em>, <em>Not Placed</em>,
+        <em>Self-Employed</em>, <em>Apprentice</em>, or blank. Skills should be comma-separated.
+        Trainee ID must be unique within the sheet.
+      </div>
+    </div>
+
+    <div class="modal-foot">
+      <button type="button" class="btn btn-secondary" id="closeFormatFooter">
+        <i class="fa-solid fa-check"></i> Got it
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ═══════════════════════════════════════════════════════════
+     CONFIG — point these to your Flask routes.
+     In Jinja: {{ url_for('admin.dashboard') }}
+     ═══════════════════════════════════════════════════════════ */
+  const ROUTES = {
+    dashboard: 'admin/dashboard'
+  };
+
+  document.getElementById('dashboardLink').setAttribute('href', ROUTES.dashboard);
+  document.getElementById('dashboardCta').setAttribute('href', ROUTES.dashboard);
+
+  /* ═══════════════════════════════════════════════════════════
+     STATE
+     ═══════════════════════════════════════════════════════════ */
+  const state = {
+    fileName: null,
+    fileSize: 0,
+    rows: [],          // parsed rows (objects)
+    headers: [],       // header row (strings)
+    credentials: []    // [{traineeId, name, email, password}]
+  };
+
+  /* ═══════════════════════════════════════════════════════════
+     ELEMENTS
+     ═══════════════════════════════════════════════════════════ */
+  const dropzone     = document.getElementById('dropzone');
+  const fileInput    = document.getElementById('fileInput');
+  const fileChip     = document.getElementById('fileChip');
+  const fileNameEl   = document.getElementById('fileName');
+  const fileSizeEl   = document.getElementById('fileSize');
+  const statusBox    = document.getElementById('statusBox');
+  const statusText   = document.getElementById('statusText');
+  const statusIcon   = document.getElementById('statusIcon');
+  const generateBtn  = document.getElementById('generateBtn');
+  const downloadBtn  = document.getElementById('downloadBtn');
+  const credsWrap    = document.getElementById('credsWrap');
+  const credsBody    = document.getElementById('credsBody');
+  const credsCount   = document.getElementById('credsCount');
+
+  /* Modal */
+  const formatModal   = document.getElementById('formatModal');
+  const openFormatBtn = document.getElementById('openFormatModal');
+  const closeModalBtns = [
+    document.getElementById('closeFormatModal'),
+    document.getElementById('closeFormatFooter')
+  ];
+
+  /* ═══════════════════════════════════════════════════════════
+     HELPERS
+     ═══════════════════════════════════════════════════════════ */
+  function formatBytes(bytes) {
+    if (!bytes) return '0 KB';
+    const units = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + units[i];
+  }
+
+  function escapeHTML(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  /**
+   * Generate a secure-ish random alphanumeric password.
+   * Includes at least one uppercase, one lowercase, one digit.
+   * Length 12 by default.
+   */
+  function randomPassword(length = 12) {
+    const upper  = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const lower  = 'abcdefghijkmnopqrstuvwxyz';
+    const digit  = '23456789';
+    const symbol = '@#$%&*!?';
+    const all = upper + lower + digit + symbol;
+
+    // Seed with one of each required class
+    let pw = '';
+    pw += upper[Math.floor(Math.random() * upper.length)];
+    pw += lower[Math.floor(Math.random() * lower.length)];
+    pw += digit[Math.floor(Math.random() * digit.length)];
+    pw += symbol[Math.floor(Math.random() * symbol.length)];
+
+    // Fill the rest from the full alphabet
+    for (let i = pw.length; i < length; i++) {
+      pw += all[Math.floor(Math.random() * all.length)];
+    }
+
+    // Fisher-Yates shuffle
+    const arr = pw.split('');
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr.join('');
+  }
+
+  /**
+   * Normalize header strings so we can match despite case / spacing.
+   * "Trainee ID" -> "traineeid"
+   */
+  function normHeader(h) {
+    return String(h || '').toLowerCase().replace(/[\s_\-]+/g, '');
+  }
+
+  /**
+   * Given the header row, find the index of a column by any of its aliases.
+   */
+  function findColumn(headers, aliases) {
+    const normalized = headers.map(normHeader);
+    for (const a of aliases) {
+      const idx = normalized.indexOf(normHeader(a));
+      if (idx !== -1) return idx;
+    }
+    return -1;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     DRAG & DROP
+     ═══════════════════════════════════════════════════════════ */
+  ['dragenter', 'dragover'].forEach((ev) => {
+    dropzone.addEventListener(ev, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.add('dragging');
+    });
+  });
+  ['dragleave', 'drop'].forEach((ev) => {
+    dropzone.addEventListener(ev, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.remove('dragging');
+    });
+  });
+
+  dropzone.addEventListener('drop', (e) => {
+    const dt = e.dataTransfer;
+    if (!dt || !dt.files || !dt.files.length) return;
+    const file = dt.files[0];
+    handleFile(file);
+  });
+
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) handleFile(file);
+  });
+
+  /* ═══════════════════════════════════════════════════════════
+     FILE HANDLING — parse via SheetJS
+     ═══════════════════════════════════════════════════════════ */
+  function handleFile(file) {
+    const nameLower = file.name.toLowerCase();
+    if (!nameLower.endsWith('.xlsx') && !nameLower.endsWith('.xls')) {
+      showStatus('Only .xlsx and .xls files are supported.', 'warn');
+      return;
+    }
+
+    state.fileName = file.name;
+    state.fileSize = file.size;
+
+    fileNameEl.textContent = file.name;
+    fileSizeEl.textContent = formatBytes(file.size);
+    fileChip.classList.add('show');
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[firstSheetName];
+
+        // Convert to array-of-arrays so we can keep the header row
+        const aoa = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false });
+        if (!aoa.length) {
+          showStatus('The Excel sheet appears to be empty.', 'warn');
+          return;
+        }
+
+        const headers = aoa[0].map((h) => String(h).trim());
+        const bodyRows = aoa.slice(1).filter((r) => r.some((cell) => String(cell).trim() !== ''));
+
+        state.headers = headers;
+        state.rows = bodyRows;
+
+        // Reset any previously generated credentials
+        state.credentials = [];
+        credsWrap.classList.remove('show');
+        credsBody.innerHTML = '';
+        credsCount.textContent = '0';
+        downloadBtn.disabled = true;
+
+        generateBtn.disabled = bodyRows.length === 0;
+
+        showStatus(`Upload successful. ${bodyRows.length} trainee${bodyRows.length === 1 ? '' : 's'} parsed.`, 'ok');
+      } catch (err) {
+        console.error(err);
+        showStatus('Could not read the Excel file. Please check the format.', 'warn');
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  /**
+   * Show the status box.
+   * kind: 'ok' | 'warn'
+   */
+  function showStatus(text, kind) {
+    statusBox.classList.add('show');
+    statusBox.classList.toggle('warn', kind === 'warn');
+    statusText.textContent = text;
+    statusIcon.className = kind === 'warn'
+      ? 'fa-solid fa-triangle-exclamation'
+      : 'fa-solid fa-circle-check';
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     MODAL OPEN / CLOSE
+     ═══════════════════════════════════════════════════════════ */
+  function openModal() { formatModal.classList.add('show'); }
+  function closeModal() { formatModal.classList.remove('show'); }
+
+  openFormatBtn.addEventListener('click', openModal);
+  closeModalBtns.forEach((b) => b && b.addEventListener('click', closeModal));
+  formatModal.addEventListener('click', (e) => {
+    if (e.target === formatModal) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && formatModal.classList.contains('show')) closeModal();
+  });
+
+  /* ═══════════════════════════════════════════════════════════
+     GENERATE CREDENTIALS
+     ═══════════════════════════════════════════════════════════ */
+  generateBtn.addEventListener('click', () => {
+    if (!state.rows.length) return;
+
+    const headers = state.headers;
+
+    const colTraineeId = findColumn(headers, ['Trainee ID', 'TraineeId', 'ID', 'Trainee_ID']);
+    const colName      = findColumn(headers, ['Name', 'Full Name', 'Trainee Name']);
+    const colEmail     = findColumn(headers, ['Email', 'Email Address', 'Work Email']);
+
+    if (colTraineeId === -1 && colName === -1) {
+      showStatus('Could not find "Trainee ID" or "Name" columns in the sheet.', 'warn');
+      return;
+    }
+
+    // Build credentials with unique passwords per trainee
+    const seen = new Set();
+    state.credentials = state.rows.map((row, i) => {
+      let traineeId = colTraineeId !== -1 ? String(row[colTraineeId] || '').trim() : '';
+      if (!traineeId) traineeId = 'HZN-' + String(i + 1).padStart(4, '0');
+
+      let name  = colName  !== -1 ? String(row[colName]  || '').trim() : '';
+      let email = colEmail !== -1 ? String(row[colEmail] || '').trim() : '';
+
+      // Unique password: avoid duplicate with anything already generated
+      let password;
+      let guard = 0;
+      do {
+        password = randomPassword(12);
+        guard++;
+      } while (seen.has(password) && guard < 20);
+      seen.add(password);
+
+      return { traineeId, name, email, password };
+    });
+
+    renderCredentials(state.credentials);
+    downloadBtn.disabled = false;
+
+    showStatus(`Generated credentials for ${state.credentials.length} trainee${state.credentials.length === 1 ? '' : 's'}.`, 'ok');
+  });
+
+  /* ═══════════════════════════════════════════════════════════
+     RENDER PREVIEW TABLE
+     ═══════════════════════════════════════════════════════════ */
+  function renderCredentials(list) {
+    credsBody.innerHTML = list.map((c, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td class="id">${escapeHTML(c.traineeId)}</td>
+        <td>${escapeHTML(c.name)}</td>
+        <td>${escapeHTML(c.email)}</td>
+        <td class="pw">${escapeHTML(c.password)}</td>
+      </tr>
+    `).join('');
+    credsCount.textContent = String(list.length);
+    credsWrap.classList.add('show');
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     DOWNLOAD CREDENTIAL SHEET (.xlsx) via SheetJS
+     ═══════════════════════════════════════════════════════════ */
+  downloadBtn.addEventListener('click', () => {
+    if (!state.credentials.length) return;
+
+    // Build the export matrix: header + rows
+    const aoa = [['Trainee ID', 'Name', 'Email', 'Password']];
+    state.credentials.forEach((c) => {
+      aoa.push([c.traineeId, c.name, c.email, c.password]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+
+    // Set column widths for a nicer look when opened
+    ws['!cols'] = [
+      { wch: 14 }, // Trainee ID
+      { wch: 22 }, // Name
+      { wch: 28 }, // Email
+      { wch: 16 }  // Password
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Credentials');
+
+    XLSX.writeFile(wb, 'trainee_credentials.xlsx');
+
+    showStatus('Credential sheet downloaded as trainee_credentials.xlsx.', 'ok');
+  });
+
+})();
+</script>
+</body>
+</html>
