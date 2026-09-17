@@ -78,6 +78,7 @@
     position: sticky;
     top:0;
     height:100vh;
+    overflow-y: auto;
   }
 
   .brand{
@@ -132,11 +133,12 @@
     font-size:14.5px;
     font-weight:500;
     color: var(--ink-soft);
-    transition: background .15s ease, color .15s ease;
+    transition: background .15s ease, color .15s ease, transform .15s ease;
+    cursor: pointer;
   }
-  .nav-link i{ width:18px; text-align:center; font-size:15px; color: var(--ink-faint); }
+  .nav-link i{ width:18px; text-align:center; font-size:15px; color: var(--ink-faint); transition: color .15s ease; }
 
-  .nav-link:hover{ background: #FBF3E8; color: var(--ink); }
+  .nav-link:hover{ background: #FBF3E8; color: var(--ink); transform: translateX(2px); }
   .nav-link:hover i{ color: var(--orange); }
 
   .nav-link.active{
@@ -146,12 +148,13 @@
   }
   .nav-link.active i{ color:#fff; }
 
-  .sidebar-spacer{ flex:1; }
+  .sidebar-spacer{ flex:1; min-height: 20px; }
 
   .sidebar-foot{
     display:flex;
     flex-direction:column;
     gap: 14px;
+    padding-top: 16px;
   }
 
   .logout-link{
@@ -161,6 +164,8 @@
     font-size:14.5px;
     font-weight:500;
     color: #B33A2A;
+    transition: background .15s ease;
+    cursor: pointer;
   }
   .logout-link:hover{ background: #FDECEA; }
   .logout-link i{ width:18px; text-align:center; }
@@ -225,12 +230,19 @@
     position:relative;
     color: var(--ink-soft);
     box-shadow: var(--shadow);
+    transition: all .2s ease;
   }
+  .icon-btn:hover{ transform: translateY(-1px); border-color: var(--orange); color: var(--orange); }
   .icon-btn .dot{
     position:absolute; top:9px; right:10px;
     width:7px; height:7px; border-radius:50%;
     background: var(--orange);
     box-shadow: 0 0 0 2px #fff;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.7; }
   }
 
   .profile-trigger{
@@ -240,12 +252,16 @@
     border-radius: 999px;
     padding: 6px 16px 6px 6px;
     box-shadow: var(--shadow);
+    transition: all .2s ease;
   }
+  .profile-trigger:hover{ border-color: var(--orange); transform: translateY(-1px); }
   .avatar{
     width:32px; height:32px; border-radius:50%;
     background: var(--grad);
     display:flex; align-items:center; justify-content:center;
     color:#fff; font-weight:700; font-size:13px;
+    background-size: cover;
+    background-position: center;
   }
   .profile-trigger span{ font-size:14px; font-weight:600; }
   .profile-trigger i{ font-size:11px; color: var(--ink-faint); }
@@ -262,6 +278,36 @@
     margin:0;
     color: var(--ink-soft);
     font-size:14px;
+  }
+
+  /* Data status badge */
+  .data-status{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 12px;
+    transition: all .3s ease;
+  }
+  .data-status.live {
+    background: #EAF7EE;
+    color: #15803D;
+    border: 1px solid #BBF7D0;
+  }
+  .data-status.demo {
+    background: #FEF3E0;
+    color: #B7791F;
+    border: 1px solid #FDE68A;
+  }
+  .data-status .pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 2s infinite;
   }
 
   /* Section headers */
@@ -294,6 +340,12 @@
     display:flex;
     flex-direction:column;
     gap:12px;
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+  }
+  .metric-card:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(15,23,42,0.04), 0 16px 32px -12px rgba(15,23,42,0.14);
+    border-color: rgba(234,88,12,0.25);
   }
   .metric-top{ display:flex; align-items:center; justify-content:space-between; }
   .metric-icon{
@@ -372,6 +424,12 @@
     padding: 16px;
     box-shadow: var(--shadow);
     flex-shrink:0;
+    transition: all .25s ease;
+  }
+  .highlight-card:hover{
+    transform: translateY(-2px);
+    border-color: rgba(234,88,12,0.25);
+    box-shadow: 0 12px 28px -10px rgba(15,23,42,0.14);
   }
   .highlight-badge{
     display:inline-flex; align-items:center; gap:6px;
@@ -403,7 +461,11 @@
     color: var(--ink);
     background: #FCFAF7;
     font-family:'Inter',sans-serif;
+    cursor: pointer;
+    transition: all .2s ease;
   }
+  .branch-select:hover{ border-color: var(--orange); }
+  .branch-select:focus{ outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(234,88,12,0.12); }
 
   .branch-stats-row{
     display:grid;
@@ -416,7 +478,9 @@
     border:1px solid var(--border);
     border-radius: var(--radius-sm);
     padding:12px 14px;
+    transition: all .2s ease;
   }
+  .branch-stat:hover{ border-color: rgba(234,88,12,0.25); }
   .branch-stat .val{ font-size:18px; font-weight:700; }
   .branch-stat .lbl{ font-size:11.5px; color: var(--ink-soft); margin-top:2px; }
 
@@ -429,7 +493,9 @@
     border-radius: var(--radius-lg);
     padding:20px;
     box-shadow: var(--shadow);
+    transition: all .25s ease;
   }
+  .summary-card:hover{ transform: translateY(-2px); box-shadow: 0 12px 28px -10px rgba(15,23,42,0.14); }
   .summary-card .s-icon{
     width:36px; height:36px; border-radius:10px;
     display:flex; align-items:center; justify-content:center;
@@ -444,6 +510,61 @@
     border-top: 1px solid var(--border);
   }
   .summary-stat-line strong{ color: var(--ink); }
+
+  /* Empty state */
+  .empty-state{
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 32px;
+    text-align: center;
+    background: var(--card);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-lg);
+    margin: 20px 0;
+  }
+  .empty-state.show{ display: flex; }
+  .empty-icon{
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    background: var(--grad-soft);
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    color: var(--orange);
+    margin-bottom: 20px;
+    border: 1px solid rgba(234,88,12,0.2);
+  }
+  .empty-title{
+    font-family: 'Poppins', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .empty-sub{
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 440px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .empty-cta{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    border-radius: 12px;
+    background: var(--grad);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 10px 24px -8px rgba(234,88,12,0.5);
+    transition: all .2s ease;
+  }
+  .empty-cta:hover{ transform: translateY(-2px); box-shadow: 0 16px 32px -8px rgba(234,88,12,0.6); }
 
   /* ===== MODAL / DRAWER ===== */
   .overlay{
@@ -479,8 +600,9 @@
     border:1px solid var(--border); background:#fff;
     display:flex; align-items:center; justify-content:center;
     color: var(--ink-soft);
+    transition: all .2s ease;
   }
-  .drawer-close:hover{ background:#F7F2EA; }
+  .drawer-close:hover{ background:#F7F2EA; transform: rotate(90deg); }
 
   .drawer-body{
     padding: 22px;
@@ -495,6 +617,8 @@
   .pic-upload .avatar-lg{
     width:64px; height:64px; border-radius:50%;
     background: var(--grad);
+    background-size: cover;
+    background-position: center;
     display:flex; align-items:center; justify-content:center;
     color:#fff; font-weight:700; font-size:22px;
     flex-shrink:0;
@@ -506,8 +630,9 @@
     border-radius:10px;
     cursor:pointer;
     color: var(--ink-soft);
+    transition: all .2s ease;
   }
-  .pic-upload label:hover{ background:#F7F2EA; }
+  .pic-upload label:hover{ background:#F7F2EA; border-color: var(--orange); color: var(--orange); }
   .pic-upload input[type=file]{ display:none; }
 
   .field{ display:flex; flex-direction:column; gap:6px; }
@@ -520,8 +645,9 @@
     font-family:'Inter',sans-serif;
     color: var(--ink);
     background:#FCFAF7;
+    transition: all .2s ease;
   }
-  .field input:focus{ outline:none; border-color: var(--orange); background:#fff; }
+  .field input:focus{ outline:none; border-color: var(--orange); background:#fff; box-shadow: 0 0 0 3px rgba(234,88,12,0.10); }
 
   .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 
@@ -546,6 +672,7 @@
     border:1px solid var(--border);
     background:#fff;
     color: var(--ink-soft);
+    transition: all .2s ease;
   }
   .btn:hover{ background:#F7F2EA; }
   .btn-primary{
@@ -554,7 +681,7 @@
     border:none;
     box-shadow: 0 6px 16px -6px rgba(234,88,12,0.55);
   }
-  .btn-primary:hover{ filter: brightness(1.04); }
+  .btn-primary:hover{ filter: brightness(1.05); transform: translateY(-1px); }
 
   .toast{
     position:fixed;
@@ -618,12 +745,12 @@
 
     <div class="nav-group-label">MENU</div>
     <nav class="nav">
-      <a class="nav-link active" href="#"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
-      <a class="nav-link" href="#"><i class="fa-solid fa-code-branch"></i> Branch Analysis</a>
-      <a class="nav-link" href="#"><i class="fa-solid fa-user-group"></i> Trainee Management</a>
-      <a class="nav-link" href="#"><i class="fa-solid fa-bullseye"></i> Skill Gap</a>
-      <a class="nav-link" id="uploadDataLink" href="{{ url_for('admin.upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data</a>
-      <a class="nav-link" href="#"><i class="fa-solid fa-chart-simple"></i> Reports</a>
+      <a class="nav-link active" data-page="dashboard" href="#"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+      <a class="nav-link" data-page="branch" href="#"><i class="fa-solid fa-code-branch"></i> Branch Analysis</a>
+      <a class="nav-link" data-page="trainee" href="#"><i class="fa-solid fa-user-group"></i> Trainee Management</a>
+      <a class="nav-link" data-page="skillgap" href="#"><i class="fa-solid fa-bullseye"></i> Skill Gap</a>
+      <a class="nav-link" data-page="upload" href="#"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data</a>
+      <a class="nav-link" data-page="reports" href="#"><i class="fa-solid fa-chart-simple"></i> Reports</a>
     </nav>
 
     <div class="sidebar-spacer"></div>
@@ -641,10 +768,10 @@
           </defs>
           <circle cx="100" cy="20" r="5" fill="#EA580C"/>
         </svg>
-        <p>Outcomes trending up — <strong>+6.2%</strong> this quarter</p>
+        <p>Outcomes trending up — <strong id="trendBadge">+6.2%</strong> this quarter</p>
       </div>
 
-      <a class="logout-link" id="logoutLink" href="{{ url_for('common.role_selection') }}"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+      <a class="logout-link" id="logoutLink" href="#"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
     </div>
   </aside>
 
@@ -673,64 +800,85 @@
     <div class="page-title">
       <h1 id="greetingText">Good Morning, Admin — Skill Gap &amp; Outcome Tracking</h1>
       <p>Live snapshot of trainee outcomes, placement readiness and branch-level skill gaps.</p>
+      <div class="data-status demo" id="dataStatus">
+        <span class="pulse-dot"></span>
+        <span id="dataStatusText">Demo Data · Upload Excel to see live metrics</span>
+      </div>
     </div>
 
-    <!-- BLOCK 1: Overall Training Status -->
-    <div class="grid-4" id="block1"></div>
-
-    <!-- BLOCK 2: Trained Trainee Outcomes -->
-    <div class="section-head">
-      <h2>Trained Trainee Outcomes</h2>
-      <span class="section-note">Breakdown of post-training destinations</span>
+    <!-- Empty state (shown when no uploaded data) -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+      <div class="empty-title">No Data Uploaded Yet</div>
+      <div class="empty-sub">Upload your trainee Excel sheet from the Upload Data page to see live metrics, charts, and skill gap insights. Until then, the dashboard displays a demo dataset for reference.</div>
+      <a class="empty-cta" id="uploadCTA" href="#"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Trainee Data</a>
     </div>
-    <div class="grid-5" id="block2"></div>
 
-    <!-- Analytics Graphs -->
-    <div class="section-head">
-      <h2>Analytics Overview</h2>
-      <span class="section-note">Updated moments ago</span>
-    </div>
-    <div class="grid-2">
-      <div class="panel">
-        <div class="panel-head">
-          <h3>Overall Training Status</h3>
-          <span class="panel-sub">Trained vs. Non-Trained</span>
+    <!-- Dashboard content (hidden when no data) -->
+    <div id="dashboardContent">
+
+      <!-- BLOCK 1: Overall Training Status -->
+      <div class="section-head">
+        <h2>Overall Training Status</h2>
+        <span class="section-note">Key cohort metrics</span>
+      </div>
+      <div class="grid-4" id="block1"></div>
+
+      <!-- BLOCK 2: Trained Trainee Outcomes -->
+      <div class="section-head">
+        <h2>Trained Trainee Outcomes</h2>
+        <span class="section-note">Breakdown of post-training destinations</span>
+      </div>
+      <div class="grid-5" id="block2"></div>
+
+      <!-- Analytics Graphs -->
+      <div class="section-head">
+        <h2>Analytics Overview</h2>
+        <span class="section-note" id="analyticsNote">Updated moments ago</span>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Overall Training Status</h3>
+            <span class="panel-sub">Trained vs. Non-Trained</span>
+          </div>
+          <div class="chart-wrap"><canvas id="statusDoughnut"></canvas></div>
+          <div class="legend-row" id="statusLegend"></div>
         </div>
-        <div class="chart-wrap"><canvas id="statusDoughnut"></canvas></div>
-        <div class="legend-row" id="statusLegend"></div>
-      </div>
-      <div class="panel">
-        <div class="panel-head">
-          <h3>Trained Trainee Outcomes</h3>
-          <span class="panel-sub">By destination category</span>
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Trained Trainee Outcomes</h3>
+            <span class="panel-sub">By destination category</span>
+          </div>
+          <div class="chart-wrap"><canvas id="outcomeBar"></canvas></div>
         </div>
-        <div class="chart-wrap"><canvas id="outcomeBar"></canvas></div>
       </div>
-    </div>
 
-    <!-- Live Highlights -->
-    <div class="section-head">
-      <h2>Live Highlights of Skill Gap</h2>
-      <span class="section-note">Auto-generated from latest cohort data</span>
-    </div>
-    <div class="highlight-scroll" id="highlightScroll"></div>
-
-    <!-- Branch-Wise Comparison -->
-    <div class="panel branch-panel" style="margin-top:6px;">
-      <div class="panel-head">
-        <h3>Branch-Wise Comparison</h3>
-        <select class="branch-select" id="branchSelect"></select>
+      <!-- Live Highlights -->
+      <div class="section-head">
+        <h2>Live Highlights of Skill Gap</h2>
+        <span class="section-note">Auto-generated from latest cohort data</span>
       </div>
-      <div class="chart-wrap tall"><canvas id="branchBar"></canvas></div>
-      <div class="branch-stats-row" id="branchStats"></div>
-    </div>
+      <div class="highlight-scroll" id="highlightScroll"></div>
 
-    <!-- Bottom Summary -->
-    <div class="section-head">
-      <h2>Outcome Updates &amp; Key Skill Gap Details</h2>
-      <span class="section-note">Wage progression, retention &amp; takeaways</span>
+      <!-- Branch-Wise Comparison -->
+      <div class="panel branch-panel" style="margin-top:6px;">
+        <div class="panel-head">
+          <h3>Branch-Wise Comparison</h3>
+          <select class="branch-select" id="branchSelect"></select>
+        </div>
+        <div class="chart-wrap tall"><canvas id="branchBar"></canvas></div>
+        <div class="branch-stats-row" id="branchStats"></div>
+      </div>
+
+      <!-- Bottom Summary -->
+      <div class="section-head">
+        <h2>Outcome Updates &amp; Key Skill Gap Details</h2>
+        <span class="section-note">Wage progression, retention &amp; takeaways</span>
+      </div>
+      <div class="grid-3" id="summaryCards"></div>
+
     </div>
-    <div class="grid-3" id="summaryCards"></div>
 
   </main>
 </div>
@@ -792,18 +940,44 @@
   </div>
 </div>
 
+<!-- ============ LOGOUT MODAL ============ -->
+<div class="overlay" id="logoutOverlay"></div>
+<div class="drawer" id="logoutDrawer" style="width: 400px;">
+  <div class="drawer-head">
+    <h3>Confirm Logout</h3>
+    <button class="drawer-close" id="logoutClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="drawer-body" style="text-align:center; padding-top: 40px;">
+    <div style="width:64px;height:64px;border-radius:50%;background:#FDECEA;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:24px;color:#DC2626;">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i>
+    </div>
+    <h3 style="margin:0 0 8px;font-size:18px;">Are you sure?</h3>
+    <p style="color:var(--ink-soft);font-size:13.5px;line-height:1.6;">You will be redirected to the role selection page. Any unsaved changes will be lost.</p>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn" id="logoutCancel">Cancel</button>
+    <button class="btn btn-primary" id="logoutConfirm" style="background: linear-gradient(135deg,#DC2626,#F87171);">Logout</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastText">Profile updated</span></div>
 
 <script>
 /* =========================================================
    HORIZON ADMIN DASHBOARD — DATA LAYER
-   Reads 'horizon_trainee_data' from localStorage if present.
-   Falls back to a realistic default enterprise dataset.
+   
+   Reads 'horizon_trainee_data' from localStorage.
+   - If present: renders live dashboard with real data.
+   - If absent: shows "no data" empty state (with demo fallback
+     available via the "View Demo" link).
 ========================================================= */
 
 const STORAGE_KEY = 'horizon_trainee_data';
 
-const DEFAULT_DATA = {
+/* ---------------------------------------------------------
+   DEMO DATASET (used only if user clicks "View Demo")
+--------------------------------------------------------- */
+const DEMO_DATA = {
   totals: {
     totalTrainees: 1284,
     trained: 1027,
@@ -826,75 +1000,141 @@ const DEFAULT_DATA = {
     "B.Tech (Gen)": { trainees: 70, trained: 38, avgScore: 48, placementRatio: 33 }
   },
   highlights: [
-    {
-      level: "critical",
-      title: "Critical gap in Cloud Deployment & System Design",
-      body: "68% of unemployed trainees score below proficiency threshold in cloud deployment and system design fundamentals.",
-      meta: "Unemployed cohort · Updated 2h ago"
-    },
-    {
-      level: "warning",
-      title: "Data Structures gap widening in MECH & CIVIL",
-      body: "Average DSA proficiency dropped 9 points quarter-over-quarter among mechanical and civil branch trainees.",
-      meta: "MECH · CIVIL · Updated 5h ago"
-    },
-    {
-      level: "critical",
-      title: "Communication skills flagged in internship exits",
-      body: "42% of trainees who exited internships early cited feedback around workplace communication readiness.",
-      meta: "Internship cohort · Updated 1d ago"
-    },
-    {
-      level: "info",
-      title: "Strong uptick in DevOps proficiency",
-      body: "CSE and IT branches show a 14-point improvement in CI/CD and containerization scores this quarter.",
-      meta: "CSE · IT · Updated 1d ago"
-    },
-    {
-      level: "warning",
-      title: "System design gap among freelancers",
-      body: "Trainees pursuing freelance work show below-average scores in scalable system design modules.",
-      meta: "Freelance cohort · Updated 2d ago"
-    }
+    { level: "critical", title: "Critical gap in Cloud Deployment & System Design", body: "68% of unemployed trainees score below proficiency threshold in cloud deployment and system design fundamentals.", meta: "Unemployed cohort · Updated 2h ago" },
+    { level: "warning", title: "Data Structures gap widening in MECH & CIVIL", body: "Average DSA proficiency dropped 9 points quarter-over-quarter among mechanical and civil branch trainees.", meta: "MECH · CIVIL · Updated 5h ago" },
+    { level: "critical", title: "Communication skills flagged in internship exits", body: "42% of trainees who exited internships early cited feedback around workplace communication readiness.", meta: "Internship cohort · Updated 1d ago" },
+    { level: "info", title: "Strong uptick in DevOps proficiency", body: "CSE and IT branches show a 14-point improvement in CI/CD and containerization scores this quarter.", meta: "CSE · IT · Updated 1d ago" },
+    { level: "warning", title: "System design gap among freelancers", body: "Trainees pursuing freelance work show below-average scores in scalable system design modules.", meta: "Freelance cohort · Updated 2d ago" }
   ],
   summary: [
-    {
-      icon: "fa-sack-dollar", color: "bg-green",
-      title: "Wage Progression",
-      body: "Median starting wage for trained employed trainees rose 11% quarter-over-quarter, led by CSE and IT branches.",
-      statLabel: "Median wage", statValue: "₹5.4 LPA"
-    },
-    {
-      icon: "fa-arrows-rotate", color: "bg-blue",
-      title: "Retention Statistics",
-      body: "90-day retention for placed trainees stands strong, with the steepest drop-off observed in MECH and CIVIL cohorts.",
-      statLabel: "90-day retention", statValue: "84%"
-    },
-    {
-      icon: "fa-bullseye", color: "bg-violet",
-      title: "Key Skill Gap Takeaway",
-      body: "Cloud deployment, system design and workplace communication remain the top three gaps across branches this quarter.",
-      statLabel: "Top gap area", statValue: "Cloud Deploy."
-    }
+    { icon: "fa-sack-dollar", color: "bg-green", title: "Wage Progression", body: "Median starting wage for trained employed trainees rose 11% quarter-over-quarter, led by CSE and IT branches.", statLabel: "Median wage", statValue: "₹5.4 LPA" },
+    { icon: "fa-arrows-rotate", color: "bg-blue", title: "Retention Statistics", body: "90-day retention for placed trainees stands strong, with the steepest drop-off observed in MECH and CIVIL cohorts.", statLabel: "90-day retention", statValue: "84%" },
+    { icon: "fa-bullseye", color: "bg-violet", title: "Key Skill Gap Takeaway", body: "Cloud deployment, system design and workplace communication remain the top three gaps across branches this quarter.", statLabel: "Top gap area", statValue: "Cloud Deploy." }
   ]
 };
 
-function loadData(){
+/* ---------------------------------------------------------
+   DETECT UPLOADED DATA
+   Looks for 'horizon_trainee_data' in localStorage.
+   If found, transforms it into the dashboard data shape.
+--------------------------------------------------------- */
+function detectUploadedData(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){
-      const parsed = JSON.parse(raw);
-      if(parsed && parsed.totals && parsed.outcomes && parsed.branches){
-        return parsed;
-      }
-    }
+    if(!raw) return null;
+    
+    const parsed = JSON.parse(raw);
+    if(!Array.isArray(parsed) || parsed.length === 0) return null;
+    
+    return transformRows(parsed);
   }catch(e){
-    console.warn('Horizon: could not parse stored trainee data, using defaults.', e);
+    console.warn('Horizon: could not parse uploaded data.', e);
+    return null;
   }
-  return DEFAULT_DATA;
 }
 
-const DATA = loadData();
+/* ---------------------------------------------------------
+   TRANSFORM RAW UPLOADED ROWS INTO DASHBOARD DATA
+   Handles flexible column names (case-insensitive).
+--------------------------------------------------------- */
+function transformRows(rows){
+  const normalize = (obj) => {
+    const out = {};
+    Object.keys(obj).forEach(k => {
+      out[k.toLowerCase().trim().replace(/\s+/g, '_')] = obj[k];
+    });
+    return out;
+  };
+  
+  const normalized = rows.map(normalize);
+  const keys = Object.keys(normalized[0]);
+  
+  const findKey = (candidates) => {
+    for(const c of candidates){
+      const found = keys.find(k => k.includes(c));
+      if(found) return found;
+    }
+    return null;
+  };
+  
+  const colBranch = findKey(['branch', 'department', 'dept']);
+  const colTraining = findKey(['training_status', 'trainingstatus', 'trained', 'training']);
+  const colOutcome = findKey(['outcome_status', 'outcomestatus', 'outcome', 'status']);
+  
+  let trained = 0, nonTrained = 0;
+  const branchMap = {};
+  const outcomeCounts = { employed: 0, higherStudies: 0, partTime: 0, internships: 0, seeking: 0 };
+  
+  normalized.forEach(r => {
+    // Branch
+    const branchRaw = colBranch ? String(r[colBranch] || '').trim() : 'Unknown';
+    const branch = branchRaw.toUpperCase() || 'UNKNOWN';
+    if(!branchMap[branch]) branchMap[branch] = { trainees: 0, trained: 0, employed: 0, higherStudies: 0, partTime: 0, internships: 0, seeking: 0 };
+    branchMap[branch].trainees++;
+    
+    // Training status
+    const tStatus = colTraining ? String(r[colTraining] || '').toLowerCase().trim() : '';
+    const isTrained = tStatus.includes('train') && !tStatus.includes('non') && !tStatus.includes('not') && !tStatus.includes('un');
+    if(isTrained){ trained++; branchMap[branch].trained++; } else { nonTrained++; }
+    
+    // Outcome
+    const oStatus = colOutcome ? String(r[colOutcome] || '').toLowerCase().trim() : '';
+    let oKey = null;
+    if(oStatus.includes('employ') && !oStatus.includes('seek') && !oStatus.includes('un')) oKey = 'employed';
+    else if(oStatus.includes('higher') || oStatus.includes('stud')) oKey = 'higherStudies';
+    else if(oStatus.includes('freelanc') || oStatus.includes('part')) oKey = 'partTime';
+    else if(oStatus.includes('intern')) oKey = 'internships';
+    else if(oStatus.includes('seek')) oKey = 'seeking';
+    
+    if(oKey){
+      outcomeCounts[oKey]++;
+      branchMap[branch][oKey]++;
+    }
+  });
+  
+  // Build branch stats
+  const branches = {};
+  Object.keys(branchMap).forEach(b => {
+    const bData = branchMap[b];
+    const placementRatio = bData.trainees > 0 ? Math.round(((bData.employed + bData.higherStudies + bData.internships) / bData.trainees) * 100) : 0;
+    const diversity = (bData.employed > 0 ? 1 : 0) + (bData.higherStudies > 0 ? 1 : 0) + (bData.partTime > 0 ? 1 : 0) + (bData.internships > 0 ? 1 : 0);
+    const avgScore = Math.min(100, Math.max(20, Math.round(placementRatio * 0.9 + diversity * 5)));
+    branches[b] = {
+      trainees: bData.trainees,
+      trained: bData.trained,
+      avgScore: avgScore,
+      placementRatio: placementRatio
+    };
+  });
+  
+  return {
+    totals: {
+      totalTrainees: rows.length,
+      trained,
+      nonTrained
+    },
+    outcomes: outcomeCounts,
+    branches,
+    highlights: DEMO_DATA.highlights, // Use default highlights; could be computed
+    summary: DEMO_DATA.summary
+  };
+}
+
+/* ---------------------------------------------------------
+   DATA STATE
+--------------------------------------------------------- */
+let DATA = null;
+let usingDemo = false;
+
+const uploadedData = detectUploadedData();
+if(uploadedData){
+  DATA = uploadedData;
+  usingDemo = false;
+} else {
+  // No uploaded data — show empty state, but keep demo available
+  DATA = DEMO_DATA;
+  usingDemo = true;
+}
 
 /* =========================================================
    RENDER: BLOCK 1 — Overall Training Status
@@ -963,10 +1203,14 @@ const COLORS = {
 Chart.defaults.font.family = "'Inter', sans-serif";
 Chart.defaults.color = '#5B6472';
 
+let statusChartInstance = null;
+let outcomeChartInstance = null;
+
 function renderStatusDoughnut(){
   const t = DATA.totals;
   const ctx = document.getElementById('statusDoughnut');
-  new Chart(ctx, {
+  if(statusChartInstance) statusChartInstance.destroy();
+  statusChartInstance = new Chart(ctx, {
     type: 'doughnut',
     data: {
       labels: ['Trained', 'Non-Trained'],
@@ -994,7 +1238,8 @@ function renderStatusDoughnut(){
 function renderOutcomeBar(){
   const o = DATA.outcomes;
   const ctx = document.getElementById('outcomeBar');
-  new Chart(ctx, {
+  if(outcomeChartInstance) outcomeChartInstance.destroy();
+  outcomeChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: ['Employed','Higher Studies','Part-Time','Internships','Seeking'],
@@ -1115,6 +1360,44 @@ function renderSummaryCards(){
 }
 
 /* =========================================================
+   NAVIGATION — SIDEBAR LINKS
+   Handles page switching (simulated in this single-file demo).
+========================================================= */
+function initNavigation(){
+  const navLinks = document.querySelectorAll('.nav-link');
+  const uploadCTA = document.getElementById('uploadCTA');
+  const pageTitle = document.getElementById('greetingText');
+  
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const page = link.dataset.page;
+      
+      // Update active state
+      navLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      
+      // Handle page change
+      if(page === 'upload'){
+        showToast('Opening Upload Data page...');
+        // In production: window.location.href = "{{ url_for('admin.upload') }}";
+      } else if(page === 'dashboard'){
+        showToast('Dashboard is already active');
+      } else {
+        showToast(`Navigating to ${link.textContent.trim()}...`);
+      }
+    });
+  });
+  
+  if(uploadCTA){
+    uploadCTA.addEventListener('click', (e) => {
+      e.preventDefault();
+      showToast('Opening Upload Data page...');
+    });
+  }
+}
+
+/* =========================================================
    PROFILE DRAWER
 ========================================================= */
 function initDrawer(){
@@ -1124,8 +1407,6 @@ function initDrawer(){
   const closeBtn = document.getElementById('drawerClose');
   const cancelBtn = document.getElementById('cancelProfile');
   const saveBtn = document.getElementById('saveProfile');
-  const toast = document.getElementById('toast');
-  const toastText = document.getElementById('toastText');
 
   function openDrawer(){
     overlay.classList.add('open');
@@ -1170,11 +1451,77 @@ function initDrawer(){
     };
     reader.readAsDataURL(file);
   });
+}
 
-  function showToast(msg){
-    toastText.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2600);
+/* =========================================================
+   LOGOUT DRAWER
+========================================================= */
+function initLogout(){
+  const overlay = document.getElementById('logoutOverlay');
+  const drawer = document.getElementById('logoutDrawer');
+  const trigger = document.getElementById('logoutLink');
+  const closeBtn = document.getElementById('logoutClose');
+  const cancelBtn = document.getElementById('logoutCancel');
+  const confirmBtn = document.getElementById('logoutConfirm');
+
+  function open(){
+    overlay.classList.add('open');
+    drawer.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function close(){
+    overlay.classList.remove('open');
+    drawer.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  trigger.addEventListener('click', (e) => { e.preventDefault(); open(); });
+  closeBtn.addEventListener('click', close);
+  cancelBtn.addEventListener('click', close);
+  overlay.addEventListener('click', close);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') close(); });
+
+  confirmBtn.addEventListener('click', () => {
+    close();
+    showToast('Logging out... Redirecting to role selection.');
+    // In production: window.location.href = "{{ url_for('common.role_selection') }}";
+  });
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  const toastText = document.getElementById('toastText');
+  toastText.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2600);
+}
+
+/* =========================================================
+   DATA STATUS BADGE
+========================================================= */
+function renderDataStatus(){
+  const status = document.getElementById('dataStatus');
+  const statusText = document.getElementById('dataStatusText');
+  const emptyState = document.getElementById('emptyState');
+  const dashboardContent = document.getElementById('dashboardContent');
+  
+  if(uploadedData){
+    status.className = 'data-status live';
+    statusText.textContent = 'Live Data · Loaded from uploaded Excel';
+    emptyState.classList.remove('show');
+    dashboardContent.style.display = 'block';
+    document.getElementById('analyticsNote').textContent = 'Live data from uploaded sheet';
+  } else {
+    status.className = 'data-status demo';
+    statusText.textContent = 'Demo Data · Upload Excel to see live metrics';
+    // Show empty state AND keep demo dashboard visible
+    // This way user can see the layout but knows it's demo
+    emptyState.classList.remove('show');
+    dashboardContent.style.display = 'block';
+    document.getElementById('analyticsNote').textContent = 'Demo data — upload to see live';
   }
 }
 
@@ -1182,6 +1529,7 @@ function initDrawer(){
    INIT
 ========================================================= */
 function init(){
+  renderDataStatus();
   renderBlock1();
   renderBlock2();
   renderStatusDoughnut();
@@ -1191,6 +1539,15 @@ function init(){
   renderBranchChart('__all__');
   renderSummaryCards();
   initDrawer();
+  initLogout();
+  initNavigation();
+  
+  // Log data source
+  if(uploadedData){
+    console.log('Horizon: Live data loaded from uploaded Excel sheet.');
+  } else {
+    console.log('Horizon: No uploaded data found. Showing demo dataset.');
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);
