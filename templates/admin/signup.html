@@ -1,0 +1,1085 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sign Up · Horizon Admin Portal</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ═══════════════════════════════════════════════════════════
+     Horizon — Admin Sign-Up (2 steps: Account → Verify)
+     Single-file HTML + CSS + JS
+     ═══════════════════════════════════════════════════════════ */
+
+  :root {
+    --bg:        #fafafc;
+    --bg-2:      #f4f1ea;
+    --surface:   #ffffff;
+    --surface-2: #fefbf3;
+
+    --border:      #e2e8f0;
+    --border-2:    #e6dcc6;
+    --border-warm: rgba(234, 88, 12, 0.42);
+
+    --text-0: #0f172a;
+    --text-1: #334155;
+    --text-2: #475569;
+    --text-3: #94a3b8;
+
+    --orange:      #ea580c;
+    --orange-2:    #f97316;
+    --amber:       #f59e0b;
+    --amber-2:     #fbbf24;
+    --amber-soft:  #fef3c7;
+    --orange-soft: #fee7d4;
+    --emerald:     #16a34a;
+    --red:         #dc2626;
+
+    --accent-gradient:       linear-gradient(135deg, #fbbf24 0%, #ea580c 100%);
+    --accent-gradient-hover: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+
+    --sans:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --display: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    --r-sm: 8px;
+    --r:    12px;
+    --r-lg: 16px;
+    --r-xl: 20px;
+
+    --shadow-sm:    0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.05);
+    --shadow-card:  0 20px 40px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
+    --shadow-amber: 0 10px 26px -6px rgba(234, 88, 12, 0.32);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--text-1);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 24px 60px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 45% at 50% -5%,  rgba(245, 158, 11, 0.20) 0%, transparent 62%),
+      radial-gradient(ellipse 55% 45% at 50% 55%,  rgba(234, 88, 12, 0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 15% 8%,   rgba(249, 115, 22, 0.07) 0%, transparent 65%),
+      radial-gradient(ellipse 45% 35% at 88% 15%,  rgba(251, 191, 36, 0.08) 0%, transparent 65%),
+      linear-gradient(180deg, #fdfbf6 0%, #fafafc 40%, #f6f4ef 100%);
+  }
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 0%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 0%, transparent 78%);
+    opacity: 0.9;
+  }
+  body > * { position: relative; z-index: 1; }
+
+  /* ═══════════════ HEADER ═══════════════ */
+  .auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+    animation: fadeUp 700ms 100ms ease both;
+  }
+  .auth-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .brand-mark {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: var(--accent-gradient);
+    display: grid;
+    place-items: center;
+    color: #ffffff;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.04em;
+    box-shadow:
+      0 10px 24px -6px rgba(234, 88, 12, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    overflow: hidden;
+  }
+  .brand-mark::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.55), transparent 55%);
+  }
+  .brand-mark::before {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(249, 168, 37, 0.32), transparent 70%);
+    z-index: -1;
+    filter: blur(10px);
+    animation: backGlow 3.4s ease-in-out infinite;
+  }
+  @keyframes backGlow {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50%      { opacity: 1;   transform: scale(1.08); }
+  }
+  .brand-text { text-align: left; line-height: 1.1; }
+  .brand-name {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--text-0) 0%, var(--text-0) 55%, var(--orange) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: block;
+  }
+  .brand-tag {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-top: 3px;
+    display: block;
+  }
+  .auth-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--amber-soft);
+    border: 1px solid rgba(234, 88, 12, 0.22);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #b45309;
+  }
+  .auth-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--orange);
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.20);
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.18); opacity: 0.7; }
+  }
+
+  /* ═══════════════ CARD ═══════════════ */
+  .auth-card {
+    width: 100%;
+    max-width: 460px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-card);
+    padding: 28px 28px 24px;
+    animation: fadeUp 700ms 200ms ease both;
+    position: relative;
+    overflow: hidden;
+  }
+  .auth-card::before {
+    content: "";
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.16), transparent 70%);
+    pointer-events: none;
+  }
+
+  .card-heading {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--text-0);
+    margin-bottom: 6px;
+  }
+  .card-sub {
+    font-size: 13.5px;
+    color: var(--text-2);
+    margin-bottom: 24px;
+    line-height: 1.55;
+  }
+
+  /* ═══════════════ STEP INDICATOR ═══════════════ */
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .step {
+    flex: 1;
+    height: 4px;
+    border-radius: 999px;
+    background: #f1f1ee;
+    overflow: hidden;
+    position: relative;
+  }
+  .step::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--accent-gradient);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .step.on::after { transform: scaleX(1); }
+
+  .steps-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 20px;
+  }
+
+  /* ═══════════════ FLASH ═══════════════ */
+  .flash {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: var(--r);
+    font-size: 13px;
+    margin-bottom: 18px;
+    animation: fadeUp 400ms ease both;
+  }
+  .flash.success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+  .flash.error   { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+  .flash.info    { background: var(--amber-soft); color: #92400e; border: 1px solid rgba(234, 88, 12, 0.22); }
+  .flash svg { flex-shrink: 0; margin-top: 1px; }
+
+  /* ═══════════════ FORM ═══════════════ */
+  .form-group { margin-bottom: 16px; }
+
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-2);
+    letter-spacing: 0.02em;
+    margin-bottom: 7px;
+  }
+  .form-label .req { color: var(--orange); margin-left: 2px; }
+  .form-label .opt {
+    color: var(--text-3);
+    font-weight: 500;
+    font-size: 11px;
+    margin-left: 6px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .input-wrap { position: relative; }
+  .input-wrap input {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    background: #fbfaf6;
+    border-radius: var(--r);
+    font-size: 14px;
+    color: var(--text-0);
+    outline: none;
+    font-family: inherit;
+    transition: border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
+  }
+  .input-wrap input::placeholder { color: var(--text-3); }
+  .input-wrap input:hover { border-color: #d8cfbc; }
+  .input-wrap input:focus {
+    border-color: var(--orange);
+    background: var(--surface);
+    box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.12);
+  }
+  .input-wrap.has-icon input { padding-right: 46px; }
+
+  .input-icon-btn {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    color: var(--text-3);
+    cursor: pointer;
+    transition: color 200ms ease, background 200ms ease;
+    border: none;
+    background: transparent;
+  }
+  .input-icon-btn:hover { color: var(--orange); background: var(--orange-soft); }
+  .input-icon-btn:focus-visible {
+    outline: 2px solid var(--orange);
+    outline-offset: 2px;
+  }
+
+  .field-error {
+    font-size: 11.5px;
+    color: var(--red);
+    margin-top: 5px;
+    display: none;
+  }
+  .form-group.has-error .field-error { display: block; }
+  .form-group.has-error .input-wrap input {
+    border-color: var(--red);
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.08);
+  }
+
+  /* ═══════════════ PASSWORD STRENGTH ═══════════════ */
+  .pw-meter {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .pw-meter span {
+    flex: 1;
+    height: 4px;
+    border-radius: 999px;
+    background: #eeebe2;
+    transition: background 300ms ease;
+  }
+  .pw-meter span.on-weak   { background: #dc2626; }
+  .pw-meter span.on-fair   { background: var(--amber); }
+  .pw-meter span.on-good   { background: #84cc16; }
+  .pw-meter span.on-strong { background: var(--emerald); }
+
+  .pw-meter-label {
+    font-size: 11px;
+    color: var(--text-3);
+    margin-top: 6px;
+    letter-spacing: 0.02em;
+  }
+  .pw-meter-label.weak   { color: #b91c1c; }
+  .pw-meter-label.fair   { color: #b45309; }
+  .pw-meter-label.good   { color: #4d7c0f; }
+  .pw-meter-label.strong { color: var(--emerald); }
+
+  /* ═══════════════ CHECKBOX ROWS ═══════════════ */
+  .auth-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 4px 0 4px;
+    flex-wrap: wrap;
+  }
+  .checkbox {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 9px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-1);
+    user-select: none;
+    line-height: 1.5;
+  }
+  .checkbox input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .checkbox .box {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid #cbd5e1;
+    background: var(--surface);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .checkbox .box svg {
+    width: 11px;
+    height: 11px;
+    stroke: #ffffff;
+    stroke-width: 3.2;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+  .checkbox input:checked + .box {
+    background: var(--accent-gradient);
+    border-color: transparent;
+    box-shadow: 0 4px 10px rgba(234, 88, 12, 0.30);
+  }
+  .checkbox input:checked + .box svg { opacity: 1; transform: scale(1); }
+  .checkbox:hover .box { border-color: var(--orange); }
+  .checkbox input:focus-visible + .box { box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.20); }
+  .checkbox input:checked ~ .lbl { color: var(--text-0); }
+
+  .link-warm {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--orange);
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    transition: color 180ms ease;
+  }
+  .link-warm:hover { color: #b45309; text-decoration: underline; }
+
+  /* ═══════════════ PRIMARY BUTTON ═══════════════ */
+  .btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 50px;
+    padding: 0 22px;
+    border-radius: var(--r);
+    background: var(--accent-gradient);
+    color: #ffffff;
+    font-family: var(--display);
+    font-size: 14.5px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    border: none;
+    cursor: pointer;
+    box-shadow: var(--shadow-amber);
+    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 220ms ease,
+                background 220ms ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.28) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 700ms ease;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px -6px rgba(234, 88, 12, 0.48);
+    background: var(--accent-gradient-hover);
+  }
+  .btn-primary:hover::after { transform: translateX(100%); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+  .btn-primary svg { transition: transform 240ms ease; }
+  .btn-primary:hover svg { transform: translateX(3px); }
+
+  /* ═══════════════ FOOTER LINKS ═══════════════ */
+  .auth-links {
+    margin-top: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeUp 700ms 400ms ease both;
+  }
+  .auth-links .register {
+    font-size: 13px;
+    color: var(--text-2);
+  }
+  .auth-links .register a {
+    color: var(--orange);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .auth-links .register a:hover { text-decoration: underline; color: #b45309; }
+
+  .auth-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    align-self: center;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-2);
+    background: transparent;
+    border: 1px solid transparent;
+    text-decoration: none;
+    transition: all 200ms ease;
+  }
+  .auth-back:hover {
+    color: var(--orange);
+    background: var(--orange-soft);
+    border-color: rgba(234, 88, 12, 0.18);
+  }
+
+  /* ═══════════════ FOOTER ═══════════════ */
+  .auth-footer {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--text-3);
+    letter-spacing: 0.03em;
+    animation: fadeUp 700ms 500ms ease both;
+  }
+  .auth-footer a { color: var(--text-2); font-weight: 600; text-decoration: none; }
+  .auth-footer a:hover { color: var(--orange); }
+
+  /* ═══════════════ ANIMATIONS ═══════════════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* ═══════════════ RESPONSIVE ═══════════════ */
+  @media (max-width: 480px) {
+    body { padding: 24px 16px 40px; }
+    .auth-card { padding: 24px 20px 20px; max-width: 100%; }
+    .brand-mark { width: 44px; height: 44px; font-size: 18px; }
+    .brand-name { font-size: 20px; }
+    .card-heading { font-size: 20px; }
+    .btn-primary { height: 48px; font-size: 14px; }
+    .auth-badge { font-size: 10.5px; padding: 5px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header class="auth-header">
+  <a href="#" class="auth-brand" aria-label="Horizon home">
+    <span class="brand-mark">H</span>
+    <span class="brand-text">
+      <span class="brand-name">Horizon</span>
+      <span class="brand-tag">Skill Gap Analysis</span>
+    </span>
+  </a>
+  <div class="auth-badge">Admin Access Portal</div>
+</header>
+
+<!-- ═══════════════ MAIN CARD ═══════════════ -->
+<main class="auth-card">
+
+  <h1 class="card-heading">Create your admin account</h1>
+  <p class="card-sub">Set up your access to the Horizon analytics dashboard.</p>
+
+  <!-- Step indicator — 2 steps now -->
+  <div class="steps" aria-hidden="true">
+    <div class="step on" id="step1"></div>
+    <div class="step" id="step2"></div>
+  </div>
+  <div class="steps-meta">
+    <span>Account</span>
+    <span>Verify</span>
+  </div>
+
+  <!-- Flash container -->
+  <div id="flashZone"></div>
+
+  <form id="signupForm" action="#" method="POST" novalidate>
+
+    <!-- ═════════ STEP 1: ACCOUNT ═════════ -->
+    <div data-step="1">
+
+      <div class="form-group" id="grp-name">
+        <label class="form-label" for="full_name">
+          Full Name <span class="req">*</span>
+        </label>
+        <div class="input-wrap">
+          <input
+            type="text"
+            id="full_name"
+            name="full_name"
+            placeholder="Aarav Reddy"
+            autocomplete="name"
+            required
+          />
+        </div>
+        <div class="field-error">Please enter your full name.</div>
+      </div>
+
+      <div class="form-group" id="grp-email">
+        <label class="form-label" for="email">
+          Work Email <span class="req">*</span>
+        </label>
+        <div class="input-wrap">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="admin@organization.com"
+            autocomplete="email"
+            required
+          />
+        </div>
+        <div class="field-error">Please enter a valid work email address.</div>
+      </div>
+
+      <div class="form-group" id="grp-phone">
+        <label class="form-label" for="phone">
+          Phone <span class="opt">Optional</span>
+        </label>
+        <div class="input-wrap">
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            placeholder="+91 98765 43210"
+            autocomplete="tel"
+          />
+        </div>
+        <div class="field-error">Please enter a valid phone number.</div>
+      </div>
+
+      <div class="form-group" id="grp-password">
+        <label class="form-label" for="password">
+          Password <span class="req">*</span>
+        </label>
+        <div class="input-wrap has-icon">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Minimum 8 characters"
+            autocomplete="new-password"
+            required
+            minlength="8"
+          />
+          <button
+            type="button"
+            class="input-icon-btn"
+            data-toggle-password
+            aria-label="Show password"
+            aria-controls="password"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="pw-meter" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="pw-meter-label" id="pwLabel">Use 8+ characters with a mix of letters, numbers, and symbols.</div>
+        <div class="field-error">Password must be at least 8 characters.</div>
+      </div>
+
+      <div class="form-group" id="grp-confirm">
+        <label class="form-label" for="confirm">
+          Confirm Password <span class="req">*</span>
+        </label>
+        <div class="input-wrap has-icon">
+          <input
+            type="password"
+            id="confirm"
+            name="confirm_password"
+            placeholder="Re-enter your password"
+            autocomplete="new-password"
+            required
+            minlength="8"
+          />
+          <button
+            type="button"
+            class="input-icon-btn"
+            data-toggle-password
+            aria-label="Show password"
+            aria-controls="confirm"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="field-error">Passwords do not match.</div>
+      </div>
+
+      <!-- Step 1 primary button -->
+      <button type="button" class="btn-primary" id="nextBtn1">
+        <span>Continue</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="12" x2="20" y2="12"/>
+          <polyline points="14 6 20 12 14 18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- ═════════ STEP 2: VERIFY ═════════ -->
+    <div data-step="2" style="display: none;">
+
+      <p style="font-size:13px;color:var(--text-2);margin-bottom:18px;">
+        Almost there. Confirm the details below to create your admin account.
+      </p>
+
+      <div class="form-group" id="grp-terms">
+        <div class="auth-row">
+          <label class="checkbox">
+            <input type="checkbox" id="terms" name="accept_terms" required />
+            <span class="box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </span>
+            <span class="lbl">I agree to the <a href="#" class="link-warm">Enterprise Admin Terms of Service</a></span>
+          </label>
+        </div>
+        <div class="field-error">You must accept the Terms of Service.</div>
+      </div>
+
+      <div class="form-group" id="grp-privacy">
+        <div class="auth-row">
+          <label class="checkbox">
+            <input type="checkbox" id="privacy" name="accept_privacy" required />
+            <span class="box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </span>
+            <span class="lbl">I have read and accept the <a href="#" class="link-warm">Data Privacy Policy</a></span>
+          </label>
+        </div>
+        <div class="field-error">You must accept the Privacy Policy.</div>
+      </div>
+
+      <div class="form-group" id="grp-updates">
+        <div class="auth-row">
+          <label class="checkbox">
+            <input type="checkbox" id="updates" name="receive_updates" />
+            <span class="box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </span>
+            <span class="lbl">Send me product updates and best practices</span>
+          </label>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:22px;">
+        <button type="button" class="btn-primary" id="backBtn2"
+                style="background:#fbfaf6; color:var(--text-1); border:1px solid var(--border); box-shadow:none;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="20" y1="12" x2="4" y2="12"/>
+            <polyline points="10 6 4 12 10 18"/>
+          </svg>
+          <span>Back</span>
+        </button>
+        <button type="submit" class="btn-primary" id="signupBtn">
+          <span>Create Admin Account</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- ── Footer links ── -->
+  <div class="auth-links">
+    <div class="register">
+      Already have an account?
+      <a href="#" id="signinLink">Sign in</a>
+    </div>
+    <a href="#" class="auth-back" id="backLink">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="20" y1="12" x2="4" y2="12"/>
+        <polyline points="10 6 4 12 10 18"/>
+      </svg>
+      Back to Role Selection
+    </a>
+  </div>
+
+</main>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="auth-footer">
+  Protected by Enterprise SSO · <a href="#">Security Policy</a>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ═══════════════════════════════════════════════════════════
+     CONFIG — point these at your backend.
+     In Flask:
+       signinRoute : {{ url_for('admin.signin') }}
+       signupRoute : {{ url_for('admin.signup') }}
+       backRoute   : {{ url_for('common.role_selection') }}
+       dashboard   : {{ url_for('admin.dashboard') }}
+     ═══════════════════════════════════════════════════════════ */
+  const ROUTES = {
+    signin:    'admin/signin',
+    signup:    'admin/signup',
+    back:      'role-selection',
+    dashboard: 'admin/dashboard'
+  };
+
+  document.getElementById('signinLink').setAttribute('href', ROUTES.signin);
+  document.getElementById('backLink').setAttribute('href', ROUTES.back);
+
+  const form = document.getElementById('signupForm');
+  form.setAttribute('action', ROUTES.signup);
+
+  /* ═══════════════════════════════════════════════════════════
+     FLASH
+     ═══════════════════════════════════════════════════════════ */
+  const flashZone = document.getElementById('flashZone');
+
+  const ICONS = {
+    error:   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>',
+    success: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+    info:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>'
+  };
+
+  window.flash = function (message, category) {
+    category = category || 'info';
+    const el = document.createElement('div');
+    el.className = 'flash ' + category;
+    el.innerHTML = (ICONS[category] || ICONS.info) + '<span></span>';
+    el.querySelector('span').textContent = message;
+    flashZone.prepend(el);
+    setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 400ms'; }, 5000);
+    setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 5500);
+  };
+
+  /* ═══════════════════════════════════════════════════════════
+     PASSWORD TOGGLES
+     ═══════════════════════════════════════════════════════════ */
+  const EYE_OPEN = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </svg>`;
+  const EYE_CLOSED = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+    <line x1="1" y1="1" x2="23" y2="23"/>
+  </svg>`;
+
+  document.querySelectorAll('[data-toggle-password]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('aria-controls');
+      const input = document.getElementById(targetId);
+      if (!input) return;
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      btn.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+      btn.innerHTML = isPassword ? EYE_CLOSED : EYE_OPEN;
+    });
+  });
+
+  /* ═══════════════════════════════════════════════════════════
+     PASSWORD STRENGTH METER
+     ═══════════════════════════════════════════════════════════ */
+  const pwInput  = document.getElementById('password');
+  const pwMeter  = document.querySelectorAll('.pw-meter span');
+  const pwLabel  = document.getElementById('pwLabel');
+
+  function scorePassword(v) {
+    let score = 0;
+    if (v.length >= 8) score++;
+    if (/[a-z]/.test(v) && /[A-Z]/.test(v)) score++;
+    if (/\d/.test(v)) score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+    return score;
+  }
+
+  const LEVELS = [
+    { name: 'weak',   cls: 'on-weak',   label: 'Weak — add more variety.' },
+    { name: 'fair',   cls: 'on-fair',   label: 'Fair — try adding a number or symbol.' },
+    { name: 'good',   cls: 'on-good',   label: 'Good — almost there.' },
+    { name: 'strong', cls: 'on-strong', label: 'Strong password.' }
+  ];
+
+  pwInput.addEventListener('input', () => {
+    const s = scorePassword(pwInput.value);
+    pwMeter.forEach((bar, i) => {
+      bar.className = '';
+      if (pwInput.value && i < s) bar.classList.add(LEVELS[s - 1].cls);
+    });
+    pwLabel.className = 'pw-meter-label';
+    if (!pwInput.value) {
+      pwLabel.textContent = 'Use 8+ characters with a mix of letters, numbers, and symbols.';
+    } else if (s === 0) {
+      pwLabel.textContent = 'Very weak — add at least 8 characters.';
+      pwLabel.classList.add('weak');
+    } else {
+      pwLabel.textContent = LEVELS[s - 1].label;
+      pwLabel.classList.add(LEVELS[s - 1].name);
+    }
+  });
+
+  /* ═══════════════════════════════════════════════════════════
+     STEP NAVIGATION (2 steps)
+     ═══════════════════════════════════════════════════════════ */
+  const stepEls  = document.querySelectorAll('[data-step]');
+  const stepBars = [document.getElementById('step1'), document.getElementById('step2')];
+
+  function showStep(n) {
+    stepEls.forEach((s) => s.style.display = s.dataset.step === String(n) ? '' : 'none');
+    stepBars.forEach((b, i) => b.classList.toggle('on', i < n));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     VALIDATION
+     ═══════════════════════════════════════════════════════════ */
+  const validEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+  const validPhone = (v) => !v || /^[+\d][\d\s\-()]{6,}$/.test(v.trim());
+
+  const fullName = document.getElementById('full_name');
+  const email    = document.getElementById('email');
+  const phone    = document.getElementById('phone');
+  const confirm  = document.getElementById('confirm');
+  const terms    = document.getElementById('terms');
+  const privacy  = document.getElementById('privacy');
+
+  const err = (id) => { document.getElementById(id).classList.add('has-error'); return false; };
+  const ok  = (id) => { document.getElementById(id).classList.remove('has-error'); return true; };
+
+  function validateStep1() {
+    let valid = true;
+    fullName.value.trim() ? ok('grp-name') : (valid = err('grp-name'));
+    validEmail(email.value) ? ok('grp-email') : (valid = err('grp-email'));
+    validPhone(phone.value) ? ok('grp-phone') : (valid = err('grp-phone'));
+    pwInput.value.length >= 8 ? ok('grp-password') : (valid = err('grp-password'));
+    confirm.value && confirm.value === pwInput.value ? ok('grp-confirm') : (valid = err('grp-confirm'));
+    return valid;
+  }
+
+  function validateStep2() {
+    let valid = true;
+    terms.checked ? ok('grp-terms') : (valid = err('grp-terms'));
+    privacy.checked ? ok('grp-privacy') : (valid = err('grp-privacy'));
+    return valid;
+  }
+
+  document.getElementById('nextBtn1').addEventListener('click', () => {
+    if (validateStep1()) showStep(2);
+  });
+  document.getElementById('backBtn2').addEventListener('click', () => showStep(1));
+
+  /* Clear errors on input */
+  [
+    ['full_name', 'grp-name'],
+    ['email',     'grp-email'],
+    ['phone',     'grp-phone'],
+    ['password',  'grp-password'],
+    ['confirm',   'grp-confirm']
+  ].forEach(([id, grp]) => {
+    const el = document.getElementById(id);
+    el.addEventListener('input', () => document.getElementById(grp).classList.remove('has-error'));
+  });
+  terms.addEventListener('change',   () => { if (terms.checked)   ok('grp-terms'); });
+  privacy.addEventListener('change', () => { if (privacy.checked) ok('grp-privacy'); });
+
+  /* ═══════════════════════════════════════════════════════════
+     SUBMIT — final step
+     ═══════════════════════════════════════════════════════════ */
+  const submitBtn = document.getElementById('signupBtn');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    if (!validateStep1()) { showStep(1); return; }
+    if (!validateStep2()) { return; }
+
+    submitBtn.disabled = true;
+    submitBtn.querySelector('span').textContent = 'Creating account…';
+
+    /* ═══════════════════════════════════════════════════════
+       REAL BACKEND CALL — uncomment when you have a server.
+       ───────────────────────────────────────────────────────
+       const payload = {
+         full_name:        fullName.value.trim(),
+         email:            email.value.trim(),
+         phone:            phone.value.trim(),
+         password:         pwInput.value,
+         confirm_password: confirm.value,
+         accept_terms:     terms.checked,
+         accept_privacy:   privacy.checked,
+         receive_updates:  document.getElementById('updates').checked
+       };
+
+       fetch(form.getAttribute('action'), {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify(payload)
+       })
+       .then(r => r.ok ? r.json() : Promise.reject(r))
+       .then(data => {
+         if (data.success) {
+           window.location.href = ROUTES.dashboard;
+         } else {
+           window.flash(data.message || 'Could not create account.', 'error');
+           submitBtn.disabled = false;
+           submitBtn.querySelector('span').textContent = 'Create Admin Account';
+         }
+       })
+       .catch(() => {
+         window.flash('Something went wrong. Please try again.', 'error');
+         submitBtn.disabled = false;
+         submitBtn.querySelector('span').textContent = 'Create Admin Account';
+       });
+       ═══════════════════════════════════════════════════════ */
+
+    /* Demo behaviour */
+    setTimeout(() => {
+      window.flash('Demo mode — no backend connected. Account not created.', 'info');
+      submitBtn.disabled = false;
+      submitBtn.querySelector('span').textContent = 'Create Admin Account';
+    }, 1400);
+  });
+})();
+</script>
+</body>
+</html>
