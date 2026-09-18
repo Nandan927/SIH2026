@@ -866,17 +866,10 @@
 <div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastText">Profile updated</span></div>
 
 <script>
-/* =========================================================
-   HORIZON — BRANCH ANALYSIS MODULE
-   Reads 'horizon_trainee_data' from localStorage.
-   Falls back to a rich default dataset across all branches.
-========================================================= */
+  
 
 const STORAGE_KEY = 'horizon_trainee_data';
 
-/* ---------------------------------------------------------
-   DEFAULT ENTERPRISE DATASET (per branch)
---------------------------------------------------------- */
 const DEFAULT_BRANCH_DATA = {
   "B.Tech Overall": {
     totals: { total: 1284, trained: 1027, nonTrained: 257 },
@@ -1006,9 +999,7 @@ const DEFAULT_BRANCH_DATA = {
   }
 };
 
-/* ---------------------------------------------------------
-   DATA LOADER — reads localStorage, merges with defaults
---------------------------------------------------------- */
+
 function loadBranchData(){
   const base = JSON.parse(JSON.stringify(DEFAULT_BRANCH_DATA));
   try{
@@ -1150,15 +1141,9 @@ function loadBranchData(){
 
 const BRANCH_DATA = loadBranchData();
 
-/* =========================================================
-   STATE
-========================================================= */
 let currentBranch = 'B.Tech Overall';
 let currentBatch  = '__all__';
 
-/* =========================================================
-   HELPERS
-========================================================= */
 function pct(n, d){ return d ? Math.round((n/d)*1000)/10 : 0; }
 
 const COLORS = {
@@ -1169,9 +1154,6 @@ const COLORS = {
 Chart.defaults.font.family = "'Inter', sans-serif";
 Chart.defaults.color = '#5B6472';
 
-/* =========================================================
-   RENDER: BLOCK 1 — Training Status Summary
-========================================================= */
 function renderBlock1(){
   const b = BRANCH_DATA[currentBranch];
   const t = b.totals;
@@ -1195,9 +1177,7 @@ function renderBlock1(){
   `).join('');
 }
 
-/* =========================================================
-   RENDER: BLOCK 2 — Outcomes Summary
-========================================================= */
+
 function renderBlock2(){
   const o = BRANCH_DATA[currentBranch].outcomes;
   const cards = [
@@ -1219,9 +1199,6 @@ function renderBlock2(){
   `).join('');
 }
 
-/* =========================================================
-   RENDER: TRAINING DOUGHNUT
-========================================================= */
 let trainingChartInstance = null;
 function renderTrainingChart(){
   const b = BRANCH_DATA[currentBranch];
@@ -1254,9 +1231,8 @@ function renderTrainingChart(){
   document.getElementById('chart1Sub').textContent = `${currentBranch} · Trained vs. Non-Trained`;
 }
 
-/* =========================================================
-   RENDER: OUTCOME BAR
-========================================================= */
+
+
 let outcomeChartInstance = null;
 function renderOutcomeChart(){
   const o = BRANCH_DATA[currentBranch].outcomes;
@@ -1285,9 +1261,6 @@ function renderOutcomeChart(){
   document.getElementById('chart2Sub').textContent = `${currentBranch} · By destination`;
 }
 
-/* =========================================================
-   RENDER: BATCH-WISE BAR
-========================================================= */
 let batchChartInstance = null;
 function renderBatchChart(){
   const b = BRANCH_DATA[currentBranch];
@@ -1320,9 +1293,6 @@ function renderBatchChart(){
   });
 }
 
-/* =========================================================
-   RENDER: SKILL DISTRIBUTION
-========================================================= */
 function renderSkills(){
   const skills = BRANCH_DATA[currentBranch].skills || [];
   if(skills.length === 0){
@@ -1347,9 +1317,6 @@ function renderSkills(){
   document.getElementById('skillSub').textContent = `Top technical skills · ${currentBranch}`;
 }
 
-/* =========================================================
-   MASTER RENDER
-========================================================= */
 function renderAll(){
   document.getElementById('pageHeading').textContent = `Branch Analysis — ${currentBranch}`;
   document.getElementById('pageSubtitle').textContent = `Deep-dive metrics for ${currentBranch}. Select a different branch above to compare.`;
@@ -1365,9 +1332,6 @@ function renderAll(){
   renderSkills();
 }
 
-/* =========================================================
-   BRANCH PICKER
-========================================================= */
 document.getElementById('branchPicker').addEventListener('change', (e) => {
   currentBranch = e.target.value;
   currentBatch = '__all__';
@@ -1376,9 +1340,7 @@ document.getElementById('branchPicker').addEventListener('change', (e) => {
   showToast(`Switched to ${currentBranch}`);
 });
 
-/* =========================================================
-   BATCH SELECT
-========================================================= */
+
 function refreshBatchOptions(){
   const sel = document.getElementById('batchSelect');
   const batches = Object.keys(BRANCH_DATA[currentBranch].batches);
@@ -1391,9 +1353,7 @@ document.getElementById('batchSelect').addEventListener('change', (e) => {
   renderBatchChart();
 });
 
-/* =========================================================
-   PROFILE DRAWER
-========================================================= */
+
 function initDrawer(){
   const overlay = document.getElementById('overlay');
   const drawer = document.getElementById('profileDrawer');
@@ -1439,9 +1399,6 @@ function initDrawer(){
   });
 }
 
-/* =========================================================
-   TOAST
-========================================================= */
 function showToast(msg){
   const toast = document.getElementById('toast');
   const toastText = document.getElementById('toastText');
@@ -1450,9 +1407,6 @@ function showToast(msg){
   setTimeout(() => toast.classList.remove('show'), 2400);
 }
 
-/* =========================================================
-   INIT
-========================================================= */
 function init(){
   refreshBatchOptions();
   renderAll();
