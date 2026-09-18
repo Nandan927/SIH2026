@@ -780,7 +780,7 @@
       <a class="nav-link" data-page="branch" href="#"><i class="fa-solid fa-code-branch"></i> Branch Analysis</a>
       <a class="nav-link" data-page="trainee" href="#"><i class="fa-solid fa-user-group"></i> Trainee Management</a>
       <a class="nav-link" data-page="skillgap" href="#"><i class="fa-solid fa-bullseye"></i> Skill Gap</a>
-      <a class="nav-link" data-page="upload" href="#"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data</a>
+      <a class="nav-link" data-page="upload" href="{{ url_for('admin_upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data</a>
       <a class="nav-link" data-page="reports" href="#"><i class="fa-solid fa-chart-simple"></i> Reports</a>
     </nav>
 
@@ -842,7 +842,7 @@
       <div class="empty-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
       <div class="empty-title">No Data Uploaded Yet</div>
       <div class="empty-sub">Upload your trainee Excel sheet from the Upload Data page to see live metrics, charts, and skill gap insights. Until then, the dashboard displays a demo dataset for reference.</div>
-      <a class="empty-cta" id="uploadCTA" href="#"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Trainee Data</a>
+      <a class="empty-cta" id="uploadCTA" href="{{ url_for('admin_upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Trainee Data</a>
     </div>
 
     <!-- Dashboard content (hidden when no data) -->
@@ -994,12 +994,12 @@
 <div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastText">Profile updated</span></div>
 
 <script>
+  
 /* =========================================================
    HORIZON ADMIN DASHBOARD — DATA LAYER
    Reads 'horizon_trainee_data' from localStorage.
 ========================================================= */
 
-const STORAGE_KEY = 'horizon_trainee_data';
 
 /* ---------------------------------------------------------
    DEMO DATASET
@@ -1043,111 +1043,96 @@ const DEMO_DATA = {
 /* ---------------------------------------------------------
    DETECT UPLOADED DATA
 --------------------------------------------------------- */
-function detectUploadedData(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return null;
-    const parsed = JSON.parse(raw);
-    if(!Array.isArray(parsed) || parsed.length === 0) return null;
-    return transformRows(parsed);
-  }catch(e){
-    console.warn('Horizon: could not parse uploaded data.', e);
+function detectUploadedData() {
+    // Data is now coming from Flask and SQLite.
+    // Browser localStorage is no longer used.
     return null;
-  }
 }
 
 /* ---------------------------------------------------------
    TRANSFORM RAW UPLOADED ROWS
 --------------------------------------------------------- */
-function transformRows(rows){
-  const normalize = (obj) => {
-    const out = {};
-    Object.keys(obj).forEach(k => {
-      out[k.toLowerCase().trim().replace(/\s+/g, '_')] = obj[k];
-    });
-    return out;
-  };
-
-  const normalized = rows.map(normalize);
-  const keys = Object.keys(normalized[0]);
-
-  const findKey = (candidates) => {
-    for(const c of candidates){
-      const found = keys.find(k => k.includes(c));
-      if(found) return found;
-    }
+/*
+   Frontend Excel transformation is no longer required.
+   Flask processes Excel and SQLite stores the data.
+*/
+function transformRows(rows) {
     return null;
-  };
-
-  const colBranch = findKey(['branch', 'department', 'dept']);
-  const colTraining = findKey(['training_status', 'trainingstatus', 'trained', 'training']);
-  const colOutcome = findKey(['outcome_status', 'outcomestatus', 'outcome', 'status']);
-
-  let trained = 0, nonTrained = 0;
-  const branchMap = {};
-  const outcomeCounts = { employed: 0, higherStudies: 0, partTime: 0, internships: 0, seeking: 0 };
-
-  normalized.forEach(r => {
-    const branchRaw = colBranch ? String(r[colBranch] || '').trim() : 'Unknown';
-    const branch = branchRaw.toUpperCase() || 'UNKNOWN';
-    if(!branchMap[branch]) branchMap[branch] = { trainees: 0, trained: 0, employed: 0, higherStudies: 0, partTime: 0, internships: 0, seeking: 0 };
-    branchMap[branch].trainees++;
-
-    const tStatus = colTraining ? String(r[colTraining] || '').toLowerCase().trim() : '';
-    const isTrained = tStatus.includes('train') && !tStatus.includes('non') && !tStatus.includes('not') && !tStatus.includes('un');
-    if(isTrained){ trained++; branchMap[branch].trained++; } else { nonTrained++; }
-
-    const oStatus = colOutcome ? String(r[colOutcome] || '').toLowerCase().trim() : '';
-    let oKey = null;
-    if(oStatus.includes('employ') && !oStatus.includes('seek') && !oStatus.includes('un')) oKey = 'employed';
-    else if(oStatus.includes('higher') || oStatus.includes('stud')) oKey = 'higherStudies';
-    else if(oStatus.includes('freelanc') || oStatus.includes('part')) oKey = 'partTime';
-    else if(oStatus.includes('intern')) oKey = 'internships';
-    else if(oStatus.includes('seek')) oKey = 'seeking';
-
-    if(oKey){
-      outcomeCounts[oKey]++;
-      branchMap[branch][oKey]++;
-    }
-  });
-
-  const branches = {};
-  Object.keys(branchMap).forEach(b => {
-    const bData = branchMap[b];
-    const placementRatio = bData.trainees > 0 ? Math.round(((bData.employed + bData.higherStudies + bData.internships) / bData.trainees) * 100) : 0;
-    const diversity = (bData.employed > 0 ? 1 : 0) + (bData.higherStudies > 0 ? 1 : 0) + (bData.partTime > 0 ? 1 : 0) + (bData.internships > 0 ? 1 : 0);
-    const avgScore = Math.min(100, Math.max(20, Math.round(placementRatio * 0.9 + diversity * 5)));
-    branches[b] = {
-      trainees: bData.trainees,
-      trained: bData.trained,
-      avgScore: avgScore,
-      placementRatio: placementRatio
-    };
-  });
-
-  return {
-    totals: { totalTrainees: rows.length, trained, nonTrained },
-    outcomes: outcomeCounts,
-    branches,
-    highlights: DEMO_DATA.highlights,
-    summary: DEMO_DATA.summary
-  };
 }
 
 /* ---------------------------------------------------------
    DATA STATE
 --------------------------------------------------------- */
-let DATA = null;
-let usingDemo = false;
+/* ---------------------------------------------------------
+   DATA STATE
+--------------------------------------------------------- */
 
-const uploadedData = detectUploadedData();
-if(uploadedData){
-  DATA = uploadedData;
-  usingDemo = false;
-} else {
-  DATA = DEMO_DATA;
-  usingDemo = true;
+const FLASK_DATA = {{ dashboard_data | tojson }};
+
+function findCount(countObject, names) {
+
+    const object = countObject || {};
+
+    for (const key of Object.keys(object)) {
+
+        const normalizedKey = key.toLowerCase().trim();
+
+        for (const name of names) {
+
+            if (normalizedKey === name.toLowerCase()) {
+                return Number(object[key]) || 0;
+            }
+
+        }
+
+    }
+
+    return 0;
 }
+
+const outcomeCounts = FLASK_DATA.outcome_status_counts || {};
+
+const branchCounts = FLASK_DATA.branch_counts || {};
+
+const branches = {};
+
+Object.keys(branchCounts).forEach(branch => {
+
+    branches[branch] = {
+        trainees: Number(branchCounts[branch]) || 0,
+        trained: 0,
+        avgScore: 0,
+        placementRatio: 0
+    };
+
+});
+
+let DATA = {
+
+    totals: {
+        totalTrainees: Number(FLASK_DATA.total_trainees) || 0,
+        trained: Number(FLASK_DATA.completed_trainees) || 0,
+        nonTrained: Number(FLASK_DATA.active_trainees) || 0
+    },
+
+    outcomes: {
+        employed: findCount(outcomeCounts, ["employed", "placed"]),
+        higherStudies: findCount(outcomeCounts, ["higher studies", "higherstudy"]),
+        partTime: findCount(outcomeCounts, ["part-time", "part time", "freelance"]),
+        internships: findCount(outcomeCounts, ["internships", "internship"]),
+        seeking: findCount(outcomeCounts, ["seeking employment", "seeking"])
+    },
+
+    branches: branches,
+
+    highlights: [],
+
+    summary: []
+
+};
+
+const uploadedData = true;
+const usingDemo = false;
 
 /* =========================================================
    RENDER: BLOCK 1
@@ -1278,19 +1263,51 @@ function renderOutcomeBar(){
 /* =========================================================
    RENDER: LIVE HIGHLIGHTS
 ========================================================= */
-function renderHighlights(){
-  const badgeMap = { critical: ['badge-critical','Critical'], warning: ['badge-warning','Watch'], info: ['badge-info','Insight'] };
-  document.getElementById('highlightScroll').innerHTML = DATA.highlights.map(h => {
-    const [cls, label] = badgeMap[h.level] || badgeMap.info;
-    return `
-      <div class="highlight-card">
-        <span class="highlight-badge ${cls}">${label}</span>
-        <h4>${h.title}</h4>
-        <p>${h.body}</p>
-        <div class="highlight-meta"><i class="fa-regular fa-clock"></i> ${h.meta}</div>
-      </div>
-    `;
-  }).join('');
+function renderHighlights() {
+
+    const container = document.getElementById('highlightScroll');
+
+    if (!DATA.highlights || DATA.highlights.length === 0) {
+
+        container.innerHTML = `
+            <div class="highlight-card">
+                <span class="highlight-badge badge-info">Info</span>
+                <h4>Skill-gap insights will appear here</h4>
+                <p>Upload trainee data with detailed skill information to generate live skill-gap insights.</p>
+                <div class="highlight-meta">
+                    <i class="fa-regular fa-clock"></i>
+                    Based on uploaded database data
+                </div>
+            </div>
+        `;
+
+        return;
+    }
+
+    const badgeMap = {
+        critical: ['badge-critical', 'Critical'],
+        warning: ['badge-warning', 'Watch'],
+        info: ['badge-info', 'Insight']
+    };
+
+    container.innerHTML = DATA.highlights.map(h => {
+
+        const [cls, label] = badgeMap[h.level] || badgeMap.info;
+
+        return `
+            <div class="highlight-card">
+                <span class="highlight-badge ${cls}">${label}</span>
+                <h4>${h.title}</h4>
+                <p>${h.body}</p>
+                <div class="highlight-meta">
+                    <i class="fa-regular fa-clock"></i>
+                    ${h.meta}
+                </div>
+            </div>
+        `;
+
+    }).join('');
+
 }
 
 /* =========================================================
@@ -1359,50 +1376,90 @@ function renderBranchStats(list){
 /* =========================================================
    RENDER: BOTTOM SUMMARY CARDS
 ========================================================= */
-function renderSummaryCards(){
-  document.getElementById('summaryCards').innerHTML = DATA.summary.map(s => `
-    <div class="summary-card">
-      <div class="s-icon ${s.color}"><i class="fa-solid ${s.icon}"></i></div>
-      <h4>${s.title}</h4>
-      <p>${s.body}</p>
-      <div class="summary-stat-line">
-        <span>${s.statLabel}</span>
-        <strong>${s.statValue}</strong>
-      </div>
-    </div>
-  `).join('');
+function renderSummaryCards() {
+
+    const container = document.getElementById('summaryCards');
+
+    if (!DATA.summary || DATA.summary.length === 0) {
+
+        container.innerHTML = `
+            <div class="summary-card">
+                <div class="s-icon bg-blue">
+                    <i class="fa-solid fa-database"></i>
+                </div>
+
+                <h4>Database Overview</h4>
+
+                <p>
+                    This dashboard is displaying trainee information
+                    directly from the uploaded SQLite database.
+                </p>
+
+                <div class="summary-stat-line">
+                    <span>Total records</span>
+                    <strong>${DATA.totals.totalTrainees}</strong>
+                </div>
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML = DATA.summary.map(s => `
+        <div class="summary-card">
+            <div class="s-icon ${s.color}">
+                <i class="fa-solid ${s.icon}"></i>
+            </div>
+
+            <h4>${s.title}</h4>
+            <p>${s.body}</p>
+
+            <div class="summary-stat-line">
+                <span>${s.statLabel}</span>
+                <strong>${s.statValue}</strong>
+            </div>
+        </div>
+    `).join('');
+
 }
 
 /* =========================================================
    NAVIGATION
 ========================================================= */
-function initNavigation(){
-  const navLinks = document.querySelectorAll('.nav-link');
-  const uploadCTA = document.getElementById('uploadCTA');
+function initNavigation() {
 
-  navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const page = link.dataset.page;
-      navLinks.forEach(l => l.classList.remove('active'));
-      link.classList.add('active');
+    const navLinks = document.querySelectorAll('.nav-link');
 
-      if(page === 'upload'){
-        showToast('Opening Upload Data page...');
-      } else if(page === 'dashboard'){
-        showToast('Dashboard is already active');
-      } else {
-        showToast(`Navigating to ${link.textContent.trim()}...`);
-      }
+    navLinks.forEach(link => {
+
+        const page = link.dataset.page;
+
+        if (page === 'upload') {
+            return;
+        }
+
+        link.addEventListener('click', (e) => {
+
+            e.preventDefault();
+
+            navLinks.forEach(l => l.classList.remove('active'));
+
+            link.classList.add('active');
+
+            if (page === 'dashboard') {
+
+                showToast('Dashboard is already active');
+
+            } else {
+
+                showToast(`${link.textContent.trim()} page is coming soon`);
+
+            }
+
+        });
+
     });
-  });
 
-  if(uploadCTA){
-    uploadCTA.addEventListener('click', (e) => {
-      e.preventDefault();
-      showToast('Opening Upload Data page...');
-    });
-  }
 }
 
 /* =========================================================
@@ -1490,9 +1547,10 @@ function initLogout(){
   document.addEventListener('keydown', (e) => { if(e.key === 'Escape') close(); });
 
   confirmBtn.addEventListener('click', () => {
-    close();
-    showToast('Logging out... Redirecting to role selection.');
-  });
+
+    window.location.href = "{{ url_for('admin_logout') }}";
+
+});
 }
 
 /* =========================================================
@@ -1510,25 +1568,24 @@ function showToast(msg){
 /* =========================================================
    DATA STATUS BADGE
 ========================================================= */
-function renderDataStatus(){
-  const status = document.getElementById('dataStatus');
-  const statusText = document.getElementById('dataStatusText');
-  const emptyState = document.getElementById('emptyState');
-  const dashboardContent = document.getElementById('dashboardContent');
+function renderDataStatus() {
 
-  if(uploadedData){
+    const status = document.getElementById('dataStatus');
+    const statusText = document.getElementById('dataStatusText');
+    const emptyState = document.getElementById('emptyState');
+    const dashboardContent = document.getElementById('dashboardContent');
+
     status.className = 'data-status live';
-    statusText.textContent = 'Live Data · Loaded from uploaded Excel';
+
+    statusText.textContent = 'Live Data · Loaded from database';
+
     emptyState.classList.remove('show');
+
     dashboardContent.style.display = 'block';
-    document.getElementById('analyticsNote').textContent = 'Live data from uploaded sheet';
-  } else {
-    status.className = 'data-status demo';
-    statusText.textContent = 'Demo Data · Upload Excel to see live metrics';
-    emptyState.classList.remove('show');
-    dashboardContent.style.display = 'block';
-    document.getElementById('analyticsNote').textContent = 'Demo data — upload to see live';
-  }
+
+    document.getElementById('analyticsNote').textContent =
+        'Live data from SQLite database';
+
 }
 
 /* =========================================================
