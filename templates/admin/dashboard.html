@@ -1823,12 +1823,9 @@
         }
     */
 
-    const FLASK_DATA = {{ dashboard_data | tojson }};
-
-    console.log(
-        "Dashboard data received from Flask:",
-        FLASK_DATA
-    );
+    const FLASK_DATA = JSON.parse(
+    document.getElementById("flask-data").textContent
+);
 
 
     /* ================= HELPER FUNCTIONS ================= */
