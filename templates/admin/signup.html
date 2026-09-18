@@ -622,7 +622,15 @@
   </div>
 
   <!-- Flash container -->
-  <div id="flashZone"></div>
+ <div id="flashZone">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash {{ category }}">
+                <span>{{ message }}</span>
+            </div>
+        {% endfor %}
+    {% endwith %}
+</div>
 
   <form id="signupForm" action="#" method="POST" novalidate>
 
@@ -859,11 +867,11 @@
        dashboard   : {{ url_for('admin.dashboard') }}
      ═══════════════════════════════════════════════════════════ */
   const ROUTES = {
-    signin:    'admin/signin',
-    signup:    'admin/signup',
-    back:      'role-selection',
-    dashboard: 'admin/dashboard'
-  };
+    signin: "{{ url_for('admin_signin') }}",
+    signup: "{{ url_for('admin_signup') }}",
+    back: "{{ url_for('role_selection') }}",
+    dashboard: "{{ url_for('admin_upload') }}"
+};
 
   document.getElementById('signinLink').setAttribute('href', ROUTES.signin);
   document.getElementById('backLink').setAttribute('href', ROUTES.back);
@@ -1028,57 +1036,31 @@
   const submitBtn = document.getElementById('signupBtn');
 
   form.addEventListener('submit', (e) => {
-    e.preventDefault();
 
-    if (!validateStep1()) { showStep(1); return; }
-    if (!validateStep2()) { return; }
+    // Validate account details again
+    if (!validateStep1()) {
+        e.preventDefault();
+        showStep(1);
+        return;
+    }
 
+    // Validate required policies
+    if (!validateStep2()) {
+        e.preventDefault();
+        return;
+    }
+
+    // Disable button while submitting
     submitBtn.disabled = true;
     submitBtn.querySelector('span').textContent = 'Creating account…';
 
-    /* ═══════════════════════════════════════════════════════
-       REAL BACKEND CALL — uncomment when you have a server.
-       ───────────────────────────────────────────────────────
-       const payload = {
-         full_name:        fullName.value.trim(),
-         email:            email.value.trim(),
-         phone:            phone.value.trim(),
-         password:         pwInput.value,
-         confirm_password: confirm.value,
-         accept_terms:     terms.checked,
-         accept_privacy:   privacy.checked,
-         receive_updates:  document.getElementById('updates').checked
-       };
+    /*
+       Important:
+       Do NOT use e.preventDefault() here.
 
-       fetch(form.getAttribute('action'), {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify(payload)
-       })
-       .then(r => r.ok ? r.json() : Promise.reject(r))
-       .then(data => {
-         if (data.success) {
-           window.location.href = ROUTES.dashboard;
-         } else {
-           window.flash(data.message || 'Could not create account.', 'error');
-           submitBtn.disabled = false;
-           submitBtn.querySelector('span').textContent = 'Create Admin Account';
-         }
-       })
-       .catch(() => {
-         window.flash('Something went wrong. Please try again.', 'error');
-         submitBtn.disabled = false;
-         submitBtn.querySelector('span').textContent = 'Create Admin Account';
-       });
-       ═══════════════════════════════════════════════════════ */
-
-    /* Demo behaviour */
-    setTimeout(() => {
-      window.flash('Demo mode — no backend connected. Account not created.', 'info');
-      submitBtn.disabled = false;
-      submitBtn.querySelector('span').textContent = 'Create Admin Account';
-    }, 1400);
-  });
+       Flask will receive all form values.
+    */
+});
 })();
 </script>
 </body>

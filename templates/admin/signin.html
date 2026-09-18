@@ -549,7 +549,15 @@
   <p class="card-sub">Enter your enterprise credentials to access the analytics dashboard.</p>
 
   <!-- Flash container — populated by JS or by Flask on server-side render -->
-  <div id="flashZone"></div>
+  <div id="flashZone">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash {{ category }}">
+                <span>{{ message }}</span>
+            </div>
+        {% endfor %}
+    {% endwith %}
+</div>
 
   <form id="signinForm" action="#" method="POST" novalidate>
 
