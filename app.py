@@ -22,7 +22,8 @@ from database.db import (
     create_admin,
     check_admin,
     insert_trainee,
-    get_trainees_by_admin
+    get_trainees_by_admin,
+    get_all_trainees
 )
 
 
@@ -31,7 +32,10 @@ app = Flask(__name__)
 app.secret_key = "horizon-secret-key"
 
 
-# Initialize database when application starts
+# =========================================================
+# INITIALIZE DATABASE
+# =========================================================
+
 init_db()
 
 
@@ -41,12 +45,18 @@ init_db()
 
 @app.route("/")
 def loading():
-    return render_template("common/loading.html")
+
+    return render_template(
+        "common/loading.html"
+    )
 
 
 @app.route("/roles")
 def role_selection():
-    return render_template("common/role_selection.html")
+
+    return render_template(
+        "common/role_selection.html"
+    )
 
 
 # =========================================================
@@ -58,28 +68,50 @@ def admin_signin():
 
     if request.method == "POST":
 
-        email = request.form.get("email", "").strip()
-        password = request.form.get("password", "")
+        email = request.form.get(
+            "email",
+            ""
+        ).strip()
+
+        password = request.form.get(
+            "password",
+            ""
+        )
 
         # Check admin credentials from database
-        admin = check_admin(email, password)
+        admin = check_admin(
+            email,
+            password
+        )
 
         if admin:
 
             session["admin_id"] = admin["id"]
+
             session["admin_name"] = admin["full_name"]
+
             session["admin_email"] = admin["email"]
 
-            flash("Login successful.", "success")
+            flash(
+                "Login successful.",
+                "success"
+            )
 
-            # After login, go to upload page
-            return redirect(url_for("admin_upload"))
+            # Redirect to upload page after login
+            return redirect(
+                url_for("admin_upload")
+            )
 
         else:
 
-            flash("Invalid email or password.", "error")
+            flash(
+                "Invalid email or password.",
+                "error"
+            )
 
-    return render_template("admin/signin.html")
+    return render_template(
+        "admin/signin.html"
+    )
 
 
 # =========================================================
@@ -91,10 +123,25 @@ def admin_signup():
 
     if request.method == "POST":
 
-        full_name = request.form.get("full_name", "").strip()
-        email = request.form.get("email", "").strip()
-        phone = request.form.get("phone", "").strip()
-        password = request.form.get("password", "")
+        full_name = request.form.get(
+            "full_name",
+            ""
+        ).strip()
+
+        email = request.form.get(
+            "email",
+            ""
+        ).strip()
+
+        phone = request.form.get(
+            "phone",
+            ""
+        ).strip()
+
+        password = request.form.get(
+            "password",
+            ""
+        )
 
         # Basic validation
         if not full_name or not email or not password:
@@ -104,7 +151,9 @@ def admin_signup():
                 "error"
             )
 
-            return redirect(url_for("admin_signup"))
+            return redirect(
+                url_for("admin_signup")
+            )
 
         result = create_admin(
             full_name,
@@ -120,7 +169,9 @@ def admin_signup():
                 "success"
             )
 
-            return redirect(url_for("admin_signin"))
+            return redirect(
+                url_for("admin_signin")
+            )
 
         else:
 
@@ -129,7 +180,9 @@ def admin_signup():
                 "error"
             )
 
-    return render_template("admin/signup.html")
+    return render_template(
+        "admin/signup.html"
+    )
 
 
 # =========================================================
@@ -162,28 +215,42 @@ def admin_upload():
     # Only logged-in admin can access upload page
     if "admin_id" not in session:
 
-        return redirect(url_for("admin_signin"))
+        return redirect(
+            url_for("admin_signin")
+        )
 
-    # Display upload page for GET request
+    # -----------------------------------------------------
+    # GET REQUEST
+    # -----------------------------------------------------
+
     if request.method == "GET":
 
-        return render_template("admin/upload.html")
+        return render_template(
+            "admin/upload.html"
+        )
 
     # -----------------------------------------------------
     # POST REQUEST: EXCEL UPLOAD
     # -----------------------------------------------------
 
-    uploaded_file = request.files.get("excel_file")
+    uploaded_file = request.files.get(
+        "excel_file"
+    )
 
     # Check whether a file was selected
-    if uploaded_file is None or uploaded_file.filename == "":
+    if (
+        uploaded_file is None
+        or uploaded_file.filename == ""
+    ):
 
         flash(
             "Please select an Excel file.",
             "error"
         )
 
-        return redirect(url_for("admin_upload"))
+        return redirect(
+            url_for("admin_upload")
+        )
 
     # Check file extension
     if not uploaded_file.filename.lower().endswith(
@@ -195,18 +262,36 @@ def admin_upload():
             "error"
         )
 
-        return redirect(url_for("admin_upload"))
+        return redirect(
+            url_for("admin_upload")
+        )
 
     try:
 
-        # Read Excel file using pandas
-        dataframe = pd.read_excel(uploaded_file)
+        # -------------------------------------------------
+        # READ EXCEL FILE
+        # -------------------------------------------------
+
+        dataframe = pd.read_excel(
+            uploaded_file
+        )
 
         print("\n========== EXCEL UPLOAD DEBUG ==========")
-        print("Excel columns:", list(dataframe.columns))
-        print("Total Excel rows:", len(dataframe))
 
-        # Required Excel columns
+        print(
+            "Excel columns:",
+            list(dataframe.columns)
+        )
+
+        print(
+            "Total Excel rows:",
+            len(dataframe)
+        )
+
+        # -------------------------------------------------
+        # REQUIRED EXCEL COLUMNS
+        # -------------------------------------------------
+
         required_columns = [
             "Trainee ID",
             "Name",
@@ -218,7 +303,6 @@ def admin_upload():
             "Skills"
         ]
 
-        # Find missing columns
         missing_columns = [
             column
             for column in required_columns
@@ -227,23 +311,29 @@ def admin_upload():
 
         if missing_columns:
 
+            print(
+                "Missing columns:",
+                missing_columns
+            )
+
             flash(
                 "Missing columns: "
                 + ", ".join(missing_columns),
                 "error"
             )
 
-            print("Missing columns:", missing_columns)
+            return redirect(
+                url_for("admin_upload")
+            )
 
-            return redirect(url_for("admin_upload"))
+        # -------------------------------------------------
+        # PREPARE STORAGE
+        # -------------------------------------------------
 
-        # Store generated credentials here
         credentials = []
 
-        # Count successfully inserted records
         inserted_count = 0
 
-        # Count skipped records
         skipped_count = 0
 
         # -------------------------------------------------
@@ -254,7 +344,10 @@ def admin_upload():
 
             try:
 
-                # Read values from Excel
+                # -----------------------------------------
+                # READ VALUES FROM EXCEL
+                # -----------------------------------------
+
                 trainee_id = str(
                     row["Trainee ID"]
                 ).strip()
@@ -287,8 +380,10 @@ def admin_upload():
                     row["Skills"]
                 ).strip()
 
-                # Pandas converts empty Excel cells into "nan"
-                # Convert those values into empty strings
+                # -----------------------------------------
+                # CONVERT PANDAS NaN TO EMPTY STRING
+                # -----------------------------------------
+
                 values = [
                     trainee_id,
                     name,
@@ -301,7 +396,9 @@ def admin_upload():
                 ]
 
                 values = [
-                    "" if value.lower() == "nan" else value
+                    ""
+                    if value.lower() == "nan"
+                    else value
                     for value in values
                 ]
 
@@ -316,8 +413,15 @@ def admin_upload():
                     skills
                 ) = values
 
-                # Basic required-field validation
-                if not trainee_id or not name or not email:
+                # -----------------------------------------
+                # VALIDATE REQUIRED FIELDS
+                # -----------------------------------------
+
+                if (
+                    not trainee_id
+                    or not name
+                    or not email
+                ):
 
                     print(
                         f"Skipping row {index + 2}: "
@@ -328,52 +432,126 @@ def admin_upload():
 
                     continue
 
-                # Generate plain password
+                # -----------------------------------------
+                # GENERATE PASSWORD
+                # -----------------------------------------
+
                 plain_password = generate_trainee_password()
 
-                # Hash password before storing in database
+                # -----------------------------------------
+                # HASH PASSWORD
+                # -----------------------------------------
+
                 hashed_password = generate_password_hash(
                     plain_password
                 )
 
-                # Insert trainee into SQLite
-                insert_trainee(
+                # -----------------------------------------
+                # INSERT INTO DATABASE
+                # -----------------------------------------
+
+                # IMPORTANT:
+                # db.py expects the argument name
+                # hashed_password, not password_hash
+
+                insert_success = insert_trainee(
+
                     trainee_id=trainee_id,
+
                     name=name,
+
                     email=email,
+
                     branch=branch,
+
                     batch=batch,
+
                     training_status=training_status,
+
                     outcome_status=outcome_status,
+
                     skills=skills,
-                    password_hash=hashed_password,
+
+                    hashed_password=hashed_password,
+
                     admin_id=session["admin_id"]
+
                 )
 
-                # Store plain password only in downloadable file
-                credentials.append({
-                    "Trainee ID": trainee_id,
-                    "Name": name,
-                    "Email": email,
-                    "Password": plain_password
-                })
+                # -----------------------------------------
+                # ONLY COUNT SUCCESSFUL INSERTIONS
+                # -----------------------------------------
 
-                inserted_count += 1
+                if insert_success:
+
+                    credentials.append({
+
+                        "Trainee ID": trainee_id,
+
+                        "Name": name,
+
+                        "Email": email,
+
+                        "Password": plain_password
+
+                    })
+
+                    inserted_count += 1
+
+                else:
+
+                    skipped_count += 1
+
+                    print(
+                        f"Database insertion failed for "
+                        f"trainee: {trainee_id}"
+                    )
 
             except Exception as row_error:
 
                 print(
-                    f"Error processing Excel row {index + 2}:",
+                    f"Error processing Excel row "
+                    f"{index + 2}:",
                     row_error
                 )
 
                 skipped_count += 1
 
-        print("Inserted records:", inserted_count)
-        print("Skipped records:", skipped_count)
-        print("========================================\n")
+        # -------------------------------------------------
+        # UPLOAD DEBUG SUMMARY
+        # -------------------------------------------------
 
-        # If no records were inserted
+        print(
+            "Inserted records:",
+            inserted_count
+        )
+
+        print(
+            "Skipped records:",
+            skipped_count
+        )
+
+        # Verify actual database contents
+        all_database_trainees = get_all_trainees()
+
+        print(
+            "TOTAL TRAINEES CURRENTLY IN DATABASE:",
+            len(all_database_trainees)
+        )
+
+        print(
+            "FIRST 5 DATABASE TRAINEES:",
+            all_database_trainees[:5]
+        )
+
+        print(
+            "========================================\n"
+        )
+
+        # -------------------------------------------------
+        # IF NO RECORDS INSERTED
+        # -------------------------------------------------
+
         if inserted_count == 0:
 
             flash(
@@ -382,13 +560,17 @@ def admin_upload():
                 "error"
             )
 
-            return redirect(url_for("admin_upload"))
+            return redirect(
+                url_for("admin_upload")
+            )
 
         # -------------------------------------------------
         # CREATE CREDENTIAL EXCEL FILE
         # -------------------------------------------------
 
-        credential_df = pd.DataFrame(credentials)
+        credential_df = pd.DataFrame(
+            credentials
+        )
 
         output = io.BytesIO()
 
@@ -413,27 +595,46 @@ def admin_upload():
 
         # Send credential Excel file to browser
         return send_file(
+
             output,
+
             as_attachment=True,
+
             download_name="trainee_credentials.xlsx",
+
             mimetype=(
                 "application/vnd.openxmlformats-officedocument."
                 "spreadsheetml.sheet"
             )
+
         )
 
     except Exception as error:
 
         print("\n========== UPLOAD ERROR ==========")
-        print(error)
-        print("==================================\n")
+
+        print(
+            "Error type:",
+            type(error).__name__
+        )
+
+        print(
+            "Error message:",
+            error
+        )
+
+        print(
+            "==================================\n"
+        )
 
         flash(
             "Something went wrong while processing the Excel file.",
             "error"
         )
 
-        return redirect(url_for("admin_upload"))
+        return redirect(
+            url_for("admin_upload")
+        )
 
 
 # =========================================================
@@ -445,7 +646,9 @@ def admin_logout():
 
     session.clear()
 
-    return redirect(url_for("admin_signin"))
+    return redirect(
+        url_for("admin_signin")
+    )
 
 
 # =========================================================
@@ -461,68 +664,150 @@ def calculate_dashboard_data(trainees):
     # If database returns None, use empty list
     trainees = trainees or []
 
-    total_trainees = len(trainees)
+    total_trainees = len(
+        trainees
+    )
 
     training_status_counts = {}
+
     outcome_status_counts = {}
+
     branch_counts = {}
+
     batch_counts = {}
 
     active_trainees = 0
+
     completed_trainees = 0
 
-    # Process every trainee
+    # -----------------------------------------------------
+    # PROCESS EVERY TRAINEE
+    # -----------------------------------------------------
+
     for trainee in trainees:
 
         trainee = trainee or {}
 
         training_status = str(
-            trainee.get("training_status", "")
+            trainee.get(
+                "training_status",
+                ""
+            )
         ).strip()
 
         outcome_status = str(
-            trainee.get("outcome_status", "")
+            trainee.get(
+                "outcome_status",
+                ""
+            )
         ).strip()
 
         branch = str(
-            trainee.get("branch", "")
+            trainee.get(
+                "branch",
+                ""
+            )
         ).strip()
 
         batch = str(
-            trainee.get("batch", "")
+            trainee.get(
+                "batch",
+                ""
+            )
         ).strip()
 
         # Replace empty values
-        training_status = training_status or "Unknown"
-        outcome_status = outcome_status or "Unknown"
-        branch = branch or "Unknown"
-        batch = batch or "Unknown"
-
-        # Count training statuses
-        training_status_counts[training_status] = (
-            training_status_counts.get(training_status, 0) + 1
+        training_status = (
+            training_status
+            or "Unknown"
         )
 
-        # Count outcome statuses
-        outcome_status_counts[outcome_status] = (
-            outcome_status_counts.get(outcome_status, 0) + 1
+        outcome_status = (
+            outcome_status
+            or "Unknown"
         )
 
-        # Count branches
-        branch_counts[branch] = (
-            branch_counts.get(branch, 0) + 1
+        branch = (
+            branch
+            or "Unknown"
         )
 
-        # Count batches
-        batch_counts[batch] = (
-            batch_counts.get(batch, 0) + 1
+        batch = (
+            batch
+            or "Unknown"
         )
 
-        # Calculate completed trainees
+        # -------------------------------------------------
+        # COUNT TRAINING STATUSES
+        # -------------------------------------------------
+
+        training_status_counts[
+            training_status
+        ] = (
+            training_status_counts.get(
+                training_status,
+                0
+            ) + 1
+        )
+
+        # -------------------------------------------------
+        # COUNT OUTCOME STATUSES
+        # -------------------------------------------------
+
+        outcome_status_counts[
+            outcome_status
+        ] = (
+            outcome_status_counts.get(
+                outcome_status,
+                0
+            ) + 1
+        )
+
+        # -------------------------------------------------
+        # COUNT BRANCHES
+        # -------------------------------------------------
+
+        branch_counts[
+            branch
+        ] = (
+            branch_counts.get(
+                branch,
+                0
+            ) + 1
+        )
+
+        # -------------------------------------------------
+        # COUNT BATCHES
+        # -------------------------------------------------
+
+        batch_counts[
+            batch
+        ] = (
+            batch_counts.get(
+                batch,
+                0
+            ) + 1
+        )
+
+        # -------------------------------------------------
+        # CALCULATE COMPLETED AND ACTIVE TRAINEES
+        # -------------------------------------------------
+
         if (
-            "completed" in training_status.lower()
-            or "placed" in training_status.lower()
-            or "employed" in outcome_status.lower()
+
+            "completed"
+            in training_status.lower()
+
+            or
+
+            "placed"
+            in training_status.lower()
+
+            or
+
+            "employed"
+            in outcome_status.lower()
+
         ):
 
             completed_trainees += 1
@@ -531,21 +816,72 @@ def calculate_dashboard_data(trainees):
 
             active_trainees += 1
 
+    # -----------------------------------------------------
+    # FINAL DASHBOARD DATA
+    # -----------------------------------------------------
+
     dashboard_result = {
+
         "total_trainees": total_trainees,
+
         "active_trainees": active_trainees,
+
         "completed_trainees": completed_trainees,
+
         "training_status_counts": training_status_counts,
+
         "outcome_status_counts": outcome_status_counts,
+
         "branch_counts": branch_counts,
+
         "batch_counts": batch_counts
+
     }
 
+    # -----------------------------------------------------
+    # DASHBOARD DEBUG
+    # -----------------------------------------------------
+
     print("\n========== DASHBOARD DEBUG ==========")
-    print("Trainees fetched from database:", trainees)
-    print("Total trainees:", total_trainees)
-    print("Dashboard data:", dashboard_result)
-    print("=====================================\n")
+
+    print(
+        "Trainees fetched from database:",
+        trainees
+    )
+
+    print(
+        "Total trainees:",
+        total_trainees
+    )
+
+    print(
+        "Completed trainees:",
+        completed_trainees
+    )
+
+    print(
+        "Active trainees:",
+        active_trainees
+    )
+
+    print(
+        "Outcome status counts:",
+        outcome_status_counts
+    )
+
+    print(
+        "Branch counts:",
+        branch_counts
+    )
+
+    print(
+        "Dashboard data:",
+        dashboard_result
+    )
+
+    print(
+        "=====================================\n"
+    )
 
     return dashboard_result
 
@@ -560,7 +896,9 @@ def admin_dashboard():
     # Only logged-in admin can access dashboard
     if "admin_id" not in session:
 
-        return redirect(url_for("admin_signin"))
+        return redirect(
+            url_for("admin_signin")
+        )
 
     # Fetch trainees belonging to logged-in admin
     trainees = get_trainees_by_admin(
@@ -568,10 +906,25 @@ def admin_dashboard():
     )
 
     print("\n========== DATABASE FETCH DEBUG ==========")
-    print("Logged-in admin ID:", session["admin_id"])
-    print("Fetched trainees:", trainees)
-    print("Number of fetched trainees:", len(trainees or []))
-    print("==========================================\n")
+
+    print(
+        "Logged-in admin ID:",
+        session["admin_id"]
+    )
+
+    print(
+        "Fetched trainees:",
+        trainees
+    )
+
+    print(
+        "Number of fetched trainees:",
+        len(trainees or [])
+    )
+
+    print(
+        "==========================================\n"
+    )
 
     # Convert database records into dashboard metrics
     dashboard_data = calculate_dashboard_data(
@@ -580,8 +933,11 @@ def admin_dashboard():
 
     # Send data to Jinja template
     return render_template(
+
         "admin/dashboard.html",
+
         dashboard_data=dashboard_data
+
     )
 
 

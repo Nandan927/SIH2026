@@ -12,13 +12,16 @@ from werkzeug.security import (
 # =========================================================
 
 # Get the main project folder
+# __file__ = database/db.py
+# First dirname = database folder
+# Second dirname = main project folder
 BASE_DIR = os.path.dirname(
     os.path.dirname(
         os.path.abspath(__file__)
     )
 )
 
-# One fixed database file for the complete application
+# Store database in the main project folder
 DATABASE_PATH = os.path.join(
     BASE_DIR,
     "horizon.db"
@@ -35,9 +38,14 @@ def get_connection():
         DATABASE_PATH
     )
 
-    # Allows us to access columns using column names
+    # Allows accessing columns by their names
     # Example: row["name"]
     connection.row_factory = sqlite3.Row
+
+    # Enable foreign-key checking in SQLite
+    connection.execute(
+        "PRAGMA foreign_keys = ON"
+    )
 
     return connection
 
@@ -49,6 +57,7 @@ def get_connection():
 def init_db():
 
     connection = get_connection()
+
     cursor = connection.cursor()
 
     # -----------------------------------------------------
@@ -98,7 +107,7 @@ def init_db():
 
             password TEXT NOT NULL,
 
-            admin_id INTEGER,
+            admin_id INTEGER NOT NULL,
 
             FOREIGN KEY (admin_id)
                 REFERENCES admins(id)
@@ -107,9 +116,13 @@ def init_db():
     """)
 
     connection.commit()
+
     connection.close()
 
-    print("Database initialized at:", DATABASE_PATH)
+    print(
+        "Database initialized at:",
+        DATABASE_PATH
+    )
 
 
 # =========================================================
@@ -124,11 +137,12 @@ def create_admin(
 ):
 
     connection = get_connection()
+
     cursor = connection.cursor()
 
     try:
 
-        # Convert plain admin password into hash
+        # Hash admin password before storing
         hashed_password = generate_password_hash(
             password
         )
@@ -164,7 +178,10 @@ def create_admin(
 
     except Exception as error:
 
-        print("CREATE ADMIN ERROR:", error)
+        print(
+            "CREATE ADMIN ERROR:",
+            error
+        )
 
         return {
             "success": False,
@@ -186,6 +203,7 @@ def check_admin(
 ):
 
     connection = get_connection()
+
     cursor = connection.cursor()
 
     cursor.execute("""
@@ -200,11 +218,12 @@ def check_admin(
 
     connection.close()
 
-    # No admin found
+    # Admin does not exist
     if admin is None:
+
         return None
 
-    # Compare entered password with stored hash
+    # Check entered password against stored hash
     if check_password_hash(
         admin["password"],
         password
@@ -233,6 +252,7 @@ def insert_trainee(
 ):
 
     connection = get_connection()
+
     cursor = connection.cursor()
 
     try:
@@ -241,36 +261,58 @@ def insert_trainee(
             INSERT INTO trainees (
 
                 trainee_id,
+
                 name,
+
                 email,
+
                 branch,
+
                 batch,
+
                 training_status,
+
                 outcome_status,
+
                 skills,
+
                 password,
+
                 admin_id
 
             )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
+
             trainee_id,
+
             name,
+
             email,
+
             branch,
+
             batch,
+
             training_status,
+
             outcome_status,
+
             skills,
+
             hashed_password,
+
             admin_id
+
         ))
 
         connection.commit()
 
         print(
-            f"Trainee inserted successfully: "
-            f"{trainee_id} | Admin ID: {admin_id}"
+            "Trainee inserted successfully:",
+            trainee_id,
+            "| Admin ID:",
+            admin_id
         )
 
         return True
@@ -278,7 +320,9 @@ def insert_trainee(
     except sqlite3.IntegrityError as error:
 
         print(
-            f"TRAINEE INSERT ERROR for {trainee_id}:",
+            "TRAINEE INSERT INTEGRITY ERROR:",
+            trainee_id,
+            "|",
             error
         )
 
@@ -287,7 +331,9 @@ def insert_trainee(
     except Exception as error:
 
         print(
-            f"GENERAL INSERT ERROR for {trainee_id}:",
+            "GENERAL TRAINEE INSERT ERROR:",
+            trainee_id,
+            "|",
             error
         )
 
@@ -305,10 +351,21 @@ def insert_trainee(
 def get_trainees_by_admin(admin_id):
 
     connection = get_connection()
+
     cursor = connection.cursor()
 
     cursor.execute("""
-        SELECT *
+        SELECT
+            id,
+            trainee_id,
+            name,
+            email,
+            branch,
+            batch,
+            training_status,
+            outcome_status,
+            skills,
+            admin_id
         FROM trainees
         WHERE admin_id = ?
         ORDER BY id DESC
@@ -318,7 +375,7 @@ def get_trainees_by_admin(admin_id):
 
     rows = cursor.fetchall()
 
-    # Convert sqlite3.Row objects into normal dictionaries
+    # Convert sqlite3.Row into normal dictionaries
     trainees = [
         dict(row)
         for row in rows
@@ -341,10 +398,21 @@ def get_trainees_by_admin(admin_id):
 def get_all_trainees():
 
     connection = get_connection()
+
     cursor = connection.cursor()
 
     cursor.execute("""
-        SELECT *
+        SELECT
+            id,
+            trainee_id,
+            name,
+            email,
+            branch,
+            batch,
+            training_status,
+            outcome_status,
+            skills,
+            admin_id
         FROM trainees
         ORDER BY id DESC
     """)
@@ -362,13 +430,43 @@ def get_all_trainees():
 
 
 # =========================================================
+# GET SINGLE TRAINEE BY TRAINEE ID
+# =========================================================
+
+def get_trainee_by_trainee_id(trainee_id):
+
+    connection = get_connection()
+
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM trainees
+        WHERE trainee_id = ?
+    """, (
+        trainee_id,
+    ))
+
+    row = cursor.fetchone()
+
+    connection.close()
+
+    if row is None:
+
+        return None
+
+    return dict(row)
+
+
+# =========================================================
 # DELETE ALL TRAINEES OF AN ADMIN
-# Optional helper for testing
+# Useful for testing
 # =========================================================
 
 def delete_trainees_by_admin(admin_id):
 
     connection = get_connection()
+
     cursor = connection.cursor()
 
     cursor.execute("""
