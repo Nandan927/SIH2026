@@ -858,14 +858,7 @@
 (() => {
   'use strict';
 
-  /* ═══════════════════════════════════════════════════════════
-     CONFIG — point these at your backend.
-     In Flask:
-       signinRoute : {{ url_for('admin.signin') }}
-       signupRoute : {{ url_for('admin.signup') }}
-       backRoute   : {{ url_for('common.role_selection') }}
-       dashboard   : {{ url_for('admin.dashboard') }}
-     ═══════════════════════════════════════════════════════════ */
+
   const ROUTES = {
     signin: "{{ url_for('admin_signin') }}",
     signup: "{{ url_for('admin_signup') }}",
