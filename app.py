@@ -270,12 +270,19 @@ def generate_trainee_password(length=12):
 
 @app.route("/admin/dashboard")
 def admin_dashboard():
-
-    # Only logged-in admin can access dashboard
     if "admin_id" not in session:
         return redirect(url_for("admin_signin"))
 
-    return render_template("admin/dashboard.html")
+    trainees = get_trainees_by_admin(session["admin_id"])
+
+    dashboard_data = calculate_dashboard_data(trainees)
+
+    return render_template(
+        "admin/dashboard.html",
+        dashboard_data=dashboard_data
+    )
+
+
 
 
 if __name__ == "__main__":
