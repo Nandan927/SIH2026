@@ -1,2115 +1,2078 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trainee Dashboard · Horizon</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Horizon | Trainee Career Navigator</title>
 
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<!-- FontAwesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-<!-- Chart.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
 <style>
-  :root{
-    --bg: #FAF8F5;
-    --card: #FFFFFF;
-    --border: #EADEC9;
-    --ink: #0F172A;
-    --ink-soft: #5B6472;
-    --ink-faint: #94A0B0;
-    --orange: #EA580C;
-    --amber: #F59E0B;
-    --grad: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%);
-    --grad-soft: linear-gradient(135deg, rgba(234,88,12,0.10) 0%, rgba(245,158,11,0.10) 100%);
-    --green: #16A34A;
-    --blue: #2563EB;
-    --violet: #7C3AED;
-    --red: #DC2626;
-    --teal: #0D9488;
-    --radius-lg: 14px;
-    --radius-md: 11px;
-    --radius-sm: 8px;
-    --shadow: 0 1px 2px rgba(15,23,42,0.04), 0 6px 18px -10px rgba(15,23,42,0.10);
-  }
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --primary:#ea580c;
+  --primary-dark:#c2410c;
+  --primary-soft:#ffedd5;
+  --primary-light:#fff7ed;
+  --accent:#0d9488;
+  --accent-soft:#ccfbf1;
+  --warn:#f59e0b;
+  --warn-soft:#fef3c7;
+  --danger:#ef4444;
+  --danger-soft:#fee2e2;
+  --ink:#0f172a;
+  --text:#334155;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --bg:#fdfbf7;
+  --card:#ffffff;
+  --radius:12px;
+  --radius-sm:8px;
+  --shadow:0 1px 2px rgba(16,24,40,.04), 0 4px 12px -6px rgba(16,24,40,.08);
+  --shadow-lg:0 10px 30px -15px rgba(16,24,40,.2);
+  --sidebar-w:230px;
+}
 
-  *{ box-sizing: border-box; }
-  html,body{ margin:0; padding:0; }
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:13px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,h5{font-family:'Poppins',sans-serif;color:var(--ink);line-height:1.3;font-weight:600;}
+a{text-decoration:none;color:inherit;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+ul{list-style:none;}
 
-  body{
-    background: var(--bg);
-    color: var(--ink);
-    font-family: 'Inter', -apple-system, sans-serif;
-    font-size: 13px;
-    -webkit-font-smoothing: antialiased;
-  }
+/* ============ LAYOUT ============ */
+.app{display:flex;min-height:100vh;}
 
-  h1,h2,h3,h4,.brand-name,.nav-link,.metric-value{
-    font-family: 'Poppins', 'Inter', sans-serif;
-  }
+/* ---- Sidebar ---- */
+.sidebar{
+  width:var(--sidebar-w);
+  background:#fff;
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;
+  position:fixed;inset:0 auto 0 0;
+  z-index:60;
+  transition:transform .28s ease;
+}
+.brand{
+  display:flex;align-items:center;gap:10px;
+  padding:16px 16px 14px;
+  border-bottom:1px solid var(--line);
+}
+.brand-mark{
+  width:32px;height:32px;border-radius:8px;flex:none;
+  background:linear-gradient(135deg,var(--primary),#f97316);
+  display:grid;place-items:center;color:#fff;font-size:14px;
+  box-shadow:0 4px 10px -4px rgba(234,88,12,.6);
+}
+.brand-text h1{font-size:14px;font-weight:700;letter-spacing:-.2px;}
+.brand-text span{font-size:10px;color:var(--muted);font-weight:500;letter-spacing:.3px;text-transform:uppercase;}
 
-  a{ text-decoration:none; color:inherit; }
-  button{ font-family:inherit; cursor:pointer; }
+/* Sidebar Add Button */
+.sidebar-add {
+  padding: 12px 12px 6px;
+}
+.sidebar-add .btn {
+  width: 100%;
+  justify-content: center;
+  padding: 8px 12px;
+  font-size: 12px;
+}
 
-  ::-webkit-scrollbar{ width:7px; height:7px; }
-  ::-webkit-scrollbar-thumb{ background: #E8DFCF; border-radius: 8px; }
-  ::-webkit-scrollbar-track{ background: transparent; }
+.nav{flex:1;overflow-y:auto;padding:10px 10px 16px;}
+.nav::-webkit-scrollbar{width:4px;}
+.nav::-webkit-scrollbar-thumb{background:#dbe1ec;border-radius:99px;}
+.nav-group{margin-bottom:14px;}
+.nav-label{
+  font-size:9.5px;font-weight:700;letter-spacing:.8px;
+  text-transform:uppercase;color:#9aa6bd;padding:0 8px 6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 10px;border-radius:var(--radius-sm);
+  font-size:12.5px;font-weight:500;color:var(--text);
+  cursor:pointer;transition:background .18s,color .18s;
+  position:relative;margin-bottom:1px;
+}
+.nav-item i{width:16px;text-align:center;font-size:13px;color:#8b97ad;transition:color .18s;}
+.nav-item:hover{background:#fdfbf7;color:var(--ink);}
+.nav-item:hover i{color:var(--primary);}
+.nav-item.active{background:var(--primary-soft);color:var(--primary);font-weight:600;}
+.nav-item.active i{color:var(--primary);}
+.nav-item.active::before{
+  content:'';position:absolute;left:-10px;top:6px;bottom:6px;width:2.5px;
+  background:var(--primary);border-radius:0 4px 4px 0;
+}
+.nav-badge{
+  margin-left:auto;background:var(--danger);color:#fff;
+  font-size:9px;font-weight:700;padding:1px 6px;border-radius:99px;
+}
 
-  :focus-visible{ outline: 2px solid var(--orange); outline-offset: 2px; }
+/* Sidebar Footer & Logout */
+.sidebar-foot{padding:12px;border-top:1px solid var(--line);}
+.consent-chip{
+  display:flex;align-items:center;gap:8px;padding:8px 10px;
+  background:var(--accent-soft);border:1px solid #a7f3d0;border-radius:var(--radius-sm);
+  font-size:11px;color:#0f766e;font-weight:500;margin-bottom:10px;
+}
+.consent-chip i{font-size:12px;}
 
-  /* ===== SHELL ===== */
-  .shell{
-    display:grid;
-    grid-template-columns: 224px 1fr;
-    min-height: 100vh;
-  }
+.sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--danger);
+  cursor: pointer;
+  transition: background .18s;
+}
+.sidebar-logout i { width: 16px; text-align: center; font-size: 13px; color: var(--danger); }
+.sidebar-logout:hover { background: var(--danger-soft); }
 
-  /* ===== SIDEBAR ===== */
-  .sidebar{
-    background: #FFFFFF;
-    border-right: 1px solid var(--border);
-    padding: 18px 12px;
-    display:flex;
-    flex-direction:column;
-    position: sticky;
-    top:0;
-    height:100vh;
-    overflow-y:auto;
-  }
+/* ---- Main ---- */
+.main{flex:1;margin-left:var(--sidebar-w);display:flex;flex-direction:column;min-width:0;}
 
-  .brand{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding: 2px 8px 16px 8px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 12px;
-  }
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,255,255,.9);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  padding:10px 20px;
+  display:flex;align-items:center;gap:12px;
+}
+.hamburger{display:none;font-size:16px;color:var(--ink);padding:4px;}
+.searchbox{
+  flex:1;max-width:320px;position:relative;
+}
+.searchbox i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#9aa6bd;font-size:12px;}
+.searchbox input{
+  width:100%;padding:7px 12px 7px 32px;border:1px solid var(--line);
+  border-radius:99px;background:#f8fafd;font-size:12px;color:var(--ink);
+  outline:none;transition:.2s;
+}
+.searchbox input:focus{border-color:#fdba74;background:#fff;box-shadow:0 0 0 3px rgba(234,88,12,.06);}
 
-  .brand-mark{
-    width:34px; height:34px;
-    border-radius: 9px;
-    background: var(--grad);
-    display:flex; align-items:center; justify-content:center;
-    color:#fff; font-weight:800; font-size:15px;
-    box-shadow: 0 5px 14px -4px rgba(234,88,12,0.55), 0 0 0 3px rgba(245,158,11,0.12);
-    flex-shrink:0;
-    position: relative;
-    overflow: hidden;
-  }
-  .brand-mark::after{
-    content:"";
-    position:absolute; inset:0;
-    background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.55), transparent 55%);
-  }
-  .brand-mark::before{
-    content:"";
-    position:absolute; inset:-8px;
-    border-radius:50%;
-    background: radial-gradient(circle, rgba(249,168,37,0.4), transparent 70%);
-    z-index:-1;
-    filter: blur(7px);
-    animation: brandGlow 3.4s ease-in-out infinite;
-  }
-  @keyframes brandGlow{
-    0%,100%{ opacity:.6; transform:scale(1); }
-    50%{ opacity:1; transform:scale(1.1); }
-  }
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.icon-btn{
+  width:32px;height:32px;border-radius:8px;display:grid;place-items:center;
+  color:var(--muted);font-size:13px;transition:.18s;position:relative;
+}
+.icon-btn:hover{background:var(--primary-light);color:var(--primary);}
+.icon-btn .dot{
+  position:absolute;top:6px;right:7px;width:6px;height:6px;
+  background:var(--danger);border-radius:50%;border:1.5px solid #fff;
+}
+.lang-pill{
+  display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:99px;
+  border:1px solid var(--line);font-size:11px;font-weight:600;color:var(--text);transition:.18s;
+}
+.lang-pill:hover{border-color:#fdba74;color:var(--primary);}
 
-  .brand-name{
-    font-weight:700;
-    font-size:15px;
-    letter-spacing:-0.02em;
-    line-height:1.1;
-  }
-  .brand-sub{
-    font-size:9.5px;
-    color: var(--ink-faint);
-    font-weight:600;
-    margin-top:2px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
+/* User Profile Chip */
+.user-chip-wrap {
+  position: relative;
+}
+.user-chip{
+  display:flex;align-items:center;gap:8px;padding:3px 8px 3px 3px;
+  border-radius:99px;border:1px solid var(--line);transition:.18s;background:#fff;
+}
 
-  .nav-group-label{
-    font-size:9.5px;
-    color: var(--ink-faint);
-    font-weight:700;
-    padding: 4px 12px 6px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
+/* Default Avatar Style */
+.avatar-img {
+  width:28px;height:28px;border-radius:50%;flex:none;
+  background: #e2e8f0;
+  color: #64748b;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  border: 1.5px solid #fff;
+  box-shadow: 0 0 0 1px var(--line);
+}
+.user-chip .u-name{font-size:11.5px;font-weight:600;color:var(--ink);line-height:1.1;}
+.user-chip .u-id{font-size:9.5px;color:var(--muted);}
 
-  .nav{
-    display:flex;
-    flex-direction:column;
-    gap:2px;
-  }
+.content{padding:18px 20px 50px;max-width:1300px;width:100%;}
 
-  .nav-link{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding: 8px 11px;
-    border-radius: 9px;
-    font-size:12.5px;
-    font-weight:500;
-    color: var(--ink-soft);
-    transition: background .15s ease, color .15s ease, transform .15s ease;
-    cursor: pointer;
-    position: relative;
-  }
-  .nav-link i{ width:16px; text-align:center; font-size:12.5px; color: var(--ink-faint); transition: color .15s ease; }
+/* ---- Views ---- */
+.view{display:none;animation:fade .3s ease;}
+.view.active{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
 
-  .nav-link:hover{ background: #FBF3E8; color: var(--ink); transform: translateX(2px); }
-  .nav-link:hover i{ color: var(--orange); }
+.page-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.page-head h2{font-size:18px;font-weight:700;letter-spacing:-.3px;}
+.page-head p{font-size:12px;color:var(--muted);margin-top:2px;}
+.page-head .head-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;}
 
-  .nav-link.active{
-    background: var(--grad);
-    color:#fff;
-    box-shadow: 0 5px 14px -6px rgba(234,88,12,0.55);
-  }
-  .nav-link.active i{ color:#fff; }
+/* ============ COMPONENTS ============ */
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px;box-shadow:var(--shadow);
+}
+.card-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.card-head h3{font-size:13.5px;font-weight:600;}
+.card-head .sub{font-size:11px;color:var(--muted);}
+.card-head .right{margin-left:auto;display:flex;align-items:center;gap:6px;}
 
-  .nav-link .nav-badge{
-    margin-left: auto;
-    font-size: 9.5px;
-    font-weight: 700;
-    padding: 1px 6px;
-    border-radius: 999px;
-    background: #FCEAEA;
-    color: var(--red);
-    letter-spacing: 0.02em;
-  }
-  .nav-link.active .nav-badge{
-    background: rgba(255,255,255,0.25);
-    color: #fff;
-  }
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;
+  transition:.18s;white-space:nowrap;
+}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 12px -6px rgba(234,88,12,.8);}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px);}
+.btn-ghost{background:#fff;border:1px solid var(--line);color:var(--text);}
+.btn-ghost:hover{border-color:#fdba74;color:var(--primary);background:var(--primary-light);}
+.btn-soft{background:var(--primary-soft);color:var(--primary);}
+.btn-soft:hover{background:#fed7aa;}
+.btn-sm{padding:5px 10px;font-size:11px;border-radius:6px;}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 
-  .nav-divider{
-    height: 1px;
-    background: var(--border);
-    margin: 10px 6px;
-  }
+.pill{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600;
+}
+.pill-green{background:var(--accent-soft);color:#0f766e;}
+.pill-blue{background:var(--primary-soft);color:var(--primary);}
+.pill-amber{background:var(--warn-soft);color:#b45309;}
+.pill-red{background:var(--danger-soft);color:#b91c1c;}
+.pill-gray{background:#f1f5f9;color:var(--muted);}
 
-  .sidebar-spacer{ flex:1; min-height: 12px; }
+/* ---- Hero ---- */
+.hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(120deg,#9a3412 0%,#ea580c 55%,#f97316 100%);
+  border-radius:14px;padding:20px 22px;color:#fff;
+  display:flex;gap:20px;align-items:center;flex-wrap:wrap;
+  box-shadow:var(--shadow-lg);
+}
+.hero::after{
+  content:'';position:absolute;right:-60px;top:-60px;width:220px;height:220px;
+  background:radial-gradient(circle,rgba(255,255,255,.14),transparent 68%);border-radius:50%;
+}
+.hero::before{
+  content:'';position:absolute;right:120px;bottom:-80px;width:180px;height:180px;
+  background:radial-gradient(circle,rgba(255,237,213,.25),transparent 68%);border-radius:50%;
+}
+.hero-left{flex:1;min-width:240px;position:relative;z-index:1;}
+.hero-left .tag{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);
+  padding:3px 9px;border-radius:99px;font-size:9.5px;font-weight:600;
+  letter-spacing:.3px;margin-bottom:10px;
+}
+.hero-left h2{color:#fff;font-size:19px;font-weight:700;letter-spacing:-.3px;}
+.hero-left p{color:rgba(255,255,255,.85);font-size:12.5px;margin-top:4px;max-width:480px;}
+.hero-meta{display:flex;gap:18px;margin-top:14px;flex-wrap:wrap;}
+.hero-meta div span{display:block;font-size:10px;color:rgba(255,255,255,.7);letter-spacing:.3px;text-transform:uppercase;font-weight:600;}
+.hero-meta div strong{font-size:13.5px;font-weight:600;font-family:'Poppins';}
+.hero-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+.hero .btn-ghost{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff;}
+.hero .btn-ghost:hover{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.35);}
+.hero .btn-light{background:#fff;color:var(--primary);}
+.hero .btn-light:hover{background:var(--primary-light);}
 
-  .sidebar-foot{
-    display:flex;
-    flex-direction:column;
-    gap: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-  }
+/* Readiness ring */
+.ring-wrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.ring{
+  width:120px;height:120px;border-radius:50%;
+  background:conic-gradient(#5eead4 calc(var(--p) * 1%), rgba(255,255,255,.18) 0);
+  display:grid;place-items:center;position:relative;
+  box-shadow:0 0 0 6px rgba(255,255,255,.06);
+}
+.ring-inner{
+  width:94px;height:94px;border-radius:50%;
+  background:#c2410c;display:grid;place-items:center;text-align:center;
+  position:relative;z-index:1;
+}
+.ring-inner strong{font-family:'Poppins';font-size:22px;font-weight:700;color:#fff;display:block;line-height:1;}
+.ring-inner small{font-size:9px;color:rgba(255,255,255,.75);letter-spacing:.5px;text-transform:uppercase;font-weight:600;}
+.ring-caption{font-size:10.5px;color:rgba(255,255,255,.8);font-weight:500;}
 
-  .logout-link{
-    display:flex; align-items:center; gap:10px;
-    padding: 8px 11px;
-    border-radius: 9px;
-    font-size:12.5px;
-    font-weight:500;
-    color: #B33A2A;
-    transition: background .15s ease;
-    cursor: pointer;
-  }
-  .logout-link:hover{ background: #FDECEA; }
-  .logout-link i{ width:16px; text-align:center; font-size:12.5px; }
+/* ---- Stat grid ---- */
+.grid{display:grid;gap:12px;}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+.grid-2-1{grid-template-columns:1.6fr 1fr;}
 
-  .sidebar-graphic{
-    border-radius: var(--radius-md);
-    background: var(--grad-soft);
-    border: 1px solid var(--border);
-    padding: 10px 10px;
-    text-align:center;
-  }
-  .sidebar-graphic svg{ width:100%; height:auto; display:block; margin-bottom:4px; }
-  .sidebar-graphic p{
-    font-size:10.5px;
-    color: var(--ink-soft);
-    margin:0;
-    line-height:1.4;
-  }
-  .sidebar-graphic strong{ color: var(--orange); }
+.stat{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 15px;box-shadow:var(--shadow);transition:.2s;
+}
+.stat:hover{transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(16,24,40,.2);}
+.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.stat-ico{
+  width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-size:13px;
+}
+.i-indigo{background:var(--primary-soft);color:var(--primary);}
+.i-teal{background:var(--accent-soft);color:var(--accent);}
+.i-amber{background:var(--warn-soft);color:#d97706;}
+.i-red{background:var(--danger-soft);color:var(--danger);}
+.stat h4{font-size:20px;font-weight:700;font-family:'Poppins';letter-spacing:-.4px;}
+.stat p{font-size:11.5px;color:var(--muted);font-weight:500;}
+.stat .trend{font-size:10px;font-weight:600;display:inline-flex;align-items:center;gap:3px;margin-top:4px;}
+.t-up{color:#0f766e;}
+.t-down{color:#b91c1c;}
 
-  /* ===== MAIN ===== */
-  .main{
-    padding: 16px 22px 44px;
-    min-width:0;
-  }
+/* ---- Progress bars ---- */
+.bar{height:6px;background:#eef1f7;border-radius:99px;overflow:hidden;}
+.bar > span{display:block;height:100%;border-radius:99px;background:var(--primary);transition:width 1s cubic-bezier(.2,.8,.2,1);}
+.bar.teal > span{background:var(--accent);}
+.bar.amber > span{background:var(--warn);}
+.bar.red > span{background:var(--danger);}
 
-  /* Header */
-  .topbar{
-    display:flex;
-    align-items:center;
-    gap:16px;
-    margin-bottom: 20px;
-  }
+/* ---- Skill rows ---- */
+.skill-row{padding:10px 0;border-bottom:1px dashed var(--line);}
+.skill-row:last-child{border-bottom:none;padding-bottom:0;}
+.skill-row:first-child{padding-top:0;}
+.skill-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.skill-head strong{font-size:12.5px;font-weight:600;color:var(--ink);}
+.skill-head .right{margin-left:auto;font-size:11px;font-weight:600;color:var(--muted);}
+.skill-track{display:flex;gap:8px;align-items:center;}
+.skill-note{font-size:10.5px;color:var(--muted);margin-top:5px;display:flex;align-items:center;gap:4px;}
 
-  .search-pill{
-    flex:1;
-    max-width: 440px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 9px 15px;
-    box-shadow: var(--shadow);
-    transition: all .2s ease;
-  }
-  .search-pill:focus-within{
-    border-color: var(--orange);
-    box-shadow: 0 0 0 3px rgba(234,88,12,0.10);
-  }
-  .search-pill i{ color: var(--ink-faint); font-size:12.5px; }
-  .search-pill input{
-    border:none; outline:none; background:transparent;
-    font-size:12.5px; width:100%; color: var(--ink); font-family:'Inter',sans-serif;
-  }
-  .search-pill input::placeholder{ color: var(--ink-faint); }
+/* ---- Next best action ---- */
+.nba{
+  border-left:3px solid var(--primary);
+  background:linear-gradient(90deg,var(--primary-light), #ffffff);
+}
+.nba-item{
+  display:flex;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line);
+}
+.nba-item:last-child{border-bottom:none;padding-bottom:0;}
+.nba-item:first-child{padding-top:0;}
+.nba-num{
+  width:22px;height:22px;border-radius:6px;flex:none;display:grid;place-items:center;
+  background:var(--primary-soft);color:var(--primary);font-size:10px;font-weight:700;
+}
+.nba-item h5{font-size:12.5px;font-weight:600;color:var(--ink);}
+.nba-item p{font-size:11px;color:var(--muted);margin-top:1px;}
+.nba-item .meta{font-size:10px;color:var(--primary);font-weight:600;margin-top:4px;display:flex;gap:10px;}
 
-  .topbar-spacer{ flex:1; }
+/* ---- Timeline ---- */
+.timeline{position:relative;padding-left:20px;}
+.timeline::before{content:'';position:absolute;left:5px;top:4px;bottom:4px;width:2px;background:var(--line);}
+.tl-item{position:relative;padding-bottom:14px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{
+  content:'';position:absolute;left:-20px;top:3px;width:10px;height:10px;border-radius:50%;
+  background:#fff;border:2px solid var(--primary);
+}
+.tl-item.done::before{background:var(--primary);}
+.tl-item.pending::before{border-color:#cbd5e1;}
+.tl-item h5{font-size:12px;font-weight:600;color:var(--ink);}
+.tl-item p{font-size:11px;color:var(--muted);margin-top:1px;}
+.tl-item time{font-size:10px;color:#94a3b8;font-weight:500;}
 
-  .icon-btn{
-    width:36px; height:36px;
-    border-radius: 10px;
-    border:1px solid var(--border);
-    background:#fff;
-    display:flex; align-items:center; justify-content:center;
-    position:relative;
-    color: var(--ink-soft);
-    font-size: 13px;
-    box-shadow: var(--shadow);
-    transition: all .2s ease;
-  }
-  .icon-btn:hover{ transform: translateY(-1px); border-color: var(--orange); color: var(--orange); }
-  .icon-btn .dot{
-    position:absolute; top:7px; right:8px;
-    width:6px; height:6px; border-radius:50%;
-    background: var(--orange);
-    box-shadow: 0 0 0 2px #fff;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse{
-    0%,100%{ transform:scale(1); opacity:1; }
-    50%{ transform:scale(1.2); opacity:.7; }
-  }
+/* ---- Role cards ---- */
+.role-card{
+  border:1px solid var(--line);border-radius:var(--radius);padding:14px;
+  background:#fff;transition:.2s;position:relative;overflow:hidden;
+}
+.role-card:hover{border-color:#fdba74;box-shadow:0 10px 24px -14px rgba(16,24,40,.2);transform:translateY(-2px);}
+.role-top{display:flex;gap:10px;align-items:flex-start;}
+.role-ico{
+  width:36px;height:36px;border-radius:10px;flex:none;display:grid;place-items:center;font-size:15px;
+  background:var(--primary-soft);color:var(--primary);
+}
+.role-top h4{font-size:13px;font-weight:600;}
+.role-top p{font-size:10.5px;color:var(--muted);}
+.match-pill{
+  margin-left:auto;text-align:right;
+}
+.match-pill strong{font-family:'Poppins';font-size:15px;font-weight:700;color:var(--accent);display:block;line-height:1;}
+.match-pill small{font-size:9px;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;font-weight:600;}
+.role-facts{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap;}
+.role-facts div{font-size:10.5px;color:var(--muted);}
+.role-facts div strong{display:block;font-size:11.5px;color:var(--ink);font-weight:600;}
+.role-foot{display:flex;gap:6px;margin-top:12px;}
 
-  .profile-trigger{
-    display:flex; align-items:center; gap:8px;
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius: 999px;
-    padding: 4px 12px 4px 4px;
-    box-shadow: var(--shadow);
-    transition: all .2s ease;
-  }
-  .profile-trigger:hover{ border-color: var(--orange); transform: translateY(-1px); }
-  .avatar{
-    width:28px; height:28px; border-radius:50%;
-    background: var(--grad);
-    background-size: cover;
-    background-position: center;
-    display:flex; align-items:center; justify-content:center;
-    color:#fff; font-weight:700; font-size:11px;
-    flex-shrink: 0;
-  }
-  .profile-trigger .p-info{ line-height: 1.15; text-align: left; }
-  .profile-trigger .p-name{ font-size:11.5px; font-weight: 700; color: var(--ink); }
-  .profile-trigger .p-roll{ font-size: 9.5px; color: var(--ink-faint); font-weight: 500; margin-top: 1px; }
-  .profile-trigger .chev{ font-size:9px; color: var(--ink-faint); }
+/* ---- Course cards ---- */
+.course-card{
+  border:1px solid var(--line);border-radius:var(--radius);padding:14px;background:#fff;
+  display:flex;flex-direction:column;gap:10px;transition:.2s;
+}
+.course-card:hover{border-color:#fdba74;box-shadow:0 10px 24px -14px rgba(16,24,40,.2);}
+.course-top{display:flex;gap:10px;align-items:flex-start;}
+.course-ico{
+  width:34px;height:34px;border-radius:8px;flex:none;display:grid;place-items:center;font-size:14px;
+  background:var(--accent-soft);color:var(--accent);
+}
+.course-card h4{font-size:12.5px;font-weight:600;}
+.course-card .csub{font-size:10.5px;color:var(--muted);margin-top:1px;}
+.course-tags{display:flex;gap:4px;flex-wrap:wrap;}
+.tag-mini{
+  font-size:9.5px;font-weight:600;padding:2px 8px;border-radius:99px;
+  background:#f4f6fc;color:var(--muted);
+}
 
-  /* ===== GREETING BANNER ===== */
-  .greeting-banner{
-    background: linear-gradient(135deg, #FFFFFF 0%, #FFF9F0 100%);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 16px 20px;
-    box-shadow: var(--shadow);
-    margin-bottom: 16px;
-    position: relative;
-    overflow: hidden;
-  }
-  .greeting-banner::before{
-    content:"";
-    position:absolute; top:-40%; right:-8%;
-    width:220px; height:220px;
-    background: radial-gradient(circle, rgba(245,158,11,0.14), transparent 70%);
-    pointer-events: none;
-  }
-  .greeting-banner::after{
-    content:"";
-    position:absolute; bottom:-30%; left:-5%;
-    width:180px; height:180px;
-    background: radial-gradient(circle, rgba(234,88,12,0.08), transparent 70%);
-    pointer-events: none;
-  }
+/* ---- Job rows ---- */
+.job-row{
+  display:flex;gap:12px;align-items:center;padding:12px;
+  border:1px solid var(--line);border-radius:var(--radius);background:#fff;transition:.2s;
+}
+.job-row:hover{border-color:#fdba74;background:#fcfdff;}
+.job-logo{
+  width:38px;height:38px;border-radius:10px;flex:none;display:grid;place-items:center;
+  background:var(--primary-light);color:var(--primary);font-weight:700;font-size:12px;font-family:'Poppins';
+}
+.job-info{flex:1;min-width:0;}
+.job-info h4{font-size:12.5px;font-weight:600;}
+.job-info p{font-size:10.5px;color:var(--muted);margin-top:1px;}
+.job-tags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;}
+.job-right{text-align:right;flex:none;}
 
-  .greeting-head{
-    display: flex; align-items: flex-start; justify-content: space-between;
-    gap: 16px; flex-wrap: wrap; margin-bottom: 12px; position: relative; z-index: 1;
-  }
-  .greeting-title{
-    font-size: 17px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin: 0 0 4px;
-    color: var(--ink);
-  }
-  .greeting-title .wave{ display: inline-block; animation: wave 2.4s ease-in-out infinite; transform-origin: 70% 70%; }
-  @keyframes wave{
-    0%,100%{ transform: rotate(0deg); }
-    15%{ transform: rotate(14deg); }
-    30%{ transform: rotate(-8deg); }
-    45%{ transform: rotate(14deg); }
-    60%{ transform: rotate(-4deg); }
-    75%{ transform: rotate(10deg); }
-  }
-  .greeting-sub{
-    font-size: 12px;
-    color: var(--ink-soft);
-    margin: 0;
-  }
+/* ---- Table ---- */
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:#fff;}
+table{width:100%;border-collapse:collapse;min-width:580px;}
+thead th{
+  text-align:left;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  color:var(--muted);padding:10px 14px;background:#fafbfe;border-bottom:1px solid var(--line);
+}
+tbody td{padding:12px 14px;font-size:12px;border-bottom:1px solid #f1f4fa;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:var(--primary-light);}
 
-  .quick-badges{
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    position: relative;
-    z-index: 1;
-  }
-  .quick-badge{
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 11px;
-    border-radius: 999px;
-    background: #FFFFFF;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    font-size: 11.5px;
-    font-weight: 600;
-    color: var(--ink);
-  }
-  .quick-badge i{
-    font-size: 10.5px;
-    color: var(--orange);
-  }
-  .quick-badge .qb-label{
-    color: var(--ink-faint);
-    font-weight: 500;
-    font-size: 10.5px;
-  }
-  .quick-badge .qb-value{
-    color: var(--ink);
-    font-weight: 700;
-    font-family: 'Poppins', sans-serif;
-    font-size: 11.5px;
-  }
+/* ---- Wage chart ---- */
+.chart{display:flex;align-items:flex-end;gap:14px;height:160px;padding:10px 4px 0;}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;}
+.chart-bar{
+  width:100%;max-width:44px;border-radius:8px 8px 4px 4px;
+  background:linear-gradient(180deg,#fdba74,#ea580c);position:relative;transition:height 1s cubic-bezier(.2,.8,.2,1);
+}
+.chart-bar.proj{background:linear-gradient(180deg,#5eead4,#0d9488);opacity:.85;}
+.chart-bar span{
+  position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+  font-size:10px;font-weight:700;color:var(--ink);white-space:nowrap;
+}
+.chart-col small{font-size:10px;color:var(--muted);font-weight:500;}
 
-  /* ===== METRIC GRID ===== */
-  .grid-4{ display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; }
-  .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+/* ---- Consent toggles ---- */
+.consent-row{
+  display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line);
+}
+.consent-row:last-child{border-bottom:none;padding-bottom:0;}
+.consent-row:first-child{padding-top:0;}
+.consent-row .ico{
+  width:32px;height:32px;border-radius:8px;flex:none;display:grid;place-items:center;
+  background:#f4f6fc;color:var(--primary);font-size:13px;
+}
+.consent-row h5{font-size:12px;font-weight:600;color:var(--ink);}
+.consent-row p{font-size:10.5px;color:var(--muted);margin-top:1px;}
+.switch{margin-left:auto;position:relative;width:38px;height:20px;flex:none;}
+.switch input{opacity:0;width:0;height:0;}
+.slider{
+  position:absolute;inset:0;background:#d7dde9;border-radius:99px;transition:.25s;cursor:pointer;
+}
+.slider::before{
+  content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;
+  background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 2px rgba(0,0,0,.15);
+}
+.switch input:checked + .slider{background:var(--accent);}
+.switch input:checked + .slider::before{transform:translateX(18px);}
 
-  .section-head{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    margin: 22px 0 10px;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .section-head h2{
-    font-size:13.5px;
-    font-weight:600;
-    margin:0;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .section-head h2 i{
-    color: var(--orange);
-    font-size: 12px;
-  }
-  .section-head .section-note{
-    font-size:11px;
-    color: var(--ink-faint);
-  }
+/* ---- Survey ---- */
+.survey-q{margin-bottom:14px;}
+.survey-q label{font-size:12px;font-weight:600;color:var(--ink);display:block;margin-bottom:6px;}
+.opt-grid{display:flex;gap:6px;flex-wrap:wrap;}
+.opt{
+  padding:6px 12px;border:1px solid var(--line);border-radius:6px;font-size:11px;
+  font-weight:500;color:var(--text);cursor:pointer;transition:.18s;background:#fff;
+}
+.opt:hover{border-color:#fdba74;background:var(--primary-light);}
+.opt.selected{border-color:var(--primary);background:var(--primary-soft);color:var(--primary);font-weight:600;}
+textarea, select, input[type=text]{
+  width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;
+  font-family:inherit;font-size:12px;color:var(--ink);outline:none;background:#fbfcfe;transition:.18s;resize:vertical;
+}
+textarea:focus, select:focus, input[type=text]:focus{border-color:#fdba74;background:#fff;box-shadow:0 0 0 3px rgba(234,88,12,.06);}
 
-  .metric-card{
-    background: var(--card);
-    border:1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 13px 14px;
-    box-shadow: var(--shadow);
-    display:flex;
-    flex-direction:column;
-    gap:9px;
-    transition: all .25s cubic-bezier(.4,0,.2,1);
-    position: relative;
-    overflow: hidden;
-  }
-  .metric-card:hover{
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(15,23,42,0.04), 0 12px 26px -12px rgba(15,23,42,0.14);
-    border-color: rgba(234,88,12,0.25);
-  }
-  .metric-top{ display:flex; align-items:center; justify-content:space-between; }
-  .metric-icon{
-    width:30px; height:30px;
-    border-radius: 8px;
-    display:flex; align-items:center; justify-content:center;
-    font-size:12px;
-    color:#fff;
-  }
-  .metric-label-pill{
-    font-size:9.5px;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 999px;
-    background: #F1F2F4;
-    color: var(--ink-faint);
-    letter-spacing: 0.02em;
-  }
-  .metric-label-pill.ok{ background:#EAF7EE; color: #15803D; }
-  .metric-label-pill.warn{ background:#FEF3E0; color: #B7791F; }
-  .metric-label-pill.danger{ background:#FCEAEA; color: #B91C1C; }
-  .metric-label-pill.info{ background:#E8F0FE; color: #1D4ED8; }
+/* ---- Empty / info box ---- */
+.info-box{
+  display:flex;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);
+  background:var(--primary-soft);border:1px solid #fed7aa;font-size:11.5px;color:#9a3412;
+}
+.info-box i{font-size:13px;margin-top:1px;}
+.info-box.teal{background:var(--accent-soft);border-color:#a7f3d0;color:#0f766e;}
+.info-box.amber{background:var(--warn-soft);border-color:#fde68a;color:#92400e;}
 
-  .metric-value{ font-size:18px; font-weight:700; letter-spacing:-0.02em; line-height: 1.1; }
-  .metric-label{ font-size:11px; color: var(--ink-soft); font-weight:500; margin-top: 2px; }
+/* ---- Empty State ---- */
+.empty-state {
+  text-align: center;
+  padding: 24px 16px;
+  color: var(--muted);
+}
+.empty-state i {
+  font-size: 28px;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+}
+.empty-state p {
+  font-size: 12px;
+}
 
-  .metric-progress{
-    height: 4px;
-    background: #F1E7D8;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-top: 3px;
-  }
-  .metric-progress > span{
-    display: block;
-    height: 100%;
-    background: var(--grad);
-    border-radius: 4px;
-    transition: width .8s cubic-bezier(.4,0,.2,1);
-  }
+/* ---- Modal ---- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+}
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+.modal-content {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
+}
+.modal-overlay.show .modal-content {
+  transform: translateY(0);
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.modal-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+}
+.modal-header .close-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  transition: background 0.15s;
+}
+.modal-header .close-btn:hover {
+  background: #f1f5f9;
+  color: var(--danger);
+}
+.modal-body .form-group {
+  margin-bottom: 12px;
+}
+.modal-body .form-group label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
 
-  .bg-orange{ background: linear-gradient(135deg,#EA580C,#F97316); }
-  .bg-amber{ background: linear-gradient(135deg,#F59E0B,#FBBF24); }
-  .bg-slate{ background: linear-gradient(135deg,#334155,#0F172A); }
-  .bg-green{ background: linear-gradient(135deg,#16A34A,#22C55E); }
-  .bg-blue{ background: linear-gradient(135deg,#2563EB,#3B82F6); }
-  .bg-violet{ background: linear-gradient(135deg,#7C3AED,#A855F7); }
-  .bg-teal{ background: linear-gradient(135deg,#0D9488,#14B8A6); }
-  .bg-pink{ background: linear-gradient(135deg,#DB2777,#EC4899); }
-  .bg-muted{ background: linear-gradient(135deg,#CBD5E1,#94A3B8); }
+/* ---- Toast ---- */
+.toast-wrap{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:8px;}
+.toast{
+  background:#0f172a;color:#fff;padding:10px 14px;border-radius:8px;font-size:12px;font-weight:500;
+  box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:8px;
+  animation:slideIn .3s ease;max-width:300px;
+}
+.toast i{color:#5eead4;font-size:13px;}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
 
-  /* ===== COMPANY CARDS ===== */
-  .companies-grid{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-  .company-card{
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 13px 14px;
-    box-shadow: var(--shadow);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    transition: all .25s cubic-bezier(.4,0,.2,1);
-    position: relative;
-    overflow: hidden;
-  }
-  .company-card::before{
-    content: "";
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 3px;
-    background: var(--grad);
-    opacity: 0;
-    transition: opacity .25s ease;
-  }
-  .company-card:hover{
-    transform: translateY(-3px);
-    box-shadow: 0 4px 6px rgba(15,23,42,0.04), 0 16px 30px -14px rgba(15,23,42,0.16);
-    border-color: rgba(234,88,12,0.28);
-  }
-  .company-card:hover::before{ opacity: 1; }
+/* ---- Overlay for mobile ---- */
+.overlay{
+  position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:55;
+  opacity:0;visibility:hidden;transition:.25s;
+}
+.overlay.show{opacity:1;visibility:visible;}
 
-  .company-head{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .company-logo{
-    width: 38px; height: 38px;
-    border-radius: 10px;
-    background: var(--grad);
-    color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-    font-size: 13px;
-    flex-shrink: 0;
-    box-shadow: 0 5px 14px -6px rgba(234,88,12,0.5);
-    position: relative;
-    overflow: hidden;
-  }
-  .company-logo::after{
-    content:"";
-    position:absolute; inset:0;
-    background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.5), transparent 55%);
-  }
-  .company-info{ min-width: 0; flex: 1; }
-  .company-name{
-    font-family: 'Poppins', sans-serif;
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--ink);
-    margin: 0 0 2px;
-    line-height: 1.2;
-  }
-  .company-role{
-    font-size: 11px;
-    color: var(--ink-soft);
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .match-badge{
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 9.5px;
-    font-weight: 800;
-    padding: 3px 8px;
-    border-radius: 999px;
-    letter-spacing: 0.02em;
-    background: #EAF7EE;
-    color: #15803D;
-  }
-  .match-badge.medium{ background: #FEF3E0; color: #B7791F; }
-  .match-badge.low{ background: #FCEAEA; color: #B91C1C; }
-  .match-badge i{ font-size: 9px; }
-
-  .company-skills{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-  .skill-chip{
-    font-size: 10px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 999px;
-    background: #FCFAF6;
-    border: 1px solid var(--border);
-    color: var(--ink-soft);
-  }
-  .skill-chip.gap{
-    background: #FEF3E0;
-    border-color: #FDE68A;
-    color: #B7791F;
-  }
-  .skill-chip strong{ color: var(--ink); font-weight: 700; }
-
-  .company-footer{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding-top: 10px;
-    border-top: 1px dashed var(--border);
-  }
-  .company-deadline{
-    font-size: 10px;
-    color: var(--ink-faint);
-    font-weight: 500;
-  }
-  .company-deadline strong{ color: var(--red); font-weight: 700; }
-
-  .apply-btn{
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 11px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 700;
-    background: var(--grad);
-    color: #fff;
-    border: none;
-    box-shadow: 0 5px 12px -6px rgba(234,88,12,0.55);
-    transition: all .2s ease;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  .apply-btn:hover{ filter: brightness(1.05); transform: translateY(-1px); box-shadow: 0 8px 18px -8px rgba(234,88,12,0.65); }
-  .apply-btn i{ font-size: 9.5px; }
-
-  /* ===== CHARTS ===== */
-  .panel{
-    background: var(--card);
-    border:1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 15px 16px;
-    box-shadow: var(--shadow);
-  }
-  .panel-head{
-    display:flex; align-items:center; justify-content:space-between;
-    margin-bottom: 10px;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .panel-head h3{ font-size:12.5px; font-weight:600; margin:0; display: flex; align-items: center; gap: 7px; }
-  .panel-head h3 i{ color: var(--orange); font-size: 11.5px; }
-  .panel-head .panel-sub{ font-size:10.5px; color: var(--ink-faint); }
-
-  .chart-wrap{ position:relative; height:230px; }
-
-  /* ===== RECOMMENDATIONS ===== */
-  .reco-list{
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .reco-card{
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    padding: 13px 15px;
-    border-radius: var(--radius-md);
-    background: linear-gradient(135deg, #FFFDF8 0%, #FFF8ED 100%);
-    border: 1px solid rgba(234,88,12,0.18);
-    border-left: 3px solid var(--orange);
-    transition: all .25s ease;
-  }
-  .reco-card:hover{
-    border-color: rgba(234,88,12,0.35);
-    box-shadow: 0 6px 18px -10px rgba(234,88,12,0.15);
-    transform: translateX(3px);
-  }
-  .reco-card.critical{ border-left-color: var(--red); background: linear-gradient(135deg, #FFF5F5 0%, #FEF2F2 100%); border-color: rgba(220,38,38,0.18); }
-  .reco-card.warn{ border-left-color: var(--amber); background: linear-gradient(135deg, #FFFDF5 0%, #FEF9ED 100%); border-color: rgba(245,158,11,0.2); }
-  .reco-card.info{ border-left-color: var(--blue); background: linear-gradient(135deg, #F5FBFF 0%, #EFF8FE 100%); border-color: rgba(37,99,235,0.15); }
-
-  .reco-icon{
-    width: 34px; height: 34px;
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px;
-    color: #fff;
-    flex-shrink: 0;
-  }
-  .reco-card.critical .reco-icon{ background: linear-gradient(135deg,#F87171,#DC2626); box-shadow: 0 6px 14px -6px rgba(220,38,38,0.5); }
-  .reco-card.warn .reco-icon{ background: linear-gradient(135deg,#FCD34D,#F59E0B); box-shadow: 0 6px 14px -6px rgba(245,158,11,0.5); }
-  .reco-card.info .reco-icon{ background: linear-gradient(135deg,#60A5FA,#2563EB); box-shadow: 0 6px 14px -6px rgba(37,99,235,0.5); }
-
-  .reco-body{ flex: 1; min-width: 0; }
-  .reco-title{
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--ink);
-    margin: 0 0 4px;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    flex-wrap: wrap;
-  }
-  .reco-tag{
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    padding: 2px 7px;
-    border-radius: 999px;
-    text-transform: uppercase;
-  }
-  .reco-tag.critical{ background: #FCEAEA; color: #B91C1C; }
-  .reco-tag.warn{ background: #FEF3E0; color: #B7791F; }
-  .reco-tag.info{ background: #E8F0FE; color: #1D4ED8; }
-  .reco-desc{
-    font-size: 11.5px;
-    color: var(--ink-soft);
-    line-height: 1.55;
-    margin: 0 0 8px;
-  }
-  .reco-desc strong{ color: var(--ink); font-weight: 700; }
-  .reco-meta{
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .reco-meta span{
-    font-size: 10px;
-    color: var(--ink-faint);
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .reco-meta span i{ font-size: 9px; color: var(--orange); }
-  .reco-meta span strong{ color: var(--ink); font-weight: 700; }
-
-  .reco-cta{
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 11px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 700;
-    background: #fff;
-    color: var(--ink);
-    border: 1px solid var(--border);
-    transition: all .2s ease;
-    cursor: pointer;
-    margin-top: 8px;
-    white-space: nowrap;
-  }
-  .reco-cta:hover{ border-color: var(--orange); color: var(--orange); transform: translateY(-1px); }
-  .reco-cta i{ font-size: 9px; }
-
-  /* ===== EMPTY STATE ===== */
-  .empty-block{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 20px;
-    text-align: center;
-    background: linear-gradient(135deg, #FFFDF8 0%, #FFF8ED 100%);
-    border: 1px dashed var(--border);
-    border-radius: var(--radius-lg);
-  }
-  .empty-block .empty-icon{
-    width: 52px; height: 52px;
-    border-radius: 15px;
-    background: var(--grad-soft);
-    border: 1px solid rgba(234,88,12,0.2);
-    display: grid; place-items: center;
-    font-size: 20px;
-    color: var(--orange);
-    margin-bottom: 14px;
-  }
-  .empty-block h3{
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--ink);
-    margin: 0 0 5px;
-  }
-  .empty-block p{
-    font-size: 12px;
-    color: var(--ink-soft);
-    margin: 0 0 16px;
-    max-width: 400px;
-    line-height: 1.55;
-  }
-  .empty-block .empty-cta{
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 9px 18px;
-    border-radius: 10px;
-    background: var(--grad);
-    color: #fff;
-    font-size: 12px;
-    font-weight: 600;
-    box-shadow: 0 8px 20px -8px rgba(234,88,12,0.5);
-    transition: all .2s ease;
-  }
-  .empty-block .empty-cta:hover{ transform: translateY(-2px); box-shadow: 0 12px 26px -8px rgba(234,88,12,0.6); }
-
-  .chart-empty{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 230px;
-    text-align: center;
-    color: var(--ink-faint);
-  }
-  .chart-empty i{
-    font-size: 28px;
-    color: var(--border);
-    margin-bottom: 10px;
-  }
-  .chart-empty h4{
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--ink-soft);
-    margin: 0 0 4px;
-  }
-  .chart-empty p{
-    font-size: 11px;
-    margin: 0;
-    max-width: 240px;
-    line-height: 1.5;
-  }
-
-  /* ===== MODAL / DRAWER ===== */
-  .overlay{
-    position:fixed; inset:0;
-    background: rgba(15,23,42,0.38);
-    backdrop-filter: blur(2px);
-    display:none;
-    z-index: 90;
-  }
-  .overlay.open{ display:block; }
-
-  .drawer{
-    position:fixed;
-    top:0; right:-400px;
-    width:360px; max-width:92vw;
-    height:100vh;
-    background:#fff;
-    z-index: 100;
-    box-shadow: -10px 0 32px rgba(15,23,42,0.18);
-    transition: right .28s cubic-bezier(.4,0,.2,1);
-    display:flex; flex-direction:column;
-  }
-  .drawer.open{ right:0; }
-
-  .drawer-head{
-    display:flex; align-items:center; justify-content:space-between;
-    padding: 16px 18px;
-    border-bottom: 1px solid var(--border);
-  }
-  .drawer-head h3{ margin:0; font-size:14px; font-weight:600; }
-  .drawer-close{
-    width:28px; height:28px; border-radius:8px;
-    border:1px solid var(--border); background:#fff;
-    display:flex; align-items:center; justify-content:center;
-    color: var(--ink-soft);
-    font-size: 12px;
-    transition: all .2s ease;
-  }
-  .drawer-close:hover{ background:#F7F2EA; transform: rotate(90deg); }
-
-  .drawer-body{
-    padding: 18px;
-    overflow-y:auto;
-    flex:1;
-    display:flex; flex-direction:column; gap:14px;
-  }
-
-  .pic-upload{ display:flex; align-items:center; gap:14px; }
-  .pic-upload .avatar-lg{
-    width:60px; height:60px; border-radius:50%;
-    background: var(--grad);
-    background-size: cover;
-    background-position: center;
-    display:flex; align-items:center; justify-content:center;
-    color:#fff; font-weight:700; font-size:20px;
-    flex-shrink:0;
-    box-shadow: 0 6px 16px -6px rgba(234,88,12,0.45);
-    position: relative;
-    overflow: hidden;
-    transition: all .2s ease;
-  }
-  .pic-upload label{
-    font-size:11.5px; font-weight:600;
-    padding: 7px 12px;
-    border:1px solid var(--border);
-    border-radius:9px;
-    cursor:pointer;
-    color: var(--ink-soft);
-    transition: all .2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    user-select: none;
-  }
-  .pic-upload label:hover{ background:#F7F2EA; border-color: var(--orange); color: var(--orange); }
-  .pic-upload label:active{ transform: scale(0.97); }
-  .pic-upload input[type=file]{
-    position: absolute;
-    width: 1px; height: 1px;
-    padding: 0; margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-  .pic-upload .upload-hint{
-    font-size: 10px;
-    color: var(--ink-faint);
-    font-weight: 500;
-    margin-top: 5px;
-    display: block;
-  }
-
-  .field{ display:flex; flex-direction:column; gap:5px; }
-  .field label{ font-size:11.5px; font-weight:600; color: var(--ink-soft); }
-  .field input, .field textarea{
-    border:1px solid var(--border);
-    border-radius: 9px;
-    padding: 8px 11px;
-    font-size:12.5px;
-    font-family:'Inter',sans-serif;
-    color: var(--ink);
-    background:#FCFAF7;
-    transition: all .2s ease;
-    resize: vertical;
-  }
-  .field textarea{ min-height: 60px; }
-  .field input:focus, .field textarea:focus{ outline:none; border-color: var(--orange); background:#fff; box-shadow: 0 0 0 3px rgba(234,88,12,0.10); }
-
-  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-
-  .divider-label{
-    display:flex; align-items:center; gap:8px;
-    font-size:10px; font-weight:700; color: var(--ink-faint);
-    margin-top: 4px;
-    letter-spacing: 0.08em;
-  }
-  .divider-label::after{ content:''; flex:1; height:1px; background: var(--border); }
-
-  .drawer-foot{
-    padding: 14px 18px;
-    border-top: 1px solid var(--border);
-    display:flex; gap:8px;
-  }
-  .btn{
-    flex:1;
-    padding: 10px;
-    border-radius: 10px;
-    font-size:12.5px;
-    font-weight:600;
-    border:1px solid var(--border);
-    background:#fff;
-    color: var(--ink-soft);
-    transition: all .2s ease;
-  }
-  .btn:hover{ background:#F7F2EA; }
-  .btn-primary{
-    background: var(--grad);
-    color:#fff;
-    border:none;
-    box-shadow: 0 5px 14px -6px rgba(234,88,12,0.55);
-  }
-  .btn-primary:hover{ filter: brightness(1.05); transform: translateY(-1px); }
-
-  /* Toast */
-  .toast{
-    position:fixed;
-    bottom: 20px; left:50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--ink);
-    color:#fff;
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-size:12px;
-    font-weight:500;
-    display:flex; align-items:center; gap:8px;
-    opacity:0;
-    pointer-events:none;
-    transition: opacity .2s ease, transform .2s ease;
-    z-index: 200;
-    box-shadow: 0 10px 26px rgba(0,0,0,0.25);
-  }
-  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); pointer-events:auto; }
-  .toast i{ color: var(--amber); font-size: 12px; }
-
-  /* ===== RESPONSIVE ===== */
-  @media (max-width: 1280px){
-    .companies-grid{ grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 1180px){
-    .grid-4{ grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 980px){
-    .shell{ grid-template-columns: 1fr; }
-    .sidebar{ position:relative; height:auto; }
-    .grid-2{ grid-template-columns: 1fr; }
-    .companies-grid{ grid-template-columns: 1fr; }
-  }
-  @media (max-width: 620px){
-    .main{ padding: 14px; }
-    .search-pill{ display:none; }
-    .field-row{ grid-template-columns:1fr; }
-    .grid-4{ grid-template-columns: 1fr; }
-    .greeting-title{ font-size: 15px; }
-    .profile-trigger .p-info{ display: none; }
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    *{ transition:none !important; animation:none !important; }
-  }
+/* ============ RESPONSIVE ============ */
+@media (max-width:1200px){
+  .grid-4{grid-template-columns:repeat(2,1fr);}
+  .grid-3{grid-template-columns:repeat(2,1fr);}
+}
+@media (max-width:1024px){
+  .grid-2-1{grid-template-columns:1fr;}
+  .grid-2{grid-template-columns:1fr;}
+}
+@media (max-width:900px){
+  .sidebar{transform:translateX(-100%);box-shadow:var(--shadow-lg);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .hamburger{display:grid;place-items:center;}
+  .content{padding:14px 14px 50px;}
+  .topbar{padding:8px 14px;}
+  .searchbox{display:none;}
+  .user-chip .u-text{display:none;}
+  .user-chip{padding:3px;}
+  .hero{padding:16px 16px;}
+  .hero-left h2{font-size:17px;}
+  .grid-4,.grid-3{grid-template-columns:1fr;}
+  .toast-wrap{left:14px;right:14px;bottom:14px;}
+  .toast{max-width:none;}
+}
 </style>
 </head>
 <body>
 
-<div class="shell">
+<div class="app">
 
-  <!-- ============ SIDEBAR ============ -->
-  <aside class="sidebar">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar" id="sidebar">
+    <!-- Top Left: Horizon Logo -->
     <div class="brand">
-      <div class="brand-mark">H</div>
-      <div>
-        <div class="brand-name">Horizon</div>
-        <div class="brand-sub">Trainee Portal</div>
+      <div class="brand-mark"><i class="fa-solid fa-mountain-sun"></i></div>
+      <div class="brand-text">
+        <h1>Horizon</h1>
+        <span>Skill Outcomes</span>
       </div>
     </div>
 
-    <div class="nav-group-label">My Dashboard</div>
+    <!-- Sidebar Add Option -->
+    <div class="sidebar-add">
+      <button class="btn btn-primary" onclick="document.getElementById('dataUpload').click()">
+        <i class="fa-solid fa-plus"></i> Add Trainee Data
+      </button>
+      <input type="file" id="dataUpload" accept=".json" style="display:none" onchange="handleFileUpload(event)">
+    </div>
+
     <nav class="nav">
-      <a class="nav-link active" href="#"><i class="fa-solid fa-house"></i> Overview</a>
-      <a class="nav-link" href="{{ url_for('trainee.profile') }}"><i class="fa-solid fa-user"></i> My Profile</a>
-      <a class="nav-link" href="{{ url_for('trainee.training') }}"><i class="fa-solid fa-graduation-cap"></i> My Training</a>
-      <a class="nav-link" href="{{ url_for('trainee.employment') }}"><i class="fa-solid fa-briefcase"></i> Employment</a>
-      <a class="nav-link" href="{{ url_for('trainee.skill_gap') }}"><i class="fa-solid fa-brain"></i> Skill Gap</a>
-      <a class="nav-link" href="{{ url_for('trainee.career') }}"><i class="fa-solid fa-arrow-trend-up"></i> Career Growth</a>
-      <a class="nav-link" href="{{ url_for('trainee.opportunities') }}"><i class="fa-solid fa-magnifying-glass-dollar"></i> Opportunities</a>
-    </nav>
-
-    <div class="nav-divider"></div>
-
-    <div class="nav-group-label">Account</div>
-    <nav class="nav">
-      <a class="nav-link" href="#"><i class="fa-solid fa-list-check"></i> Follow-ups</a>
-      <a class="nav-link" href="#"><i class="fa-solid fa-shield-halved"></i> Privacy &amp; Consent</a>
-      <a class="nav-link" href="#">
-        <i class="fa-solid fa-bell"></i> Notifications
-        <span class="nav-badge" id="notifBadge" style="display:none;">0</span>
-      </a>
-      <a class="nav-link" href="#"><i class="fa-solid fa-circle-question"></i> Support</a>
-    </nav>
-
-    <div class="sidebar-spacer"></div>
-
-    <div class="sidebar-foot">
-      <div class="sidebar-graphic">
-        <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 70 L35 40 L65 55 L100 20 L135 42 L165 25 L200 50" fill="none" stroke="#EA580C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
-          <path d="M0 70 L35 40 L65 55 L100 20 L135 42 L165 25 L200 50 L200 90 L0 90 Z" fill="url(#g1)" opacity="0.5"/>
-          <defs>
-            <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.35"/>
-              <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
-            </linearGradient>
-          </defs>
-          <circle cx="100" cy="20" r="5" fill="#EA580C"/>
-        </svg>
-        <p id="sidebarNote">Upload data to see insights</p>
+      <div class="nav-group">
+        <div class="nav-label">Trainee Career Navigation</div>
+        <div class="nav-item active" data-view="dashboard">
+          <i class="fa-solid fa-gauge-high"></i> Dashboard
+        </div>
+        <div class="nav-item" data-view="passport">
+          <i class="fa-solid fa-id-card"></i> My Passport
+        </div>
+        <div class="nav-item" data-view="skillgap">
+          <i class="fa-solid fa-chart-simple"></i> Skill Gap &amp; Readiness
+        </div>
+        <div class="nav-item" data-view="career">
+          <i class="fa-solid fa-route"></i> Career Path Explorer
+        </div>
+        <div class="nav-item" data-view="learning">
+          <i class="fa-solid fa-book-open-reader"></i> Learning Hub
+        </div>
+        <div class="nav-item" data-view="jobs">
+          <i class="fa-solid fa-briefcase"></i> Job Match
+          <span class="nav-badge" id="jobBadge">0</span>
+        </div>
+        <div class="nav-item" data-view="applications">
+          <i class="fa-solid fa-file-lines"></i> My Applications
+        </div>
+        <div class="nav-item" data-view="wages">
+          <i class="fa-solid fa-arrow-trend-up"></i> Wage &amp; Retention
+        </div>
+        <div class="nav-item" data-view="selfemp">
+          <i class="fa-solid fa-store"></i> Self-Employment
+        </div>
       </div>
 
-      <a class="logout-link" href="{{ url_for('common.role_selection') }}"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+      <div class="nav-group">
+        <div class="nav-label">Engagement</div>
+        <div class="nav-item" data-view="followup">
+          <i class="fa-solid fa-clipboard-question"></i> Follow-Up Survey
+          <span class="nav-badge" id="followupBadge">0</span>
+        </div>
+        <div class="nav-item" data-view="consent">
+          <i class="fa-solid fa-shield-halved"></i> Privacy &amp; Consent
+        </div>
+        <div class="nav-item" data-view="feedback">
+          <i class="fa-solid fa-comment-dots"></i> Feedback
+        </div>
+      </div>
+    </nav>
+
+    <!-- Sidebar Footer with Logout -->
+    <div class="sidebar-foot">
+      <div class="consent-chip">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Consent active &middot; You control your data</span>
+      </div>
+      <div class="sidebar-logout" onclick="handleLogout()">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+      </div>
     </div>
   </aside>
+  <div class="overlay" id="overlay"></div>
 
-  <!-- ============ MAIN ============ -->
-  <main class="main">
+  <!-- ================= MAIN ================= -->
+  <div class="main">
 
-    <div class="topbar">
-      <div class="search-pill">
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="hamburger" id="hamburger"><i class="fa-solid fa-bars"></i></button>
+
+      <div class="searchbox">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Search skills, training modules, target roles, or active companies...">
-      </div>
-      <div class="topbar-spacer"></div>
-      <button class="icon-btn" aria-label="Notifications">
-        <i class="fa-regular fa-bell"></i>
-        <span class="dot" id="notifDot" style="display:none;"></span>
-      </button>
-      <button class="profile-trigger" id="profileTrigger">
-        <div class="avatar" id="topAvatarInitial">?</div>
-        <div class="p-info">
-          <div class="p-name" id="topTraineeName">Trainee</div>
-          <div class="p-roll" id="topTraineeRoll">—</div>
-        </div>
-        <i class="fa-solid fa-chevron-down chev"></i>
-      </button>
-    </div>
-
-    <div class="greeting-banner">
-      <div class="greeting-head">
-        <div>
-          <h1 class="greeting-title">
-            Welcome, <span id="greetingName">Trainee</span> <span class="wave">👋</span> — Skill Score &amp; Career Dashboard
-          </h1>
-          <p class="greeting-sub" id="greetingSub">Upload your trainee record to see personalised insights and opportunities.</p>
-        </div>
+        <input type="text" placeholder="Search jobs, skills, courses…" />
       </div>
 
-      <div class="quick-badges">
-        <div class="quick-badge">
-          <i class="fa-solid fa-chart-line"></i>
-          <span class="qb-label">Skill Score</span>
-          <span class="qb-value" id="qbSkillScore">0/100</span>
-        </div>
-        <div class="quick-badge">
-          <i class="fa-solid fa-graduation-cap"></i>
-          <span class="qb-label">Training</span>
-          <span class="qb-value" id="qbTraining">0%</span>
-        </div>
-        <div class="quick-badge">
-          <i class="fa-solid fa-bullseye"></i>
-          <span class="qb-label">Target Role</span>
-          <span class="qb-value" id="qbTargetRole">—</span>
+      <div class="topbar-right">
+        <!-- Direct Action Buttons -->
+        <button class="btn btn-ghost btn-sm" onclick="openEditProfile()">
+          <i class="fa-solid fa-user-pen"></i> Edit Profile
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="openChangePassword()">
+          <i class="fa-solid fa-key"></i> Change Password
+        </button>
+        
+        <button class="lang-pill"><i class="fa-solid fa-globe"></i> EN</button>
+        <button class="icon-btn" title="Notifications">
+          <i class="fa-regular fa-bell"></i><span class="dot"></span>
+        </button>
+
+        <!-- Top Right: Profile Picture (Static Display) -->
+        <div class="user-chip-wrap">
+          <div class="user-chip">
+            <!-- Default Avatar Icon -->
+            <div class="avatar-img" id="profilePic">
+              <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="u-text" style="text-align:left">
+              <div class="u-name" id="topName">Trainee Name</div>
+              <div class="u-id" id="topId">ID: N/A</div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </header>
 
-    <div class="grid-4" id="metricGrid"></div>
+    <div class="content">
 
-    <div class="section-head">
-      <h2><i class="fa-solid fa-chart-simple"></i> Analytics &amp; Performance</h2>
-      <span class="section-note" id="analyticsNote">Awaiting uploaded data</span>
+      <!-- ============================================================
+           VIEW 1 : DASHBOARD
+      ============================================================ -->
+      <section class="view active" id="view-dashboard">
+
+        <!-- Hero -->
+        <div class="hero">
+          <div class="hero-left">
+            <span class="tag"><i class="fa-solid fa-bolt"></i> NEXT BEST ACTION READY</span>
+            <h2>Welcome back, <span id="heroName">Trainee</span> 👋</h2>
+            <p id="heroDesc">Upload your data to see your personalised skill gap analysis and job matches.</p>
+
+            <div class="hero-meta">
+              <div><span>Target Role</span><strong id="heroTargetRole">--</strong></div>
+              <div><span>District</span><strong id="heroDistrict">--</strong></div>
+              <div><span>Batch</span><strong id="heroBatch">--</strong></div>
+              <div><span>Certifications</span><strong id="heroCerts">0 Earned</strong></div>
+            </div>
+
+            <div class="hero-actions">
+              <button class="btn btn-light btn-sm" data-goto="skillgap"><i class="fa-solid fa-chart-simple"></i> View Skill Gap</button>
+              <button class="btn btn-ghost btn-sm" data-goto="learning"><i class="fa-solid fa-play"></i> Continue Learning</button>
+              <button class="btn btn-ghost btn-sm" data-goto="jobs"><i class="fa-solid fa-briefcase"></i> See Job Matches</button>
+            </div>
+          </div>
+
+          <div class="ring-wrap">
+            <div class="ring" id="heroRing" style="--p:0">
+              <div class="ring-inner">
+                <strong id="heroReadiness">0%</strong>
+                <small>Ready</small>
+              </div>
+            </div>
+            <div class="ring-caption" id="heroRingCaption">Job Readiness &middot; --</div>
+          </div>
+        </div>
+
+        <!-- Stat cards -->
+        <div class="grid grid-4" style="margin-top:14px">
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-ico i-indigo"><i class="fa-solid fa-gauge-high"></i></div>
+              <span class="pill pill-blue">Target</span>
+            </div>
+            <h4 id="statReadiness">0%</h4>
+            <p>Job Readiness Score</p>
+            <span class="trend t-up"><i class="fa-solid fa-arrow-up"></i> 0% this month</span>
+          </div>
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-ico i-teal"><i class="fa-solid fa-certificate"></i></div>
+            </div>
+            <h4 id="statCerts">0 / 0</h4>
+            <p>Skills Certified</p>
+            <span class="trend t-up"><i class="fa-solid fa-arrow-up"></i> 0 certifications</span>
+          </div>
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-ico i-amber"><i class="fa-solid fa-paper-plane"></i></div>
+            </div>
+            <h4 id="statApps">0</h4>
+            <p>Applications Sent</p>
+            <span class="trend"><i class="fa-solid fa-clock" style="color:#d97706"></i> 0 in interview stage</span>
+          </div>
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-ico i-indigo"><i class="fa-solid fa-user-check"></i></div>
+            </div>
+            <h4 id="statProfile">0%</h4>
+            <p>Profile Completeness</p>
+            <div class="bar" style="margin-top:7px"><span id="statProfileBar" style="width:0%"></span></div>
+          </div>
+        </div>
+
+        <!-- Next Best Action + Skill snapshot -->
+        <div class="grid grid-2-1" style="margin-top:14px">
+
+          <div class="card nba">
+            <div class="card-head">
+              <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--primary)"></i>
+              <h3>Your Next Best Actions</h3>
+              <div class="right"><span class="pill pill-blue">Auto-generated</span></div>
+            </div>
+            <div id="nbaList">
+              <div class="empty-state">
+                <i class="fa-solid fa-inbox"></i>
+                <p>No actions available. Upload data to generate recommendations.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-chart-simple" style="color:var(--primary)"></i>
+              <h3>Skill Snapshot</h3>
+            </div>
+            <div id="dashboardSkillSnapshot">
+              <div class="empty-state">
+                <i class="fa-solid fa-chart-bar"></i>
+                <p>No skill data available.</p>
+              </div>
+            </div>
+            <button class="btn btn-soft btn-sm" style="width:100%;justify-content:center;margin-top:12px" data-goto="skillgap">
+              <i class="fa-solid fa-arrow-right"></i> View Full Analysis
+            </button>
+          </div>
+        </div>
+
+        <!-- Timeline + Upcoming -->
+        <div class="grid grid-2" style="margin-top:14px">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-timeline" style="color:var(--primary)"></i>
+              <h3>Your Journey</h3>
+            </div>
+            <div class="timeline" id="journeyTimeline">
+              <div class="empty-state">
+                <i class="fa-solid fa-road"></i>
+                <p>No timeline events yet.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-regular fa-calendar-check" style="color:var(--primary)"></i>
+              <h3>Upcoming &amp; Reminders</h3>
+            </div>
+            <div id="remindersList">
+              <div class="empty-state">
+                <i class="fa-regular fa-calendar"></i>
+                <p>No upcoming events.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 2 : MY PASSPORT
+      ============================================================ -->
+      <section class="view" id="view-passport">
+        <div class="page-head">
+          <div>
+            <h2>My Trainee Passport</h2>
+            <p>Your lifelong, portable record — one identity across every programme, course and employer.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn btn-ghost btn-sm" data-toast="Passport PDF downloaded"><i class="fa-solid fa-download"></i> Download</button>
+            <button class="btn btn-primary btn-sm" onclick="openEditProfile()"><i class="fa-solid fa-pen"></i> Edit Profile</button>
+          </div>
+        </div>
+
+        <div class="grid grid-2-1">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-id-card" style="color:var(--primary)"></i>
+              <h3>Passport Details</h3>
+              <div class="right"><span class="pill pill-green"><i class="fa-solid fa-circle-check"></i> Verified</span></div>
+            </div>
+
+            <div class="grid grid-2" style="gap:12px">
+              <div><p style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.4px">Passport ID</p><strong style="font-size:13px" id="passportId">N/A</strong></div>
+              <div><p style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.4px">Full Name</p><strong style="font-size:13px" id="passportName">Trainee Name</strong></div>
+              <div><p style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.4px">Primary Phone</p><strong style="font-size:13px" id="passportPhone">N/A</strong></div>
+              <div><p style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.4px">Alternate Phone</p><strong style="font-size:13px" id="passportAltPhone">N/A</strong></div>
+              <div><p style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.4px">District</p><strong style="font-size:13px" id="passportDistrict">N/A</strong></div>
+              <div><p style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.4px">Preferred Language</p><strong style="font-size:13px" id="passportLang">N/A</strong></div>
+            </div>
+
+            <div class="info-box" style="margin-top:14px">
+              <i class="fa-solid fa-circle-info"></i>
+              <div>Keep at least one alternate contact updated. It helps us reach you even if your phone number changes.</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-award" style="color:var(--primary)"></i>
+              <h3>Certifications</h3>
+            </div>
+            <div id="certificationsList">
+              <div class="empty-state">
+                <i class="fa-solid fa-certificate"></i>
+                <p>No certifications yet.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-head">
+            <i class="fa-solid fa-timeline" style="color:var(--primary)"></i>
+            <h3>Full Outcome Timeline</h3>
+            <div class="right"><span class="pill pill-gray">Auto-updated</span></div>
+          </div>
+          <div class="timeline" id="outcomeTimeline">
+            <div class="empty-state">
+              <i class="fa-solid fa-clock"></i>
+              <p>No timeline data available.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 3 : SKILL GAP & READINESS
+      ============================================================ -->
+      <section class="view" id="view-skillgap">
+        <div class="page-head">
+          <div>
+            <h2>Skill Gap &amp; Job Readiness</h2>
+            <p>See exactly what stands between you and your target role.</p>
+          </div>
+          <div class="head-actions">
+            <select id="roleSelect" style="width:auto;padding:6px 12px;border-radius:6px;font-size:12px;">
+              <option>Data Analyst</option>
+              <option>Business Analyst</option>
+              <option>MIS Executive</option>
+              <option>Data Entry Operator</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-3">
+          <div class="stat" style="text-align:center;padding:20px">
+            <div class="ring" id="skillgapRing" style="--p:0;margin:0 auto 10px;background:conic-gradient(var(--primary) calc(0% * 1%), #eef1f7 0)">
+              <div class="ring-inner" style="background:#fff">
+                <strong style="color:var(--primary)" id="skillgapReadiness">0%</strong>
+                <small style="color:var(--muted)">Ready</small>
+              </div>
+            </div>
+            <h4 style="font-size:13px">Job Readiness Score</h4>
+            <p id="skillgapTargetText">-- &middot; --</p>
+          </div>
+
+          <div class="stat">
+            <div class="stat-ico i-teal" style="margin-bottom:10px"><i class="fa-solid fa-circle-check"></i></div>
+            <h4 id="skillgapStrongCount">0</h4>
+            <p>Skills You Already Have</p>
+            <div class="course-tags" style="margin-top:10px" id="skillgapStrongTags"></div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-ico i-red" style="margin-bottom:10px"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <h4 id="skillgapGapCount">0</h4>
+            <p>Critical Skill Gaps</p>
+            <div class="course-tags" style="margin-top:10px" id="skillgapGapTags"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-head">
+            <i class="fa-solid fa-list-check" style="color:var(--primary)"></i>
+            <h3>Detailed Skill Analysis</h3>
+            <div class="right"><span class="pill pill-gray">Required vs Current</span></div>
+          </div>
+          <div id="skillGapList">
+            <div class="empty-state">
+              <i class="fa-solid fa-chart-bar"></i>
+              <p>No skill data available. Upload data to see analysis.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="margin-top:14px">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-graduation-cap" style="color:var(--primary)"></i>
+              <h3>How to Close Your Gaps</h3>
+            </div>
+            <div id="closeGapsList">
+              <div class="empty-state">
+                <i class="fa-solid fa-book"></i>
+                <p>No recommendations available.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-chart-line" style="color:var(--primary)"></i>
+              <h3>Readiness Simulation</h3>
+            </div>
+            <p style="font-size:11.5px;color:var(--muted);margin-bottom:14px">See how each skill changes your employability.</p>
+            <div id="simulationList">
+              <div class="empty-state">
+                <i class="fa-solid fa-arrow-trend-up"></i>
+                <p>Simulation requires skill data.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 4 : CAREER PATH EXPLORER
+      ============================================================ -->
+      <section class="view" id="view-career">
+        <div class="page-head">
+          <div>
+            <h2>Career Path Explorer</h2>
+            <p>Explore roles in demand, what they pay, and the path to get there.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn btn-ghost btn-sm" data-toast="Filters opened"><i class="fa-solid fa-filter"></i> Filters</button>
+          </div>
+        </div>
+
+        <div class="info-box" style="margin-bottom:14px">
+          <i class="fa-solid fa-location-dot"></i>
+          <div>Showing roles with demand in <strong id="careerDistrict">your district</strong> and remote opportunities. Based on live job postings and employer demand signals.</div>
+        </div>
+
+        <div class="grid grid-3" id="careerRoleGrid">
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <i class="fa-solid fa-route"></i>
+            <p>No career path data available. Upload data to explore roles.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-head">
+            <i class="fa-solid fa-route" style="color:var(--primary)"></i>
+            <h3>Your Career Path — <span id="careerPathRole">--</span></h3>
+            <div class="right"><span class="pill pill-blue">5 steps</span></div>
+          </div>
+          <div class="timeline" id="careerPathTimeline">
+            <div class="empty-state">
+              <i class="fa-solid fa-map-signs"></i>
+              <p>No career path mapped yet.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 5 : LEARNING HUB
+      ============================================================ -->
+      <section class="view" id="view-learning">
+        <div class="page-head">
+          <div>
+            <h2>Learning Hub</h2>
+            <p>Personalised courses picked to close your gaps fastest.</p>
+          </div>
+          <div class="head-actions">
+            <span class="pill pill-blue" style="padding:6px 12px"><i class="fa-solid fa-bolt"></i> AI Recommended</span>
+          </div>
+        </div>
+
+        <div class="grid grid-2" id="learningGrid">
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <i class="fa-solid fa-book-open"></i>
+            <p>No courses recommended. Upload data to get personalised learning paths.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-head">
+            <i class="fa-solid fa-trophy" style="color:var(--primary)"></i>
+            <h3>Your Achievements</h3>
+          </div>
+          <div class="grid grid-4" style="gap:10px" id="achievementsGrid">
+            <div class="empty-state" style="grid-column: 1 / -1;">
+              <i class="fa-solid fa-medal"></i>
+              <p>No achievements yet.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 6 : JOB MATCH
+      ============================================================ -->
+      <section class="view" id="view-jobs">
+        <div class="page-head">
+          <div>
+            <h2>Job &amp; Apprenticeship Match</h2>
+            <p id="jobMatchSubtitle">0 openings matched to your skills, location and salary expectation.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn btn-ghost btn-sm" data-toast="Filters opened"><i class="fa-solid fa-filter"></i> Filters</button>
+            <button class="btn btn-primary btn-sm" data-toast="Profile shared with matching employers"><i class="fa-solid fa-share-nodes"></i> Share Profile</button>
+          </div>
+        </div>
+
+        <div class="info-box" style="margin-bottom:14px">
+          <i class="fa-solid fa-shield-halved"></i>
+          <div>Your profile is shared with employers <strong>only when you apply</strong> or explicitly allow it. You can revoke access anytime from Privacy &amp; Consent.</div>
+        </div>
+
+        <div id="jobList" class="grid" style="gap:10px">
+          <div class="empty-state">
+            <i class="fa-solid fa-briefcase"></i>
+            <p>No jobs matched yet. Upload data to see matched openings.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 7 : APPLICATIONS
+      ============================================================ -->
+      <section class="view" id="view-applications">
+        <div class="page-head">
+          <div>
+            <h2>My Applications</h2>
+            <p>Track every application, interview and offer in one place.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-4" style="margin-bottom:14px">
+          <div class="stat"><div class="stat-ico i-indigo" style="margin-bottom:8px"><i class="fa-solid fa-paper-plane"></i></div><h4 id="appStatTotal">0</h4><p>Total Applied</p></div>
+          <div class="stat"><div class="stat-ico i-amber" style="margin-bottom:8px"><i class="fa-solid fa-comments"></i></div><h4 id="appStatInterview">0</h4><p>In Interview</p></div>
+          <div class="stat"><div class="stat-ico i-teal" style="margin-bottom:8px"><i class="fa-solid fa-circle-check"></i></div><h4 id="appStatOffer">0</h4><p>Offers Received</p></div>
+          <div class="stat"><div class="stat-ico i-red" style="margin-bottom:8px"><i class="fa-solid fa-circle-xmark"></i></div><h4 id="appStatRejected">0</h4><p>Not Selected</p></div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Employer</th>
+                <th>Role</th>
+                <th>Applied On</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="appTableBody">
+              <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;">No applications found.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 8 : WAGE & RETENTION
+      ============================================================ -->
+      <section class="view" id="view-wages">
+        <div class="page-head">
+          <div>
+            <h2>Wage &amp; Retention Insights</h2>
+            <p>Understand your earning potential and how to grow it.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-3" style="margin-bottom:14px">
+          <div class="stat">
+            <div class="stat-ico i-indigo" style="margin-bottom:8px"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+            <h4>₹0</h4>
+            <p>Your Expected Starting Band</p>
+          </div>
+          <div class="stat">
+            <div class="stat-ico i-teal" style="margin-bottom:8px"><i class="fa-solid fa-arrow-trend-up"></i></div>
+            <h4>₹0</h4>
+            <p>After Closing Skill Gaps</p>
+          </div>
+          <div class="stat">
+            <div class="stat-ico i-amber" style="margin-bottom:8px"><i class="fa-solid fa-clock"></i></div>
+            <h4>0%</h4>
+            <p>6-Month Retention (this role)</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <i class="fa-solid fa-chart-column" style="color:var(--primary)"></i>
+            <h3>Projected Wage Progression</h3>
+            <div class="right">
+              <span class="pill pill-blue">Current path</span>
+              <span class="pill pill-green">After skill gaps closed</span>
+            </div>
+          </div>
+
+          <div class="chart">
+            <div class="chart-col"><div class="chart-bar" style="height:0%"><span>₹0</span></div><small>Start</small></div>
+            <div class="chart-col"><div class="chart-bar" style="height:0%"><span>₹0</span></div><small>6 months</small></div>
+            <div class="chart-col"><div class="chart-bar" style="height:0%"><span>₹0</span></div><small>1 year</small></div>
+            <div class="chart-col"><div class="chart-bar" style="height:0%"><span>₹0</span></div><small>2 years</small></div>
+            <div class="chart-col"><div class="chart-bar proj" style="height:0%"><span>₹0</span></div><small>3 years*</small></div>
+          </div>
+
+          <p style="font-size:10.5px;color:var(--muted);margin-top:12px">
+            *Projected with certifications and portfolio projects. Based on market data for your target role.
+          </p>
+        </div>
+
+        <div class="grid grid-2" style="margin-top:14px">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-lightbulb" style="color:var(--primary)"></i>
+              <h3>How to Earn More</h3>
+            </div>
+            <div class="nba-item">
+              <div class="nba-num"><i class="fa-solid fa-database" style="font-size:9px"></i></div>
+              <div><h5>Learn in-demand skills</h5><p>Adds value to your monthly starting salary</p></div>
+            </div>
+            <div class="nba-item">
+              <div class="nba-num"><i class="fa-solid fa-chart-column" style="font-size:9px"></i></div>
+              <div><h5>Master tools</h5><p>Most requested tools in job postings</p></div>
+            </div>
+            <div class="nba-item">
+              <div class="nba-num"><i class="fa-solid fa-diagram-project" style="font-size:9px"></i></div>
+              <div><h5>Build a portfolio</h5><p>Candidates with projects get 2× more callbacks</p></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-people-group" style="color:var(--primary)"></i>
+              <h3>Retention Tips</h3>
+            </div>
+            <div class="info-box" style="margin-bottom:10px">
+              <i class="fa-solid fa-circle-check"></i>
+              <div>Complete a certification before joining to improve your long-term retention.</div>
+            </div>
+            <div class="info-box teal" style="margin-bottom:10px">
+              <i class="fa-solid fa-comments"></i>
+              <div>Ask about growth path and training support during your interview.</div>
+            </div>
+            <div class="info-box amber">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <div>Avoid roles more than 25 km away without transport support — distance is the #1 reason for early exit.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 9 : SELF-EMPLOYMENT
+      ============================================================ -->
+      <section class="view" id="view-selfemp">
+        <div class="page-head">
+          <div>
+            <h2>Self-Employment &amp; Apprenticeship</h2>
+            <p>Explore alternatives to salaried jobs — with support at every step.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="margin-bottom:14px">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-store" style="color:var(--primary)"></i>
+              <h3>Self-Employment Support</h3>
+            </div>
+            <p style="font-size:11.5px;color:var(--muted);margin-bottom:14px">If you're considering starting your own work, these resources help you plan and fund it.</p>
+
+            <div class="job-row" style="margin-bottom:8px;padding:10px">
+              <div class="job-logo" style="width:32px;height:32px;font-size:11px"><i class="fa-solid fa-sack-dollar"></i></div>
+              <div class="job-info"><h4>Mudra Loan (Shishu)</h4><p>Up to ₹50,000 &middot; No collateral</p></div>
+              <button class="btn btn-ghost btn-sm" data-toast="Scheme details opened">View</button>
+            </div>
+
+            <div class="job-row" style="margin-bottom:8px;padding:10px">
+              <div class="job-logo" style="width:32px;height:32px;font-size:11px"><i class="fa-solid fa-seedling"></i></div>
+              <div class="job-info"><h4>PMEGP</h4><p>Subsidy up to 35% for micro-enterprises</p></div>
+              <button class="btn btn-ghost btn-sm" data-toast="Scheme details opened">View</button>
+            </div>
+
+            <div class="job-row" style="padding:10px">
+              <div class="job-logo" style="width:32px;height:32px;font-size:11px"><i class="fa-solid fa-chalkboard-user"></i></div>
+              <div class="job-info"><h4>Free Business Mentorship</h4><p>1-on-1 with local entrepreneurs</p></div>
+              <button class="btn btn-primary btn-sm" data-toast="Mentor booking opened">Book</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-screwdriver-wrench" style="color:var(--primary)"></i>
+              <h3>Apprenticeship Openings</h3>
+            </div>
+            <p style="font-size:11.5px;color:var(--muted);margin-bottom:14px">Earn while you learn — with a stipend and a strong chance of full-time conversion.</p>
+
+            <div class="empty-state">
+              <i class="fa-solid fa-screwdriver-wrench"></i>
+              <p>No apprenticeship openings matched yet.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 10 : FOLLOW-UP SURVEY
+      ============================================================ -->
+      <section class="view" id="view-followup">
+        <div class="page-head">
+          <div>
+            <h2>Follow-Up Survey</h2>
+            <p>Your 3-month check-in. Takes 2 minutes and keeps your record active.</p>
+          </div>
+          <div class="head-actions">
+            <span class="pill pill-red" style="padding:6px 12px"><i class="fa-regular fa-clock"></i> Due now</span>
+          </div>
+        </div>
+
+        <div class="grid grid-2-1">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-clipboard-question" style="color:var(--primary)"></i>
+              <h3>Quick Check-In</h3>
+              <div class="right"><span class="pill pill-gray">Step 1 of 3</span></div>
+            </div>
+
+            <div class="survey-q">
+              <label>1. What is your current status?</label>
+              <div class="opt-grid" data-group="status">
+                <div class="opt">Employed</div>
+                <div class="opt">Self-employed</div>
+                <div class="opt">Apprenticeship</div>
+                <div class="opt">Studying further</div>
+                <div class="opt">Looking for work</div>
+                <div class="opt">Not available</div>
+              </div>
+            </div>
+
+            <div class="survey-q">
+              <label>2. If not employed, what is the main reason?</label>
+              <div class="opt-grid" data-group="reason">
+                <div class="opt">No nearby jobs</div>
+                <div class="opt">Salary mismatch</div>
+                <div class="opt">Skill gap</div>
+                <div class="opt">Family / health</div>
+                <div class="opt">Further education</div>
+                <div class="opt">Documentation</div>
+                <div class="opt">Transport / migration</div>
+                <div class="opt">Employer rejection</div>
+              </div>
+            </div>
+
+            <div class="survey-q">
+              <label>3. Anything else you'd like us to know?</label>
+              <textarea rows="2" placeholder="Optional — type your response here…"></textarea>
+            </div>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-primary btn-sm" id="submitSurvey"><i class="fa-solid fa-paper-plane"></i> Submit Response</button>
+              <button class="btn btn-ghost btn-sm" data-toast="Reminder set for tomorrow"><i class="fa-regular fa-clock"></i> Remind Me Later</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-circle-info" style="color:var(--primary)"></i>
+              <h3>Why This Matters</h3>
+            </div>
+            <div class="info-box" style="margin-bottom:10px">
+              <i class="fa-solid fa-bullseye"></i>
+              <div>Your responses help us improve courses for the next batch and match you better.</div>
+            </div>
+            <div class="info-box teal" style="margin-bottom:10px">
+              <i class="fa-solid fa-unlock"></i>
+              <div>Responding keeps you eligible for priority job matching and placement drives.</div>
+            </div>
+            <div class="info-box amber">
+              <i class="fa-solid fa-lock"></i>
+              <div>Your individual answers are never shown to employers — only anonymised trends.</div>
+            </div>
+
+            <div style="margin-top:14px">
+              <p style="font-size:10.5px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.4px;margin-bottom:6px">Past Responses</p>
+              <div class="timeline">
+                <div class="tl-item done"><h5>1-Month Follow-Up</h5><p>Status: In training</p><time>12 Feb 2024</time></div>
+                <div class="tl-item done"><h5>Enrolment Confirmation</h5><p>Status: Enrolled</p><time>12 Jan 2024</time></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 11 : PRIVACY & CONSENT
+      ============================================================ -->
+      <section class="view" id="view-consent">
+        <div class="page-head">
+          <div>
+            <h2>Privacy &amp; Consent</h2>
+            <p>You decide what is shared, with whom, and for how long.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn btn-ghost btn-sm" data-toast="Data export requested — you'll receive it by email"><i class="fa-solid fa-download"></i> Download My Data</button>
+          </div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-toggle-on" style="color:var(--primary)"></i>
+              <h3>Consent Controls</h3>
+              <div class="right"><span class="pill pill-green">Granular</span></div>
+            </div>
+
+            <div class="consent-row">
+              <div class="ico"><i class="fa-solid fa-briefcase"></i></div>
+              <div><h5>Share profile with employers</h5><p>Only when you apply or allow</p></div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+
+            <div class="consent-row">
+              <div class="ico"><i class="fa-solid fa-phone"></i></div>
+              <div><h5>Follow-up contact</h5><p>WhatsApp, SMS, IVR and calls</p></div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+
+            <div class="consent-row">
+              <div class="ico"><i class="fa-solid fa-chart-pie"></i></div>
+              <div><h5>Anonymised analytics</h5><p>Used for course and policy improvement</p></div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+
+            <div class="consent-row">
+              <div class="ico"><i class="fa-solid fa-building-columns"></i></div>
+              <div><h5>EPFO / UAN verification</h5><p>Confirms employment and wages</p></div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+
+            <div class="consent-row">
+              <div class="ico"><i class="fa-solid fa-bullhorn"></i></div>
+              <div><h5>Job alerts &amp; marketing</h5><p>New openings and events</p></div>
+              <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-clock-rotate-left" style="color:var(--primary)"></i>
+              <h3>Access Log</h3>
+              <div class="right"><span class="pill pill-gray">Last 30 days</span></div>
+            </div>
+
+            <div class="timeline">
+              <div class="tl-item done"><h5>Placement Officer viewed your profile</h5><p>Purpose: Job matching</p><time>18 Jun 2024, 11:42 AM</time></div>
+              <div class="tl-item done"><h5>Employer (TechNova) requested profile access</h5><p>Purpose: Application review &middot; Approved by you</p><time>16 Jun 2024, 04:15 PM</time></div>
+              <div class="tl-item done"><h5>System ran follow-up reminder</h5><p>Purpose: Outcome tracking</p><time>12 Jun 2024, 09:00 AM</time></div>
+              <div class="tl-item done"><h5>Analytics job generated anonymised report</h5><p>No personal identifiers used</p><time>01 Jun 2024, 02:30 AM</time></div>
+            </div>
+
+            <div class="info-box teal" style="margin-top:14px">
+              <i class="fa-solid fa-shield-halved"></i>
+              <div>You can revoke any consent at any time. Revoking stops future sharing but does not affect past lawful use.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-head">
+            <i class="fa-solid fa-scale-balanced" style="color:var(--primary)"></i>
+            <h3>Your Rights</h3>
+          </div>
+          <div class="grid grid-3" style="gap:10px">
+            <div style="padding:12px;background:#fafbfe;border-radius:8px">
+              <i class="fa-solid fa-eye" style="color:var(--primary);font-size:15px"></i>
+              <h5 style="font-size:12px;margin-top:6px">Right to Access</h5>
+              <p style="font-size:10.5px;color:var(--muted);margin-top:2px">See all data stored about you.</p>
+            </div>
+            <div style="padding:12px;background:#fafbfe;border-radius:8px">
+              <i class="fa-solid fa-pen" style="color:var(--primary);font-size:15px"></i>
+              <h5 style="font-size:12px;margin-top:6px">Right to Correct</h5>
+              <p style="font-size:10.5px;color:var(--muted);margin-top:2px">Fix inaccurate information anytime.</p>
+            </div>
+            <div style="padding:12px;background:#fafbfe;border-radius:8px">
+              <i class="fa-solid fa-trash-can" style="color:#b91c1c;font-size:15px"></i>
+              <h5 style="font-size:12px;margin-top:6px">Right to Erase</h5>
+              <p style="font-size:10.5px;color:var(--muted);margin-top:2px">Request deletion of your record.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 12 : FEEDBACK
+      ============================================================ -->
+      <section class="view" id="view-feedback">
+        <div class="page-head">
+          <div>
+            <h2>Feedback</h2>
+            <p>Your honest feedback directly shapes the next batch's curriculum.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-2-1">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-comment-dots" style="color:var(--primary)"></i>
+              <h3>Share Your Experience</h3>
+            </div>
+
+            <div class="survey-q">
+              <label>How would you rate your training overall?</label>
+              <div class="opt-grid" data-group="rating">
+                <div class="opt">Excellent</div>
+                <div class="opt">Good</div>
+                <div class="opt">Average</div>
+                <div class="opt">Poor</div>
+              </div>
+            </div>
+
+            <div class="survey-q">
+              <label>Which area needs the most improvement?</label>
+              <div class="opt-grid" data-group="improve">
+                <div class="opt">Practical training</div>
+                <div class="opt">Trainer quality</div>
+                <div class="opt">Course content</div>
+                <div class="opt">Placement support</div>
+                <div class="opt">Infrastructure</div>
+                <div class="opt">Soft skills</div>
+              </div>
+            </div>
+
+            <div class="survey-q">
+              <label>Tell us more</label>
+              <textarea rows="3" placeholder="What worked well? What should change?"></textarea>
+            </div>
+
+            <button class="btn btn-primary btn-sm" id="submitFeedback"><i class="fa-solid fa-paper-plane"></i> Submit Feedback</button>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-arrow-trend-up" style="color:var(--primary)"></i>
+              <h3>How Your Feedback Helps</h3>
+            </div>
+            <div class="timeline">
+              <div class="tl-item done"><h5>You report a gap</h5><p>e.g., "More practical SQL needed"</p></div>
+              <div class="tl-item done"><h5>Admin sees the pattern</h5><p>Aggregated across your batch</p></div>
+              <div class="tl-item done"><h5>Curriculum updated</h5><p>Next batch gets the improved module</p></div>
+              <div class="tl-item pending"><h5>Better outcomes</h5><p>Higher placement and retention</p></div>
+            </div>
+
+            <div class="info-box teal" style="margin-top:14px">
+              <i class="fa-solid fa-lightbulb"></i>
+              <div>Last batch's feedback added 20 hours of practical SQL training — placement rose by 14%.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ============================================================
+     MODALS
+============================================================ -->
+
+<!-- Edit Profile Modal -->
+<div class="modal-overlay" id="editProfileModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Edit Profile</h3>
+      <button class="close-btn" onclick="closeModal('editProfileModal')"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <div class="grid-2">
-      <div class="panel">
-        <div class="panel-head">
-          <h3><i class="fa-solid fa-chart-line"></i> Training Performance Trend</h3>
-          <span class="panel-sub">Last 6 months</span>
-        </div>
-        <div class="chart-wrap" id="trendChartWrap">
-          <canvas id="trendChart"></canvas>
-        </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="editName" value="Trainee Name">
       </div>
-      <div class="panel">
-        <div class="panel-head">
-          <h3><i class="fa-solid fa-bullseye"></i> Personal Skill Gap Analysis</h3>
-          <span class="panel-sub">You vs Industry Benchmark</span>
-        </div>
-        <div class="chart-wrap" id="skillGapChartWrap">
-          <canvas id="skillGapChart"></canvas>
-        </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="text" id="editEmail" value="trainee@example.com">
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="text" id="editPhone" value="+91 98••• ••210">
       </div>
     </div>
-
-    <div class="section-head">
-      <h2><i class="fa-solid fa-briefcase"></i> Live Companies Hiring &amp; Open Opportunities</h2>
-      <span class="section-note" id="companyCount">0 active drives</span>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('editProfileModal')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="saveProfile()">Save Changes</button>
     </div>
-    <div id="companiesSection"></div>
-
-    <div class="section-head">
-      <h2><i class="fa-solid fa-lightbulb"></i> Recommended Learning &amp; Remedial Modules</h2>
-      <span class="section-note">Personalised to close your skill gaps</span>
-    </div>
-    <div id="recoSection"></div>
-
-  </main>
+  </div>
 </div>
 
-<!-- ============ PROFILE DRAWER ============ -->
-<div class="overlay" id="overlay"></div>
-<div class="drawer" id="profileDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
-  <div class="drawer-head">
-    <h3 id="drawerTitle">Trainee Settings</h3>
-    <button class="drawer-close" id="drawerClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-  </div>
-  <div class="drawer-body">
-    <div class="pic-upload">
-      <div class="avatar-lg" id="drawerAvatarInitial">?</div>
-      <div>
-        <label for="picInput" id="uploadPhotoLabel">
-          <i class="fa-solid fa-camera"></i>Change photo
-        </label>
-        <input type="file" id="picInput" accept="image/png,image/jpeg,image/jpg,image/webp">
-        <span class="upload-hint">PNG, JPG or WebP · Max 5 MB</span>
+<!-- Change Password Modal -->
+<div class="modal-overlay" id="changePasswordModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Change Password</h3>
+      <button class="close-btn" onclick="closeModal('changePasswordModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Current Password</label>
+        <input type="text" placeholder="Enter current password">
+      </div>
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="text" placeholder="Enter new password">
+      </div>
+      <div class="form-group">
+        <label>Confirm New Password</label>
+        <input type="text" placeholder="Confirm new password">
       </div>
     </div>
-
-    <div class="field">
-      <label for="fullName">Full Name</label>
-      <input type="text" id="fullName" placeholder="Enter your full name">
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('changePasswordModal')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="savePassword()">Update Password</button>
     </div>
-    <div class="field">
-      <label for="emailAddr">Email Address</label>
-      <input type="email" id="emailAddr" placeholder="Enter your email address">
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label for="branchField">Branch</label>
-        <input type="text" id="branchField" placeholder="e.g. CSE">
-      </div>
-      <div class="field">
-        <label for="batchField">Batch</label>
-        <input type="text" id="batchField" placeholder="e.g. 2022-2026">
-      </div>
-    </div>
-    <div class="field">
-      <label for="bioField">Academic Bio</label>
-      <textarea id="bioField" placeholder="Tell us about your interests, projects, and career goals..."></textarea>
-    </div>
-
-    <div class="divider-label">CHANGE PASSWORD</div>
-    <div class="field">
-      <label for="curPass">Current Password</label>
-      <input type="password" id="curPass" placeholder="••••••••">
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label for="newPass">New Password</label>
-        <input type="password" id="newPass" placeholder="••••••••">
-      </div>
-      <div class="field">
-        <label for="confPass">Confirm Password</label>
-        <input type="password" id="confPass" placeholder="••••••••">
-      </div>
-    </div>
-  </div>
-  <div class="drawer-foot">
-    <button class="btn" id="cancelProfile">Cancel</button>
-    <button class="btn btn-primary" id="saveProfile">Save Changes</button>
   </div>
 </div>
 
-<div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastText">Profile updated</span></div>
+<div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-/* =========================================================
-   HORIZON — TRAINEE DASHBOARD
-   
-   Data sources:
-   - 'horizon_trainee_data'     : uploaded Excel rows (array)
-   - 'horizon_current_user_id'  : which row is the logged-in trainee
-   - 'horizon_trainee_profile'  : user's saved profile overrides
-                                  (name, email, branch, batch, bio, photo)
-   
-   Overrides ALWAYS take precedence so the trainee can edit
-   their own details at any time — regardless of uploaded data.
-========================================================= */
+/* ============================================================
+   EMPTY DEFAULT STATE (Loaded on start, zeroed out)
+============================================================ */
+const emptyData = {
+    profile: {
+        name: "Trainee",
+        fullName: "Trainee Name",
+        id: "N/A",
+        targetRole: "--",
+        district: "--",
+        batch: "--",
+        readiness: 0,
+        certifications: "0 Earned",
+        phone: "N/A",
+        altPhone: "N/A",
+        language: "N/A"
+    },
+    stats: {
+        readiness: "0%",
+        certs: "0 / 0",
+        applications: 0,
+        profileCompleteness: 0
+    },
+    skills: [],
+    jobs: [],
+    applications: []
+};
 
-const STORAGE_KEY = 'horizon_trainee_data';
-const USER_KEY = 'horizon_current_user_id';
-const PROFILE_KEY = 'horizon_trainee_profile';
+// Global state holding the current data (starts empty)
+let currentData = JSON.parse(JSON.stringify(emptyData));
 
-const BENCHMARK_SKILLS = [
-  { name: 'Python',         target: 80 },
-  { name: 'SQL',            target: 80 },
-  { name: 'System Design',  target: 80 },
-  { name: 'Cloud & Docker', target: 85 },
-  { name: 'Communication',  target: 80 }
-];
+/* ============================================================
+   RENDER FUNCTIONS (Data Driven)
+============================================================ */
+function renderDashboard(data) {
+    const isEmpty = data.profile.id === "N/A";
 
-const COMPANY_TEMPLATES = [
-  { name: 'TCS Digital',    role: 'Full-Stack Developer', skills: ['Python','SQL','React'],        deadline: 'Jun 24' },
-  { name: 'Infosys Power',  role: 'Cloud Engineer',       skills: ['AWS','Docker','Linux'],        deadline: 'Jun 28' },
-  { name: 'Horizon Tech',   role: 'Backend Engineer',     skills: ['Python','Flask','PostgreSQL'], deadline: 'Jul 02' },
-  { name: 'Accenture',      role: 'Data Analyst',         skills: ['SQL','Tableau','Statistics'],  deadline: 'Jul 08' },
-  { name: 'Wipro Next',     role: 'Frontend Engineer',    skills: ['React','TypeScript','CSS'],    deadline: 'Jun 30' },
-  { name: 'Zoho Corp',      role: 'Software Engineer',    skills: ['Java','DSA','SQL'],            deadline: 'Jul 05' }
-];
+    // 1. Update Topbar Profile
+    document.getElementById('topName').textContent = data.profile.fullName;
+    document.getElementById('topId').textContent = 'ID: ' + data.profile.id;
 
-/* =========================================================
-   HELPERS
-========================================================= */
-function initials(name){
-  if(!name) return '?';
-  const parts = String(name).trim().split(/\s+/);
-  if(parts.length === 1) return parts[0].charAt(0).toUpperCase();
-  return (parts[0].charAt(0) + parts[parts.length-1].charAt(0)).toUpperCase();
-}
+    // 2. Update Hero Section
+    document.getElementById('heroName').textContent = data.profile.name;
+    document.getElementById('heroTargetRole').textContent = data.profile.targetRole;
+    document.getElementById('heroDistrict').textContent = data.profile.district;
+    document.getElementById('heroBatch').textContent = data.profile.batch;
+    document.getElementById('heroCerts').textContent = data.profile.certifications;
+    
+    // Hero Readiness Ring
+    document.getElementById('heroReadiness').textContent = data.profile.readiness + '%';
+    document.getElementById('heroRing').style.setProperty('--p', data.profile.readiness);
+    document.getElementById('heroRingCaption').textContent = `Job Readiness · ${data.profile.targetRole}`;
 
-function firstName(fullName){
-  if(!fullName) return 'Trainee';
-  return String(fullName).trim().split(/\s+/)[0];
-}
-
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, c => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[c]));
-}
-
-/* =========================================================
-   PROFILE OVERRIDES — persisted in localStorage
-========================================================= */
-function loadProfileOverrides(){
-  try{
-    const raw = localStorage.getItem(PROFILE_KEY);
-    if(!raw) return {};
-    const parsed = JSON.parse(raw);
-    return (parsed && typeof parsed === 'object') ? parsed : {};
-  }catch(e){
-    console.warn('Horizon: could not read profile overrides.', e);
-    return {};
-  }
-}
-
-function saveProfileOverrides(overrides){
-  try{
-    localStorage.setItem(PROFILE_KEY, JSON.stringify(overrides));
-    return true;
-  }catch(e){
-    console.warn('Horizon: could not save profile overrides.', e);
-    return false;
-  }
-}
-
-/* =========================================================
-   DATA LOADER — returns null if no uploaded data
-========================================================= */
-function loadTraineeData(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return null;
-
-    const rows = JSON.parse(raw);
-    if(!Array.isArray(rows) || rows.length === 0) return null;
-
-    const normalize = (obj) => {
-      const out = {};
-      Object.keys(obj).forEach(k => {
-        out[k.toLowerCase().trim().replace(/\s+/g,'_')] = obj[k];
-      });
-      return out;
-    };
-    const normalized = rows.map(normalize);
-    const keys = Object.keys(normalized[0] || {});
-    const findKey = (cands) => {
-      for(const c of cands){
-        const found = keys.find(k => k.includes(c));
-        if(found) return found;
-      }
-      return null;
-    };
-
-    const colId       = findKey(['trainee_id','id','roll']);
-    const colName     = findKey(['name','full_name','student']);
-    const colEmail    = findKey(['email','mail']);
-    const colBranch   = findKey(['branch','department','dept']);
-    const colBatch    = findKey(['batch','cohort','year']);
-    const colTraining = findKey(['training_status','trainingstatus','trained','training']);
-    const colOutcome  = findKey(['outcome_status','outcomestatus','outcome','status']);
-    const colSkills   = findKey(['skill','skills','tech']);
-    const colScore    = findKey(['score','skill_score','readiness']);
-
-    const currentId = localStorage.getItem(USER_KEY);
-    let row = null;
-    if(currentId){
-      row = normalized.find(r => colId && String(r[colId]) === String(currentId));
-    }
-    if(!row) row = normalized[0];
-
-    const id       = colId     ? String(row[colId])     : '—';
-    const name     = colName   ? String(row[colName])   : 'Trainee';
-    const email    = colEmail  ? String(row[colEmail])  : '—';
-    const branch   = colBranch ? String(row[colBranch] || '').trim().toUpperCase() : '—';
-    const batch    = colBatch  ? String(row[colBatch])  : '—';
-
-    const tRaw = colTraining ? String(row[colTraining] || '').toLowerCase() : '';
-    let trainingStatus = 'Non-Trained';
-    let trainingProgress = 0;
-    if(tRaw.includes('progress') || tRaw.includes('ongoing')){
-      trainingStatus = 'In Progress';
-      trainingProgress = 50;
-    } else if(tRaw.includes('train') && !tRaw.includes('non') && !tRaw.includes('not') && !tRaw.includes('un')){
-      trainingStatus = 'Trained';
-      trainingProgress = 100;
-    }
-
-    const oRaw = colOutcome ? String(row[colOutcome] || '').toLowerCase() : '';
-    let outcome = 'Seeking Employment';
-    if(oRaw.includes('employ') && !oRaw.includes('seek') && !oRaw.includes('un')) outcome = 'Employed';
-    else if(oRaw.includes('higher') || oRaw.includes('stud')) outcome = 'Higher Studies';
-    else if(oRaw.includes('freelanc') || oRaw.includes('part')) outcome = 'Part-Time / Freelancing';
-    else if(oRaw.includes('intern')) outcome = 'Internships';
-
-    const skillsRaw = colSkills ? String(row[colSkills] || '') : '';
-    const skillList = skillsRaw.split(/[,;|]/).map(s => s.trim()).filter(Boolean);
-
-    let skillScore = 0;
-    if(colScore && row[colScore] !== undefined && !isNaN(Number(row[colScore]))){
-      skillScore = Math.min(100, Math.max(0, Math.round(Number(row[colScore]))));
+    if(isEmpty) {
+        document.getElementById('heroDesc').innerHTML = "Upload your data to see your personalised skill gap analysis and job matches.";
     } else {
-      skillScore = Math.min(100, skillList.length * 12);
+        document.getElementById('heroDesc').innerHTML = `You are <strong>2 skills away</strong> from qualifying for a ${data.profile.targetRole} role. Complete SQL and Power BI this month to unlock 12 matched jobs.`;
     }
 
-    const lowerSkills = skillList.map(s => s.toLowerCase());
-    const benchmarkStatus = BENCHMARK_SKILLS.map(b => {
-      const has = lowerSkills.some(s => s.includes(b.name.toLowerCase().split(' ')[0]));
-      return {
-        name: b.name,
-        target: b.target,
-        current: has ? Math.min(95, b.target + 5) : Math.max(15, b.target - 40)
-      };
-    });
+    // 3. Update Stat Cards
+    document.getElementById('statReadiness').textContent = data.stats.readiness;
+    document.getElementById('statCerts').textContent = data.stats.certs;
+    document.getElementById('statApps').textContent = data.stats.applications;
+    document.getElementById('statProfile').textContent = data.stats.profileCompleteness + '%';
+    document.getElementById('statProfileBar').style.width = data.stats.profileCompleteness + '%';
 
-    const criticalGaps = benchmarkStatus.filter(b => b.current < b.target - 10).length;
+    // 4. Update Skill Gap View
+    document.getElementById('skillgapReadiness').textContent = data.stats.readiness;
+    document.getElementById('skillgapRing').style.setProperty('--p', data.profile.readiness);
+    document.getElementById('skillgapTargetText').textContent = `${data.profile.targetRole} · ${data.profile.district.split(',')[0]}`;
+    
+    const strongSkills = data.skills.filter(s => s.status === 'strong');
+    const gapSkills = data.skills.filter(s => s.status === 'gap' || s.status === 'progress');
+    
+    document.getElementById('skillgapStrongCount').textContent = strongSkills.length;
+    document.getElementById('skillgapGapCount').textContent = gapSkills.length;
+    
+    document.getElementById('skillgapStrongTags').innerHTML = strongSkills.map(s => `<span class="tag-mini">${s.name}</span>`).join('');
+    document.getElementById('skillgapGapTags').innerHTML = gapSkills.map(s => `<span class="tag-mini" style="background:#fef2f2;color:#b91c1c">${s.name}</span>`).join('');
 
-    let eligibleCompanies = 0;
-    const companies = COMPANY_TEMPLATES.map(c => {
-      let matched = 0;
-      c.skills.forEach(s => {
-        const ls = s.toLowerCase();
-        const has = lowerSkills.some(x =>
-          x.includes(ls) ||
-          (ls === 'aws' && x.includes('cloud')) ||
-          (ls === 'docker' && x.includes('docker')) ||
-          (ls === 'dsa' && (x.includes('dsa') || x.includes('algorithm'))) ||
-          (ls === 'postgresql' && (x.includes('sql') || x.includes('postgres')))
-        );
-        if(has) matched++;
-      });
-      const matchPct = Math.round((matched / c.skills.length) * 100);
-      if(matchPct >= 66) eligibleCompanies++;
+    // Render Detailed Skill List
+    const skillListWrap = document.getElementById('skillGapList');
+    if(skillListWrap) {
+        if(data.skills.length === 0) {
+            skillListWrap.innerHTML = `<div class="empty-state"><i class="fa-solid fa-chart-bar"></i><p>No skill data available. Upload data to see analysis.</p></div>`;
+        } else {
+            skillListWrap.innerHTML = data.skills.map(s => {
+                const gap = Math.max(0, s.need - s.have);
+                let barClass = 'bar';
+                let label = '';
+                let labelColor = '';
 
-      const skillDetails = c.skills.map(s => {
-        const ls = s.toLowerCase();
-        const has = lowerSkills.some(x =>
-          x.includes(ls) ||
-          (ls === 'aws' && x.includes('cloud')) ||
-          (ls === 'docker' && x.includes('docker'))
-        );
-        return {
-          name: s,
-          user: has ? Math.min(95, 70 + Math.floor(Math.random()*20)) : 40,
-          gap: !has
-        };
-      });
+                if(s.status === 'strong'){ barClass = 'bar teal'; label = 'Strong'; labelColor = '#0f766e'; }
+                else if(s.status === 'progress'){ barClass = 'bar amber'; label = 'In Progress'; labelColor = '#d97706'; }
+                else { barClass = 'bar red'; label = 'Gap — ' + gap + '%'; labelColor = '#b91c1c'; }
 
-      return {
-        name: c.name,
-        role: c.role,
-        deadline: c.deadline,
-        match: matchPct,
-        matchLevel: matchPct >= 75 ? 'high' : matchPct >= 45 ? 'medium' : 'low',
-        skills: skillDetails
-      };
-    });
-
-    const modulesCompleted = Math.min(15, skillList.length + 3);
-    const modulesTotal = 15;
-
-    const recommendations = benchmarkStatus
-      .filter(b => b.current < b.target - 10)
-      .slice(0, 3)
-      .map(b => {
-        const level = b.current < b.target - 25 ? 'critical' : 'warn';
-        return {
-          level,
-          icon: b.name === 'Cloud & Docker' ? 'fa-docker'
-              : b.name === 'System Design' ? 'fa-diagram-project'
-              : b.name === 'Communication' ? 'fa-comments'
-              : b.name === 'SQL' ? 'fa-database'
-              : 'fa-code',
-          title: `Bridge Your Gap: ${b.name}`,
-          desc: `Your current score in <strong>${b.name}</strong> is <strong>${b.current}%</strong>, below the industry benchmark of <strong>${b.target}%</strong>. Complete targeted modules to close this gap.`,
-          meta: [
-            { icon: 'fa-clock', text: `<strong>${Math.floor(4 + Math.random()*8)} hrs</strong> estimated` },
-            { icon: 'fa-users', text: `<strong>${Math.floor(200 + Math.random()*1500)}</strong> peers enrolled` },
-            { icon: 'fa-star', text: `<strong>4.${Math.floor(5 + Math.random()*4)}</strong> rating` }
-          ],
-          cta: 'Start Module'
-        };
-      });
-
-    if(recommendations.length === 0){
-      recommendations.push({
-        level: 'info',
-        icon: 'fa-circle-check',
-        title: 'You Are On Track!',
-        desc: 'Your skill levels meet or exceed all benchmark targets. Continue to keep your edge by exploring <strong>advanced modules</strong> and <strong>mock interviews</strong>.',
-        meta: [
-          { icon: 'fa-clock', text: '<strong>Ongoing</strong>' },
-          { icon: 'fa-star', text: '<strong>Personalised</strong>' }
-        ],
-        cta: 'Explore'
-      });
-    }
-
-    return {
-      hasData: true,
-      id, name, email, branch, batch,
-      targetRole: 'Full-Stack Engineer',
-      trainingStatus, trainingProgress, outcome,
-      skillList,
-      skillScore,
-      modulesCompleted, modulesTotal,
-      criticalGaps,
-      eligibleCompanies,
-      benchmarkStatus,
-      companies,
-      recommendations,
-      trend: null,
-      photo: null
-    };
-  }catch(e){
-    console.warn('Horizon: could not parse trainee data.', e);
-    return null;
-  }
-}
-
-/* =========================================================
-   BOOT — build working identity
-========================================================= */
-const TRAINEE = loadTraineeData();
-const HAS_DATA = !!TRAINEE;
-const PROFILE_OVERRIDES = loadProfileOverrides();
-
-const IDENTITY = {
-  id:     (HAS_DATA && TRAINEE.id)         ? TRAINEE.id    : '—',
-  name:   PROFILE_OVERRIDES.name   || ((HAS_DATA && TRAINEE.name)   ? TRAINEE.name   : 'Trainee'),
-  email:  PROFILE_OVERRIDES.email  || ((HAS_DATA && TRAINEE.email)  ? TRAINEE.email  : ''),
-  branch: PROFILE_OVERRIDES.branch || ((HAS_DATA && TRAINEE.branch) ? TRAINEE.branch : ''),
-  batch:  PROFILE_OVERRIDES.batch  || ((HAS_DATA && TRAINEE.batch)  ? TRAINEE.batch  : ''),
-  bio:    PROFILE_OVERRIDES.bio    || ((HAS_DATA && TRAINEE.bio)    ? TRAINEE.bio    : ''),
-  photo:  PROFILE_OVERRIDES.photo  || ((HAS_DATA && TRAINEE.photo)  ? TRAINEE.photo  : null)
-};
-
-/* =========================================================
-   AVATAR HELPERS
-========================================================= */
-function applyPhotoToAvatars(dataUrl){
-  const topAvatar = document.getElementById('topAvatarInitial');
-  const drawerAvatar = document.getElementById('drawerAvatarInitial');
-  [topAvatar, drawerAvatar].forEach(el => {
-    if(!el) return;
-    el.style.backgroundImage = `url(${dataUrl})`;
-    el.style.backgroundSize = 'cover';
-    el.style.backgroundPosition = 'center';
-    el.style.backgroundRepeat = 'no-repeat';
-    el.textContent = '';
-  });
-}
-
-function resetAvatarsToInitial(){
-  const initial = initials(IDENTITY.name);
-  const topAvatar = document.getElementById('topAvatarInitial');
-  const drawerAvatar = document.getElementById('drawerAvatarInitial');
-  [topAvatar, drawerAvatar].forEach(el => {
-    if(!el) return;
-    el.style.backgroundImage = '';
-    el.style.backgroundSize = '';
-    el.style.backgroundPosition = '';
-    el.style.backgroundRepeat = '';
-    el.textContent = initial;
-  });
-}
-
-function applyIdentityToAvatars(){
-  if(IDENTITY.photo) applyPhotoToAvatars(IDENTITY.photo);
-  else resetAvatarsToInitial();
-}
-
-/* =========================================================
-   RENDER: IDENTITY (topbar + greeting + drawer)
-========================================================= */
-function renderIdentity(){
-  document.getElementById('topTraineeName').textContent = IDENTITY.name || 'Trainee';
-  document.getElementById('topTraineeRoll').textContent = IDENTITY.id || '—';
-  document.getElementById('greetingName').textContent   = firstName(IDENTITY.name);
-
-  const skillScore = (HAS_DATA && TRAINEE.skillScore) || 0;
-  const trainingProgress = (HAS_DATA && TRAINEE.trainingProgress) || 0;
-  const targetRole = (HAS_DATA && TRAINEE.targetRole) || '—';
-  document.getElementById('qbSkillScore').textContent = skillScore + '/100';
-  document.getElementById('qbTraining').textContent   = trainingProgress + '%';
-  document.getElementById('qbTargetRole').textContent = targetRole;
-
-  if(HAS_DATA){
-    document.getElementById('sidebarNote').innerHTML =
-      `Skill score <strong>${skillScore}/100</strong> · ${IDENTITY.branch || '—'}`;
-  } else if(IDENTITY.name && IDENTITY.name !== 'Trainee'){
-    document.getElementById('sidebarNote').innerHTML =
-      `Welcome, <strong>${escapeHtml(firstName(IDENTITY.name))}</strong>`;
-  } else {
-    document.getElementById('sidebarNote').textContent = 'Upload data to see insights';
-  }
-
-  if(HAS_DATA && TRAINEE.criticalGaps > 0){
-    document.getElementById('notifDot').style.display = 'block';
-    const badge = document.getElementById('notifBadge');
-    badge.style.display = 'inline-flex';
-    badge.textContent = TRAINEE.criticalGaps;
-  }
-
-  document.getElementById('fullName').value    = IDENTITY.name   || '';
-  document.getElementById('emailAddr').value   = IDENTITY.email  || '';
-  document.getElementById('branchField').value = IDENTITY.branch || '';
-  document.getElementById('batchField').value  = IDENTITY.batch  || '';
-  document.getElementById('bioField').value    = IDENTITY.bio    || '';
-
-  applyIdentityToAvatars();
-}
-
-/* =========================================================
-   RENDER: METRIC CARDS
-========================================================= */
-function renderMetrics(){
-  const cards = HAS_DATA
-    ? [
-        {
-          icon: 'fa-chart-line', bg: 'bg-orange',
-          pill: TRAINEE.skillScore + '%', pillClass: 'info',
-          value: TRAINEE.skillScore + '/100', label: 'Overall Skill Score',
-          progress: TRAINEE.skillScore
-        },
-        {
-          icon: 'fa-graduation-cap', bg: 'bg-amber',
-          pill: TRAINEE.trainingProgress + '%',
-          pillClass: TRAINEE.trainingProgress >= 75 ? 'ok' : TRAINEE.trainingProgress >= 40 ? 'warn' : 'danger',
-          value: TRAINEE.modulesCompleted + '/' + TRAINEE.modulesTotal,
-          label: 'Training Modules Completed',
-          progress: TRAINEE.trainingProgress
-        },
-        {
-          icon: 'fa-triangle-exclamation', bg: 'bg-slate',
-          pill: TRAINEE.criticalGaps + ' critical',
-          pillClass: TRAINEE.criticalGaps > 0 ? 'danger' : 'ok',
-          value: String(TRAINEE.criticalGaps), label: 'Skill Gaps Identified',
-          progress: null
-        },
-        {
-          icon: 'fa-briefcase', bg: 'bg-green',
-          pill: 'Hiring now', pillClass: 'ok',
-          value: String(TRAINEE.eligibleCompanies), label: 'Companies Hiring You Now',
-          progress: null
+                return `
+                <div class="skill-row">
+                    <div class="skill-head">
+                    <strong>${s.name}</strong>
+                    <span class="right" style="color:${labelColor}">${label}</span>
+                    </div>
+                    <div class="skill-track">
+                    <div class="${barClass}" style="flex:1"><span style="width:${s.have}%"></span></div>
+                    <span style="font-size:10.5px;font-weight:600;color:var(--muted);min-width:70px;text-align:right">
+                        ${s.have}% / ${s.need}% required
+                    </span>
+                    </div>
+                    <div class="skill-note"><i class="fa-solid fa-circle-info"></i> ${s.note}</div>
+                </div>
+                `;
+            }).join('');
         }
-      ]
-    : [
-        { icon: 'fa-chart-line',           bg: 'bg-muted', pill: 'No data', pillClass: '', value: '0/100', label: 'Overall Skill Score',         progress: 0 },
-        { icon: 'fa-graduation-cap',       bg: 'bg-muted', pill: 'No data', pillClass: '', value: '0/15',  label: 'Training Modules Completed', progress: 0 },
-        { icon: 'fa-triangle-exclamation', bg: 'bg-muted', pill: 'No data', pillClass: '', value: '0',     label: 'Skill Gaps Identified',       progress: null },
-        { icon: 'fa-briefcase',            bg: 'bg-muted', pill: 'No data', pillClass: '', value: '0',     label: 'Companies Hiring You Now',   progress: null }
-      ];
-
-  document.getElementById('metricGrid').innerHTML = cards.map(c => `
-    <div class="metric-card">
-      <div class="metric-top">
-        <div class="metric-icon ${c.bg}"><i class="fa-solid ${c.icon}"></i></div>
-        <span class="metric-label-pill ${c.pillClass}">${escapeHtml(c.pill)}</span>
-      </div>
-      <div>
-        <div class="metric-value">${escapeHtml(c.value)}</div>
-        <div class="metric-label">${escapeHtml(c.label)}</div>
-        ${c.progress !== null ? `<div class="metric-progress"><span style="width:${c.progress}%"></span></div>` : ''}
-      </div>
-    </div>
-  `).join('');
-
-  document.getElementById('analyticsNote').textContent = HAS_DATA
-    ? `Personalised · ${TRAINEE.branch} · Batch ${TRAINEE.batch}`
-    : 'Awaiting uploaded data';
-}
-
-/* =========================================================
-   RENDER: CHARTS
-========================================================= */
-const COLORS = {
-  orange: '#EA580C', amber: '#F59E0B', slate: '#334155',
-  green: '#16A34A', blue: '#2563EB', violet: '#7C3AED'
-};
-
-Chart.defaults.font.family = "'Inter', sans-serif";
-Chart.defaults.font.size = 11;
-Chart.defaults.color = '#5B6472';
-
-let trendChartInstance = null;
-let skillGapChartInstance = null;
-
-function renderTrendChart(){
-  const wrap = document.getElementById('trendChartWrap');
-  if(!HAS_DATA || !TRAINEE.trend){
-    wrap.innerHTML = `
-      <div class="chart-empty">
-        <i class="fa-solid fa-chart-line"></i>
-        <h4>No trend data yet</h4>
-        <p>Upload your trainee data to start tracking performance over time.</p>
-      </div>`;
-    return;
-  }
-  wrap.innerHTML = '<canvas id="trendChart"></canvas>';
-  const ctx = document.getElementById('trendChart');
-  if(trendChartInstance) trendChartInstance.destroy();
-  const t = TRAINEE.trend;
-  const grad1 = ctx.getContext('2d').createLinearGradient(0,0,0,220);
-  grad1.addColorStop(0, 'rgba(234,88,12,0.28)');
-  grad1.addColorStop(1, 'rgba(234,88,12,0.02)');
-  trendChartInstance = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: t.labels,
-      datasets: [
-        { label: 'Test Score', data: t.scores, borderColor: COLORS.orange, backgroundColor: grad1, borderWidth: 2.5, tension: 0.4, fill: true, pointBackgroundColor: '#fff', pointBorderColor: COLORS.orange, pointBorderWidth: 2, pointRadius: 4 }
-      ]
-    },
-    options: { maintainAspectRatio: false, scales: { x: { grid: { display: false } }, y: { beginAtZero: false, min: 30, max: 100, grid: { color: '#F1EBDD' } } } }
-  });
-}
-
-function renderSkillGapChart(){
-  const wrap = document.getElementById('skillGapChartWrap');
-  if(!HAS_DATA){
-    wrap.innerHTML = `
-      <div class="chart-empty">
-        <i class="fa-solid fa-bullseye"></i>
-        <h4>No skill data yet</h4>
-        <p>Upload your trainee record to compare your skills against industry benchmarks.</p>
-      </div>`;
-    return;
-  }
-  wrap.innerHTML = '<canvas id="skillGapChart"></canvas>';
-  const ctx = document.getElementById('skillGapChart');
-  if(skillGapChartInstance) skillGapChartInstance.destroy();
-
-  const labels = TRAINEE.benchmarkStatus.map(b => b.name);
-  const current = TRAINEE.benchmarkStatus.map(b => b.current);
-  const benchmark = TRAINEE.benchmarkStatus.map(b => b.target);
-
-  const gradAmber = ctx.getContext('2d').createLinearGradient(0,0,0,260);
-  gradAmber.addColorStop(0, 'rgba(245,158,11,0.9)');
-  gradAmber.addColorStop(1, 'rgba(234,88,12,0.9)');
-
-  skillGapChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        { label: 'Your Level',          data: current,   backgroundColor: gradAmber, borderRadius: 6, maxBarThickness: 20 },
-        { label: 'Industry Benchmark',  data: benchmark, backgroundColor: '#E2E8F0', borderRadius: 6, maxBarThickness: 20 }
-      ]
-    },
-    options: {
-      indexAxis: 'y',
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 7, boxHeight: 7, padding: 12, font: { size: 10.5, weight: '600' } } },
-        tooltip: { backgroundColor: '#0F172A', padding: 10, cornerRadius: 8, callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.x}%` } }
-      },
-      scales: {
-        x: { beginAtZero: true, max: 100, grid: { color: '#F1EBDD' }, ticks: { font: { size: 10 }, callback: v => v + '%' } },
-        y: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } }
-      }
     }
-  });
+
+    // Dashboard Skill Snapshot (Top 4 skills)
+    const snapshotWrap = document.getElementById('dashboardSkillSnapshot');
+    if(snapshotWrap) {
+        if(data.skills.length === 0) {
+            snapshotWrap.innerHTML = `<div class="empty-state"><i class="fa-solid fa-chart-bar"></i><p>No skill data available.</p></div>`;
+        } else {
+            snapshotWrap.innerHTML = data.skills.slice(0, 4).map(s => {
+                let barClass = 'bar teal';
+                let label = 'Strong';
+                let labelColor = '#0f766e';
+                if(s.status === 'progress'){ barClass = 'bar amber'; label = 'In Progress'; labelColor = '#d97706'; }
+                else if(s.status === 'gap'){ barClass = 'bar red'; label = 'Gap'; labelColor = '#b91c1c'; }
+
+                return `
+                <div class="skill-row">
+                    <div class="skill-head"><strong>${s.name}</strong><span class="right" style="color:${labelColor}">${label}</span></div>
+                    <div class="${barClass}"><span style="width:${s.have}%"></span></div>
+                </div>`;
+            }).join('');
+        }
+    }
+
+    // 5. Update Passport View
+    document.getElementById('passportId').textContent = data.profile.id;
+    document.getElementById('passportName').textContent = data.profile.fullName;
+    document.getElementById('passportPhone').textContent = data.profile.phone;
+    document.getElementById('passportAltPhone').textContent = data.profile.altPhone;
+    document.getElementById('passportDistrict').textContent = data.profile.district;
+    document.getElementById('passportLang').textContent = data.profile.language;
+
+    // 6. Render Jobs
+    const jobWrap = document.getElementById('jobList');
+    document.getElementById('jobMatchSubtitle').textContent = `${data.jobs.length} openings matched to your skills, location and salary expectation.`;
+    document.getElementById('jobBadge').textContent = data.jobs.length;
+
+    if(jobWrap) {
+        if(data.jobs.length === 0) {
+            jobWrap.innerHTML = `<div class="empty-state"><i class="fa-solid fa-briefcase"></i><p>No jobs matched yet. Upload data to see matched openings.</p></div>`;
+        } else {
+            jobWrap.innerHTML = data.jobs.map(j => `
+                <div class="job-row">
+                <div class="job-logo">${j.initials}</div>
+                <div class="job-info">
+                    <h4>${j.title}</h4>
+                    <p>${j.company} &middot; ${j.loc}</p>
+                    <div class="job-tags">
+                    ${j.tags.map(t => `<span class="tag-mini">${t}</span>`).join('')}
+                    </div>
+                </div>
+                <div class="job-right" style="min-width:130px">
+                    <div class="match-pill" style="margin-bottom:6px">
+                    <strong style="color:${j.match >= 80 ? '#0d9488' : j.match >= 65 ? '#ea580c' : '#d97706'}">${j.match}%</strong>
+                    <small>Match</small>
+                    </div>
+                    <div style="font-size:11px;color:var(--ink);font-weight:600;margin-bottom:7px">${j.salary}</div>
+                    <button class="btn btn-primary btn-sm" data-toast="Application submitted to ${j.company}">
+                    <i class="fa-solid fa-paper-plane"></i> Apply
+                    </button>
+                </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    // 7. Render Applications Table
+    const tbody = document.getElementById('appTableBody');
+    if(tbody) {
+        if(data.applications.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;">No applications found.</td></tr>`;
+        } else {
+            tbody.innerHTML = data.applications.map(a => `
+                <tr>
+                <td><strong style="color:var(--ink);font-weight:600">${a.company}</strong></td>
+                <td>${a.role}</td>
+                <td style="color:var(--muted)">${a.date}</td>
+                <td><span class="pill ${a.pill}">${a.status}</span></td>
+                <td>
+                    <button class="btn btn-ghost btn-sm" data-toast="Opening application details…">
+                    View <i class="fa-solid fa-chevron-right" style="font-size:9px"></i>
+                    </button>
+                </td>
+                </tr>
+            `).join('');
+        }
+    }
+
+    // Update Application Stats
+    document.getElementById('appStatTotal').textContent = data.applications.length;
+    document.getElementById('appStatInterview').textContent = data.applications.filter(a => a.status === 'Interview').length;
+    document.getElementById('appStatOffer').textContent = data.applications.filter(a => a.status === 'Offer Received').length;
+    document.getElementById('appStatRejected').textContent = data.applications.filter(a => a.status === 'Not Selected').length;
+
+    // Update Career Path Title
+    document.getElementById('careerPathRole').textContent = data.profile.targetRole;
+    document.getElementById('careerDistrict').textContent = data.profile.district || "your district";
 }
 
-/* =========================================================
-   RENDER: COMPANIES
-========================================================= */
-function renderCompanies(){
-  const container = document.getElementById('companiesSection');
-  const countEl = document.getElementById('companyCount');
-
-  if(!HAS_DATA){
-    countEl.textContent = '0 active drives';
-    container.innerHTML = `
-      <div class="empty-block">
-        <div class="empty-icon"><i class="fa-solid fa-briefcase"></i></div>
-        <h3>No Opportunities Yet</h3>
-        <p>Upload your trainee record to unlock live company drives and see your match percentage for each role.</p>
-        <a class="empty-cta" href="{{ url_for('admin.upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Trainee Data</a>
-      </div>`;
-    return;
-  }
-
-  countEl.textContent = `${TRAINEE.companies.length} active drives`;
-
-  container.innerHTML = `<div class="companies-grid">${TRAINEE.companies.map(c => {
-    const skillsHtml = c.skills.map(s => {
-      const cls = s.gap ? 'skill-chip gap' : 'skill-chip';
-      return `<span class="${cls}">${escapeHtml(s.name)}: <strong>${s.user}%</strong></span>`;
-    }).join('');
-
-    return `
-      <div class="company-card">
-        <div class="company-head">
-          <div class="company-logo">${escapeHtml(initials(c.name))}</div>
-          <div class="company-info">
-            <div class="company-name">${escapeHtml(c.name)}</div>
-            <div class="company-role">${escapeHtml(c.role)}</div>
-          </div>
-          <span class="match-badge ${c.matchLevel === 'high' ? '' : c.matchLevel === 'medium' ? 'medium' : 'low'}">
-            <i class="fa-solid fa-bolt"></i> ${c.match}%
-          </span>
-        </div>
-        <div class="company-skills">${skillsHtml}</div>
-        <div class="company-footer">
-          <div class="company-deadline"><i class="fa-regular fa-clock"></i> Apply by <strong>${escapeHtml(c.deadline)}</strong></div>
-          <button class="apply-btn" data-company="${escapeHtml(c.name)}">Apply <i class="fa-solid fa-arrow-right"></i></button>
-        </div>
-      </div>
-    `;
-  }).join('')}</div>`;
-
-  container.querySelectorAll('.apply-btn').forEach(btn => {
-    btn.addEventListener('click', () => showToast(`Application started for ${btn.dataset.company}`));
-  });
+/* ============================================================
+   MODAL HANDLERS
+============================================================ */
+function openEditProfile() {
+    document.getElementById('editProfileModal').classList.add('show');
 }
 
-/* =========================================================
-   RENDER: RECOMMENDATIONS
-========================================================= */
-function renderRecommendations(){
-  const container = document.getElementById('recoSection');
-  if(!HAS_DATA){
-    container.innerHTML = `
-      <div class="empty-block">
-        <div class="empty-icon"><i class="fa-solid fa-lightbulb"></i></div>
-        <h3>No Recommendations Yet</h3>
-        <p>Once your trainee data is uploaded, personalised learning paths and remedial modules will be generated here.</p>
-        <a class="empty-cta" href="{{ url_for('admin.upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Trainee Data</a>
-      </div>`;
-    return;
-  }
-
-  container.innerHTML = `<div class="reco-list">${TRAINEE.recommendations.map(r => {
-    const metaHtml = r.meta.map(m => `<span><i class="fa-solid ${m.icon}"></i> ${m.text}</span>`).join('');
-    const tagLabel = r.level === 'critical' ? 'Critical Gap' : r.level === 'warn' ? 'Recommended' : 'Insight';
-    return `
-      <div class="reco-card ${r.level}">
-        <div class="reco-icon"><i class="fa-solid ${r.icon}"></i></div>
-        <div class="reco-body">
-          <div class="reco-title">
-            ${escapeHtml(r.title)}
-            <span class="reco-tag ${r.level}">${tagLabel}</span>
-          </div>
-          <p class="reco-desc">${r.desc}</p>
-          <div class="reco-meta">${metaHtml}</div>
-          <button class="reco-cta" data-reco="${escapeHtml(r.title)}"><i class="fa-solid fa-play"></i> ${escapeHtml(r.cta)}</button>
-        </div>
-      </div>
-    `;
-  }).join('')}</div>`;
-
-  container.querySelectorAll('.reco-cta').forEach(btn => {
-    btn.addEventListener('click', () => showToast(`Opening: ${btn.dataset.reco}`));
-  });
+function openChangePassword() {
+    document.getElementById('changePasswordModal').classList.add('show');
 }
 
-/* =========================================================
-   SIDEBAR NAV
-========================================================= */
-function initNav(){
-  const links = document.querySelectorAll('.nav-link');
-  links.forEach(link => {
-    link.addEventListener('click', (e) => {
-      const href = link.getAttribute('href');
-      if(href && href !== '#' && !href.startsWith('#') && !href.includes('url_for')) return;
-      e.preventDefault();
-      if(link.classList.contains('active')) return;
-      links.forEach(l => l.classList.remove('active'));
-      link.classList.add('active');
-      showToast(`Navigating to ${link.textContent.trim()}...`);
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('show');
+}
+
+function saveProfile() {
+    const name = document.getElementById('editName').value;
+    showToast("Profile updated successfully!");
+    closeModal('editProfileModal');
+    // In a real app, you would send this data to the backend here
+}
+
+function savePassword() {
+    showToast("Password changed successfully!");
+    closeModal('changePasswordModal');
+    // In a real app, you would validate and send this data to the backend here
+}
+
+function handleLogout() {
+    showToast("Logging out...");
+    // In a real app, clear session and redirect to login page
+}
+
+// Close modal when clicking outside the modal content
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.classList.remove('show');
+        }
     });
-  });
+});
+
+/* ============================================================
+   ACTION HANDLERS
+============================================================ */
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const uploadedData = JSON.parse(e.target.result);
+            
+            // Basic validation
+            if(!uploadedData.profile || !uploadedData.skills) {
+                throw new Error("Invalid data format. Missing required fields (profile, skills).");
+            }
+
+            // Ensure arrays exist even if empty
+            if(!uploadedData.jobs) uploadedData.jobs = [];
+            if(!uploadedData.applications) uploadedData.applications = [];
+
+            // Update global state and re-render
+            currentData = uploadedData;
+            renderDashboard(currentData);
+            
+            showToast("Data uploaded successfully! Dashboard updated.");
+            event.target.value = '';
+        } catch (error) {
+            showToast("Error parsing file: " + error.message);
+        }
+    };
+    reader.readAsText(file);
 }
 
-/* =========================================================
-   PROFILE DRAWER — always editable, always saveable
-========================================================= */
-function initDrawer(){
-  const overlay      = document.getElementById('overlay');
-  const drawer       = document.getElementById('profileDrawer');
-  const trigger      = document.getElementById('profileTrigger');
-  const closeBtn     = document.getElementById('drawerClose');
-  const cancelBtn    = document.getElementById('cancelProfile');
-  const saveBtn      = document.getElementById('saveProfile');
-  const uploadLabel  = document.getElementById('uploadPhotoLabel');
-  const fileInput    = document.getElementById('picInput');
+/* ============================================================
+   NAVIGATION
+============================================================ */
+const navItems = document.querySelectorAll('.nav-item');
+const views = document.querySelectorAll('.view');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
 
-  let pendingPhoto = null;
+function goTo(viewName){
+  navItems.forEach(n => n.classList.toggle('active', n.dataset.view === viewName));
+  views.forEach(v => v.classList.toggle('active', v.id === 'view-' + viewName));
 
-  function refreshDrawerFields(){
-    document.getElementById('fullName').value    = IDENTITY.name   || '';
-    document.getElementById('emailAddr').value   = IDENTITY.email  || '';
-    document.getElementById('branchField').value = IDENTITY.branch || '';
-    document.getElementById('batchField').value  = IDENTITY.batch  || '';
-    document.getElementById('bioField').value    = IDENTITY.bio    || '';
-  }
-
-  function open(){
-    refreshDrawerFields();
-    pendingPhoto = null;
-    overlay.classList.add('open');
-    drawer.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function close(revertPreview){
-    if(revertPreview && pendingPhoto){
-      pendingPhoto = null;
-      if(IDENTITY.photo) applyPhotoToAvatars(IDENTITY.photo);
-      else resetAvatarsToInitial();
-    }
-    overlay.classList.remove('open');
-    drawer.classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  trigger.addEventListener('click', open);
-  closeBtn.addEventListener('click', () => close(true));
-  cancelBtn.addEventListener('click', () => close(true));
-  overlay.addEventListener('click', () => close(true));
-  document.addEventListener('keydown', (e) => {
-    if(e.key === 'Escape' && drawer.classList.contains('open')) close(true);
-  });
-
-  if(uploadLabel && fileInput){
-    uploadLabel.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      fileInput.click();
+  const activeView = document.getElementById('view-' + viewName);
+  if(activeView){
+    activeView.querySelectorAll('.bar > span').forEach(el => {
+      const w = el.style.width;
+      el.style.width = '0%';
+      requestAnimationFrame(() => setTimeout(() => { el.style.width = w; }, 40));
+    });
+    activeView.querySelectorAll('.chart-bar').forEach(el => {
+      const h = el.style.height;
+      el.style.height = '0%';
+      requestAnimationFrame(() => setTimeout(() => { el.style.height = h; }, 40));
     });
   }
 
-  if(fileInput){
-    fileInput.addEventListener('change', (e) => {
-      const file = e.target.files && e.target.files[0];
-      if(!file) return;
+  window.scrollTo({ top:0, behavior:'smooth' });
+  sidebar.classList.remove('open');
+  overlay.classList.remove('show');
+}
 
-      if(!file.type.startsWith('image/')){
-        showToast('Please select an image file');
-        fileInput.value = '';
-        return;
-      }
-      if(file.size > 5 * 1024 * 1024){
-        showToast('Image too large — max 5 MB');
-        fileInput.value = '';
-        return;
-      }
+navItems.forEach(item => {
+  item.addEventListener('click', () => goTo(item.dataset.view));
+});
 
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const img = new Image();
-        img.onload = () => {
-          const maxDim = 300;
-          let w = img.width, h = img.height;
-          if(w > h && w > maxDim){ h = Math.round(h * (maxDim / w)); w = maxDim; }
-          else if(h > maxDim){ w = Math.round(w * (maxDim / h)); h = maxDim; }
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-goto]');
+  if(btn) goTo(btn.dataset.goto);
+});
 
-          const canvas = document.createElement('canvas');
-          canvas.width = w;
-          canvas.height = h;
-          const cctx = canvas.getContext('2d');
-          cctx.drawImage(img, 0, 0, w, h);
+document.getElementById('hamburger').addEventListener('click', () => {
+  sidebar.classList.add('open');
+  overlay.classList.add('show');
+});
+overlay.addEventListener('click', () => {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('show');
+});
 
-          let dataUrl;
-          try{
-            dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-          }catch(err){
-            dataUrl = ev.target.result;
-          }
+/* ============================================================
+   TOASTS
+============================================================ */
+const toastWrap = document.getElementById('toastWrap');
 
-          pendingPhoto = dataUrl;
-          applyPhotoToAvatars(dataUrl);
-          showToast('Photo ready — click Save Changes');
-        };
-        img.onerror = () => {
-          pendingPhoto = ev.target.result;
-          applyPhotoToAvatars(pendingPhoto);
-          showToast('Photo ready — click Save Changes');
-        };
-        img.src = ev.target.result;
-      };
-      reader.onerror = () => {
-        showToast('Could not read the selected file');
-      };
-      reader.readAsDataURL(file);
-    });
-  }
+function showToast(msg){
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>${msg}</span>`;
+  toastWrap.appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'opacity .3s, transform .3s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(20px)';
+    setTimeout(() => el.remove(), 300);
+  }, 2800);
+}
 
-  saveBtn.addEventListener('click', () => {
-    const nameVal   = document.getElementById('fullName').value.trim();
-    const emailVal  = document.getElementById('emailAddr').value.trim();
-    const branchVal = document.getElementById('branchField').value.trim();
-    const batchVal  = document.getElementById('batchField').value.trim();
-    const bioVal    = document.getElementById('bioField').value.trim();
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-toast]');
+  if(btn) showToast(btn.dataset.toast);
+});
 
-    const overrides = Object.assign({}, PROFILE_OVERRIDES);
-    if(nameVal)   overrides.name   = nameVal;
-    if(emailVal)  overrides.email  = emailVal;
-    if(branchVal) overrides.branch = branchVal;
-    if(batchVal)  overrides.batch  = batchVal;
-    if(bioVal)    overrides.bio    = bioVal;
+/* ============================================================
+   OPTION SELECTORS (surveys)
+============================================================ */
+document.querySelectorAll('.opt-grid').forEach(grid => {
+  grid.addEventListener('click', e => {
+    const opt = e.target.closest('.opt');
+    if(!opt) return;
+    grid.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+  });
+});
 
-    if(pendingPhoto){
-      overrides.photo = pendingPhoto;
-    } else if(IDENTITY.photo){
-      overrides.photo = IDENTITY.photo;
-    } else if(PROFILE_OVERRIDES.photo){
-      overrides.photo = PROFILE_OVERRIDES.photo;
-    }
-
-    if(!saveProfileOverrides(overrides)){
-      showToast('Could not save profile changes');
+/* ============================================================
+   SURVEY / FEEDBACK SUBMIT
+============================================================ */
+const submitSurvey = document.getElementById('submitSurvey');
+if(submitSurvey){
+  submitSurvey.addEventListener('click', () => {
+    const chosen = document.querySelector('[data-group="status"] .opt.selected');
+    if(!chosen){
+      showToast('Please select your current status');
       return;
     }
-
-    if(overrides.name)   IDENTITY.name   = overrides.name;
-    if(overrides.email)  IDENTITY.email  = overrides.email;
-    if(overrides.branch) IDENTITY.branch = overrides.branch;
-    if(overrides.batch)  IDENTITY.batch  = overrides.batch;
-    if(overrides.bio)    IDENTITY.bio    = overrides.bio;
-    if(overrides.photo)  IDENTITY.photo  = overrides.photo;
-
-    Object.keys(overrides).forEach(k => { PROFILE_OVERRIDES[k] = overrides[k]; });
-
-    document.getElementById('topTraineeName').textContent = IDENTITY.name || 'Trainee';
-    document.getElementById('greetingName').textContent   = firstName(IDENTITY.name);
-    if(HAS_DATA){
-      document.getElementById('sidebarNote').innerHTML =
-        `Skill score <strong>${TRAINEE.skillScore}/100</strong> · ${IDENTITY.branch || '—'}`;
-    } else if(IDENTITY.name && IDENTITY.name !== 'Trainee'){
-      document.getElementById('sidebarNote').innerHTML =
-        `Welcome, <strong>${escapeHtml(firstName(IDENTITY.name))}</strong>`;
-    }
-    applyIdentityToAvatars();
-
-    pendingPhoto = null;
-    showToast('Profile updated successfully');
-    close(false);
+    showToast('Thank you! Your response has been recorded.');
   });
 }
 
-/* =========================================================
-   TOAST
-========================================================= */
-function showToast(msg){
-  const toast = document.getElementById('toast');
-  const toastText = document.getElementById('toastText');
-  toastText.textContent = msg;
-  toast.classList.add('show');
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => toast.classList.remove('show'), 2600);
-}
-
-/* =========================================================
-   STORAGE LISTENER
-========================================================= */
-function initStorageListener(){
-  window.addEventListener('storage', (e) => {
-    if(e.key === STORAGE_KEY){
-      showToast('New trainee data detected — reloading...');
-      setTimeout(() => window.location.reload(), 800);
-    }
+const submitFeedback = document.getElementById('submitFeedback');
+if(submitFeedback){
+  submitFeedback.addEventListener('click', () => {
+    showToast('Feedback submitted — thank you for helping improve the next batch!');
   });
 }
 
-/* =========================================================
+/* ============================================================
    INIT
-========================================================= */
-function init(){
-  renderIdentity();
-  renderMetrics();
-  renderTrendChart();
-  renderSkillGapChart();
-  renderCompanies();
-  renderRecommendations();
-  initNav();
-  initDrawer();
-  initStorageListener();
-
-  console.log(HAS_DATA
-    ? `Horizon: Loaded trainee record for ${IDENTITY.name} (${IDENTITY.id}).`
-    : 'Horizon: No uploaded trainee data. Profile is still fully editable.');
-}
-
-document.addEventListener('DOMContentLoaded', init);
+============================================================ */
+// Initial render using EMPTY data (all zeros)
+renderDashboard(currentData);
 </script>
-
 </body>
 </html>
