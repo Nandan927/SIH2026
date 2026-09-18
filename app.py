@@ -1,8 +1,28 @@
 import secrets
 import string
+import io
+import pandas as pd
 
-from flask import Flask, render_template, request, redirect, url_for, flash, session
-from database.db import init_db, create_admin, check_admin
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash,
+    session,
+    send_file
+)
+
+from werkzeug.security import generate_password_hash
+
+from database.db import (
+    init_db,
+    create_admin,
+    check_admin,
+    insert_trainee,
+    get_trainees_by_admin
+)
 
 app = Flask(__name__)
 
@@ -243,6 +263,68 @@ def generate_trainee_password(length=12):
     )
 
     return password
+
+
+def calculate_dashboard_data(trainees):
+    """Build dashboard metrics from trainee data."""
+    trainees = trainees or []
+
+    total_trainees = len(trainees)
+
+    training_status_counts = {}
+    outcome_status_counts = {}
+    branch_counts = {}
+    batch_counts = {}
+
+    active_trainees = 0
+    completed_trainees = 0
+
+    for trainee in trainees:
+        trainee = trainee or {}
+
+        training_status = str(trainee.get("training_status", "")).strip() or "Unknown"
+        outcome_status = str(trainee.get("outcome_status", "")).strip() or "Unknown"
+        branch = str(trainee.get("branch", "")).strip() or "Unknown"
+        batch = str(trainee.get("batch", "")).strip() or "Unknown"
+
+        training_status_counts[training_status] = training_status_counts.get(training_status, 0) + 1
+        outcome_status_counts[outcome_status] = outcome_status_counts.get(outcome_status, 0) + 1
+        branch_counts[branch] = branch_counts.get(branch, 0) + 1
+        batch_counts[batch] = batch_counts.get(batch, 0) + 1
+
+        if "completed" in training_status.lower() or "placed" in outcome_status.lower():
+            completed_trainees += 1
+        else:
+            active_trainees += 1
+
+    return {
+        "total_trainees": total_trainees,
+        "active_trainees": active_trainees,
+        "completed_trainees": completed_trainees,
+        "training_status_counts": training_status_counts,
+        "outcome_status_counts": outcome_status_counts,
+        "branch_counts": branch_counts,
+        "batch_counts": batch_counts,
+    }
+
+
+# ---------------- ADMIN DASHBOARD ---------------- #
+
+@app.route("/admin/dashboard")
+def admin_dashboard():
+    if "admin_id" not in session:
+        return redirect(url_for("admin_signin"))
+
+    trainees = get_trainees_by_admin(session["admin_id"])
+
+    dashboard_data = calculate_dashboard_data(trainees)
+
+    return render_template(
+        "admin/dashboard.html",
+        dashboard_data=dashboard_data
+    )
+
+
 
 
 if __name__ == "__main__":
