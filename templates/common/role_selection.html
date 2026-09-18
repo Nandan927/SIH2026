@@ -74,7 +74,7 @@
   a { color: inherit; text-decoration: none; }
   button { font-family: inherit; cursor: pointer; border: none; background: none; }
 
-  /* ═══════════════ NAVIGATION ═══════════════ */
+  
   .nav {
     position: sticky;
     top: 0;
@@ -178,7 +178,7 @@
     box-shadow: 0 8px 18px rgba(249, 115, 22, 0.35);
   }
 
-  /* ═══════════════ HERO ═══════════════ */
+  
   .hero {
     position: relative;
     padding: 96px 24px 120px;
@@ -361,7 +361,7 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ═══════════════ SECTION SHELL ═══════════════ */
+  
   section { position: relative; }
 
   .section {
@@ -428,7 +428,7 @@
   }
   .section-head--center p { margin-left: auto; margin-right: auto; }
 
-  /* ═══════════════ SCROLL REVEAL ═══════════════ */
+  
   .reveal {
     opacity: 0;
     transform: translateY(24px);
@@ -443,7 +443,7 @@
   .reveal.d4 { transition-delay: 320ms; }
   .reveal.d5 { transition-delay: 400ms; }
 
-  /* ═══════════════ SECTION 1 — TWO COLUMN ═══════════════ */
+
   .two-col {
     display: grid;
     grid-template-columns: 1.15fr 1fr;
@@ -550,7 +550,7 @@
   .gap-label.l3 { top: 50%; left: 2%; transform: translateY(-50%); color: var(--slate-600); }
   .gap-label.l4 { top: 50%; right: 2%; transform: translateY(-50%); color: var(--slate-600); }
 
-  /* ═══════════════ SECTION 2 — BENEFIT GRID ═══════════════ */
+  
   .benefits-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -608,7 +608,7 @@
     color: var(--slate-600);
   }
 
-  /* ═══════════════ SECTION 3 — FEATURES ═══════════════ */
+  
   .features {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -662,7 +662,7 @@
     color: var(--slate-600);
   }
 
-  /* ═══════════════ SECTION 4 — FRAMEWORK STEPS ═══════════════ */
+  
   .framework {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -757,7 +757,7 @@
     line-height: 1.7;
   }
 
-  /* ═══════════════ ROLE SELECTION ═══════════════ */
+
   .roles {
     padding: 112px 24px;
     background:
@@ -929,7 +929,7 @@
   .role-btn svg { transition: transform 240ms ease; }
   .role-btn:hover svg { transform: translateX(3px); }
 
-  /* ═══════════════ FOOTER ═══════════════ */
+  
   .footer {
     padding: 40px 24px;
     background: var(--slate-900);
@@ -965,7 +965,7 @@
     margin: 20px auto;
   }
 
-  /* ═══════════════ RESPONSIVE ═══════════════ */
+  
   @media (max-width: 900px) {
     .nav-links { display: none; }
     .two-col { grid-template-columns: 1fr; gap: 56px; }
@@ -1010,7 +1010,7 @@
 </head>
 <body>
 
-<!-- ═══════════════ NAVIGATION ═══════════════ -->
+
 <nav class="nav" id="nav">
   <div class="nav-inner">
     <a href="#top" class="logo">
@@ -1028,7 +1028,8 @@
   </div>
 </nav>
 
-<!-- ═══════════════ HERO ═══════════════ -->
+
+
 <header class="hero" id="top">
   <div class="hero-inner">
     <div class="eyebrow">Live skill intelligence · built for modern teams</div>
@@ -1077,7 +1078,7 @@
   </div>
 </header>
 
-<!-- ═══════════════ SECTION 1 ═══════════════ -->
+
 <section class="section section--white" id="about">
   <div class="section-inner">
     <div class="two-col">
@@ -1150,7 +1151,7 @@
   </div>
 </section>
 
-<!-- ═══════════════ SECTION 2 ═══════════════ -->
+
 <section class="section section--grey">
   <div class="section-inner">
     <div class="section-head section-head--center reveal">
@@ -1223,7 +1224,7 @@
   </div>
 </section>
 
-<!-- ═══════════════ SECTION 3 ═══════════════ -->
+
 <section class="section section--white">
   <div class="section-inner">
     <div class="section-head section-head--center reveal">
@@ -1286,7 +1287,7 @@
   </div>
 </section>
 
-<!-- ═══════════════ SECTION 4 — FRAMEWORK ═══════════════ -->
+
 <section class="section section--grey" id="how">
   <div class="section-inner">
     <div class="section-head section-head--center reveal">
@@ -1345,7 +1346,7 @@
   </div>
 </section>
 
-<!-- ═══════════════ ROLE SELECTION ═══════════════ -->
+
 <section class="roles" id="start">
   <div class="section-inner">
     <div class="section-head section-head--center reveal">
@@ -1435,7 +1436,7 @@
   </div>
 </section>
 
-<!-- ═══════════════ FOOTER ═══════════════ -->
+
 <footer class="footer">
   <div class="brand">
     <span class="brand-dot">H</span>
@@ -1450,9 +1451,7 @@
 (() => {
   'use strict';
 
-  // ═══════════════════════════════════════════════════════════
-  //  Nav — add shadow when scrolled
-  // ═══════════════════════════════════════════════════════════
+  
   const nav = document.getElementById('nav');
   let lastScrolled = false;
 
@@ -1466,9 +1465,7 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // ═══════════════════════════════════════════════════════════
-  //  Scroll reveal
-  // ═══════════════════════════════════════════════════════════
+
   const reveals = document.querySelectorAll('.reveal');
 
   if ('IntersectionObserver' in window) {
@@ -1490,11 +1487,7 @@
     reveals.forEach((el) => el.classList.add('in'));
   }
 
-  // ═══════════════════════════════════════════════════════════
-  //  Smooth scroll for in-page anchors
-  //  (native CSS scroll-behavior handles most; this ensures
-  //   offset for the sticky nav is respected everywhere)
-  // ═══════════════════════════════════════════════════════════
+  
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', (e) => {
       const id = link.getAttribute('href');
@@ -1508,9 +1501,8 @@
     });
   });
 
-  // ═══════════════════════════════════════════════════════════
-  //  Role card keyboard accessibility — Enter/Space triggers click
-  // ═══════════════════════════════════════════════════════════
+  
+  
   document.querySelectorAll('.role-card').forEach((card) => {
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');

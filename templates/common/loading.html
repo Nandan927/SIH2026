@@ -50,7 +50,7 @@
       linear-gradient(180deg, #ffffff 0%, #fafafc 55%, #f6f4ef 100%);
   }
 
-  /* ═══ soft edge fade — replaces dark vignette ═══ */
+ 
   .vignette {
     position: fixed;
     inset: 0;
@@ -330,9 +330,7 @@ import * as THREE from 'three';
 (() => {
   'use strict';
 
-  // ═══════════════════════════════════════════════════════════
-  //  Renderer & scene
-  // ═══════════════════════════════════════════════════════════
+
   const canvas = document.getElementById('scene');
   const renderer = new THREE.WebGLRenderer({
     canvas,
@@ -351,11 +349,6 @@ import * as THREE from 'three';
   const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
   camera.position.set(0, 0, 6);
 
-  // ═══════════════════════════════════════════════════════════
-  //  Lights — for a light background, we lean on ambient +
-  //  brighter point lights, and ditch additive blending so the
-  //  geometry reads as solid, saturated color (not glow).
-  // ═══════════════════════════════════════════════════════════
   scene.add(new THREE.AmbientLight(0xffffff, 1.0));
 
   const lightY = new THREE.PointLight(0xf59e0b, 1.1, 30, 2);
@@ -366,14 +359,12 @@ import * as THREE from 'three';
   lightO.position.set(-3.5, -2, 3);
   scene.add(lightO);
 
-  // ═══════════════════════════════════════════════════════════
-  //  Root group — receives cursor tilt
-  // ═══════════════════════════════════════════════════════════
+
   const root = new THREE.Group();
   root.scale.setScalar(0.7);
   scene.add(root);
 
-  // ── outer icosahedron wireframe (amber) ──
+ 
   const outerGeo = new THREE.IcosahedronGeometry(1.9, 1);
   const outerWire = new THREE.LineSegments(
     new THREE.WireframeGeometry(outerGeo),
@@ -381,13 +372,12 @@ import * as THREE from 'three';
       color: 0xd97706,        // deeper amber — visible on white
       transparent: true,
       opacity: 0.55,
-      // NORMAL blending (default) — additive would be invisible on white
     })
   );
   root.add(outerWire);
 
-  // ── inner icosahedron wireframe (orange) ──
-  const innerGeo = new THREE.IcosahedronGeometry(1.35, 0);
+
+    const innerGeo = new THREE.IcosahedronGeometry(1.35, 0);
   const innerWire = new THREE.LineSegments(
     new THREE.WireframeGeometry(innerGeo),
     new THREE.LineBasicMaterial({
@@ -398,10 +388,7 @@ import * as THREE from 'three';
   );
   root.add(innerWire);
 
-  // ═══════════════════════════════════════════════════════════
-  //  Skill-node network — vertices of outer icosahedron,
-  //  connected to 3 nearest neighbors with warm-yellow lines.
-  // ═══════════════════════════════════════════════════════════
+ 
   const positions = outerGeo.attributes.position;
   const uniqueVerts = [];
   const seen = new Set();
@@ -443,20 +430,20 @@ import * as THREE from 'three';
   const network = new THREE.LineSegments(
     networkGeo,
     new THREE.LineBasicMaterial({
-      color: 0xf59e0b,        // amber
+      color: 0xf59e0b,      
       transparent: true,
       opacity: 0.75,
     })
   );
   root.add(network);
 
-  // ── soft circular dot texture (used for nodes + particles) ──
+ 
   function makeDotTexture() {
     const size = 64;
     const c = document.createElement('canvas');
     c.width = c.height = size;
     const ctx = c.getContext('2d');
-    // for the light theme we use a solid warmer core (no additive glow)
+   
     const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
     g.addColorStop(0.00, 'rgba(255, 255, 255, 1)');
     g.addColorStop(0.25, 'rgba(255, 226, 178, 1)');
@@ -471,8 +458,7 @@ import * as THREE from 'three';
   }
   const dotTex = makeDotTexture();
 
-  // ── nodes — points at every icosahedron vertex ──
-  const nodePositions = [];
+    const nodePositions = [];
   for (const v of uniqueVerts) {
     nodePositions.push(v.x, v.y, v.z);
   }
@@ -495,7 +481,7 @@ import * as THREE from 'three';
   );
   root.add(nodes);
 
-  // ── core pulse — small glowing sphere in the middle ──
+  
   const coreMat = new THREE.MeshBasicMaterial({
     color: 0xea580c,
     transparent: true,
@@ -504,7 +490,7 @@ import * as THREE from 'three';
   const core = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 16), coreMat);
   root.add(core);
 
-  // ── distant particles (ambient depth) ──
+  
   const PARTICLE_COUNT = 500;
   const pPositions = new Float32Array(PARTICLE_COUNT * 3);
   for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -531,9 +517,8 @@ import * as THREE from 'three';
   );
   root.add(particles);
 
-  // ═══════════════════════════════════════════════════════════
-  //  Cursor parallax
-  // ═══════════════════════════════════════════════════════════
+  
+
   const mouse = { x: 0, y: 0 };
   const tilt  = { x: 0, y: 0 };
 
@@ -547,9 +532,7 @@ import * as THREE from 'three';
 
   let idlePhase = 0;
 
-  // ═══════════════════════════════════════════════════════════
-  //  Resize
-  // ═══════════════════════════════════════════════════════════
+
   function resize() {
     const w = window.innerWidth;
     const h = window.innerHeight;
@@ -565,9 +548,8 @@ import * as THREE from 'three';
   window.addEventListener('resize', resize);
   resize();
 
-  // ═══════════════════════════════════════════════════════════
-  //  Animation loop
-  // ═══════════════════════════════════════════════════════════
+  
+
   const clock = new THREE.Clock();
   let entryT = 0;
   const ENTRY_DURATION = 1.6;
