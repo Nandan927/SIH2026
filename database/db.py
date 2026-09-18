@@ -1,8 +1,17 @@
 import sqlite3
+import os
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
 DATABASE_NAME = "horizon.db"
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+DATABASE_PATH = os.path.join(
+    BASE_DIR,
+    "database",
+    "horizon.db"
+)
 
 
 # Connect to SQLite database
@@ -170,3 +179,25 @@ def insert_trainee(
 
     connection.commit()
     connection.close()
+
+
+def get_trainees_by_admin(admin_id):
+    conn = sqlite3.connect(DATABASE_PATH)
+    conn.row_factory = sqlite3.Row
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT *
+        FROM trainees
+        WHERE admin_id = ?
+        """,
+        (admin_id,)
+    )
+
+    trainees = [dict(row) for row in cursor.fetchall()]
+
+    conn.close()
+
+    return trainees
