@@ -549,7 +549,15 @@
   <p class="card-sub">Enter your enterprise credentials to access the analytics dashboard.</p>
 
   <!-- Flash container — populated by JS or by Flask on server-side render -->
-  <div id="flashZone"></div>
+  <div id="flashZone">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash {{ category }}">
+                <span>{{ message }}</span>
+            </div>
+        {% endfor %}
+    {% endwith %}
+</div>
 
   <form id="signinForm" action="#" method="POST" novalidate>
 
@@ -652,15 +660,7 @@
 (() => {
   'use strict';
 
-  /* ═══════════════════════════════════════════════════════════
-     CONFIG — change this to point at your real backend.
-     In a Flask template, replace these with:
-       signinRoute  : {{ url_for('admin.signin') }}
-       signupRoute  : {{ url_for('admin.signup') }}
-       forgotRoute  : {{ url_for('admin.forgot_password') }}
-       backRoute    : {{ url_for('common.role_selection') }}
-       dashboardRoute: {{ url_for('admin.dashboard') }}
-     ═══════════════════════════════════════════════════════════ */
+  
   const ROUTES = {
   signin: "{{ url_for('admin_signin') }}",
   signup: "{{ url_for('admin_signup') }}",
