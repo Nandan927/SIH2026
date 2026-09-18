@@ -1054,10 +1054,17 @@
   <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar">
     <div class="brand">
+<<<<<<< HEAD
       <div class="brand-mark">H</div>
       <div>
         <div class="brand-name">Horizon</div>
         <div class="brand-sub">Trainee Portal</div>
+=======
+      <div class="brand-mark"><i class="fa-solid fa-mountain-sun"></i></div>
+      <div class="brand-text">
+        <h1>Horizon</h1>
+        <span>UPDATE FUTURE</span>
+>>>>>>> db2fd515ee9423342e66d67b1a295cdc120746b5
       </div>
     </div>
 
@@ -1126,8 +1133,869 @@
           <div class="p-name" id="topTraineeName">Trainee</div>
           <div class="p-roll" id="topTraineeRoll">—</div>
         </div>
+<<<<<<< HEAD
         <i class="fa-solid fa-chevron-down chev"></i>
       </button>
+=======
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ============================================================
+           VIEW 1 : DASHBOARD
+      ============================================================ -->
+      <section class="view active" id="view-dashboard">
+
+        <!-- Hero -->
+        <div class="hero">
+          <div class="hero-left">
+            <span class="tag"><i class="fa-solid fa-bolt"></i> NEXT BEST ACTION READY</span>
+            <h2>Welcome <span id="heroName">Trainee</span> 👋</h2>
+            <p id="heroDesc">Upload your data to see your personalised skill gap analysis and job matches.</p>
+
+            <div class="hero-meta">
+              <div><span>Target Role</span><strong id="heroTargetRole">--</strong></div>
+              <div><span>District</span><strong id="heroDistrict">--</strong></div>
+              <div><span>Batch</span><strong id="heroBatch">--</strong></div>
+              <div><span>Certifications</span><strong id="heroCerts">0 Earned</strong></div>
+            </div>
+
+            <div class="hero-actions">
+              <button class="btn btn-light btn-sm" data-goto="skillgap"><i class="fa-solid fa-chart-simple"></i> View Skill Gap</button>
+              <button class="btn btn-ghost btn-sm" data-goto="learning"><i class="fa-solid fa-play"></i> Continue Learning</button>
+              <button class="btn btn-ghost btn-sm" data-goto="jobs"><i class="fa-solid fa-briefcase"></i> See Job Matches</button>
+            </div>
+          </div>
+
+          <div class="ring-wrap">
+            <div class="ring" id="heroRing" style="--p:0">
+              <div class="ring-inner">
+                <strong id="heroReadiness">0%</strong>
+                <small>Ready</small>
+              </div>
+            </div>
+            <div class="ring-caption" id="heroRingCaption">Job Readiness &middot; --</div>
+          </div>
+        </div>
+
+        <!-- Stat cards -->
+        <div class="grid grid-4" style="margin-top:14px">
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-ico i-indigo"><i class="fa-solid fa-gauge-high"></i></div>
+              <span class="pill pill-blue">Target</span>
+            </div>
+            <h4 id="statReadiness">0%</h4>
+            <p>Job Readiness Score</p>
+            <span class="trend t-up"><i class="fa-solid fa-arrow-up"></i> 0% this month</span>
+          </div>
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-ico i-teal"><i class="fa-solid fa-certificate"></i></div>
+            </div>
+            <h4 id="statCerts">0 / 0</h4>
+            <p>Skills Certified</p>
+            <span class="trend t-up"><i class="fa-solid fa-arrow-up"></i> 0 certifications</span>
+          </div>
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-ico i-amber"><i class="fa-solid fa-paper-plane"></i></div>
+            </div>
+            <h4 id="statApps">0</h4>
+            <p>Applications Sent</p>
+            <span class="trend"><i class="fa-solid fa-clock" style="color:#d97706"></i> 0 in interview stage</span>
+          </div>
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-ico i-indigo"><i class="fa-solid fa-user-check"></i></div>
+            </div>
+            <h4 id="statProfile">0%</h4>
+            <p>Profile Completeness</p>
+            <div class="bar" style="margin-top:7px"><span id="statProfileBar" style="width:0%"></span></div>
+          </div>
+        </div>
+
+        <!-- Next Best Action + Skill snapshot -->
+        <div class="grid grid-2-1" style="margin-top:14px">
+
+          <div class="card nba">
+            <div class="card-head">
+              <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--primary)"></i>
+              <h3>Your Next Best Actions</h3>
+              <div class="right"><span class="pill pill-blue">Auto-generated</span></div>
+            </div>
+            <div id="nbaList">
+              <div class="empty-state">
+                <i class="fa-solid fa-inbox"></i>
+                <p>No actions available. Upload data to generate recommendations.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-chart-simple" style="color:var(--primary)"></i>
+              <h3>Skill Snapshot</h3>
+            </div>
+            <div id="dashboardSkillSnapshot">
+              <div class="empty-state">
+                <i class="fa-solid fa-chart-bar"></i>
+                <p>No skill data available.</p>
+              </div>
+            </div>
+            <button class="btn btn-soft btn-sm" style="width:100%;justify-content:center;margin-top:12px" data-goto="skillgap">
+              <i class="fa-solid fa-arrow-right"></i> View Full Analysis
+            </button>
+          </div>
+        </div>
+
+        <!-- Timeline + Upcoming -->
+        <div class="grid grid-2" style="margin-top:14px">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-timeline" style="color:var(--primary)"></i>
+              <h3>Your Journey</h3>
+            </div>
+            <div class="timeline" id="journeyTimeline">
+              <div class="empty-state">
+                <i class="fa-solid fa-road"></i>
+                <p>No timeline events yet.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-regular fa-calendar-check" style="color:var(--primary)"></i>
+              <h3>Upcoming &amp; Reminders</h3>
+            </div>
+            <div id="remindersList">
+              <div class="empty-state">
+                <i class="fa-regular fa-calendar"></i>
+                <p>No upcoming events.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 2 : MY PASSPORT
+      ============================================================ -->
+      <section class="view" id="view-passport">
+        <div class="page-head">
+          <div>
+            <h2>My Trainee Passport</h2>
+            <p>Your lifelong, portable record — one identity across every programme, course and employer.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn btn-ghost btn-sm" data-toast="Passport PDF downloaded"><i class="fa-solid fa-download"></i> Download</button>
+            <button class="btn btn-primary btn-sm" onclick="openEditProfile()"><i class="fa-solid fa-pen"></i> Edit Profile</button>
+          </div>
+        </div>
+
+        <div class="grid grid-2-1">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-id-card" style="color:var(--primary)"></i>
+              <h3>Passport Details</h3>
+              <div class="right"><span class="pill pill-green"><i class="fa-solid fa-circle-check"></i> Verified</span></div>
+            </div>
+
+            <div class="grid grid-2" style="gap:12px">
+              <div><p style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.4px">Passport ID</p><strong style="font-size:13px" id="passportId">N/A</strong></div>
+              <div><p style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.4px">Full Name</p><strong style="font-size:13px" id="passportName">Trainee Name</strong></div>
+              <div><p style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.4px">Primary Phone</p><strong style="font-size:13px" id="passportPhone">N/A</strong></div>
+              <div><p style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.4px">Alternate Phone</p><strong style="font-size:13px" id="passportAltPhone">N/A</strong></div>
+              <div><p style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.4px">District</p><strong style="font-size:13px" id="passportDistrict">N/A</strong></div>
+              <div><p style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.4px">Preferred Language</p><strong style="font-size:13px" id="passportLang">N/A</strong></div>
+            </div>
+
+            <div class="info-box" style="margin-top:14px">
+              <i class="fa-solid fa-circle-info"></i>
+              <div>Keep at least one alternate contact updated. It helps us reach you even if your phone number changes.</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-award" style="color:var(--primary)"></i>
+              <h3>Certifications</h3>
+            </div>
+            <div id="certificationsList">
+              <div class="empty-state">
+                <i class="fa-solid fa-certificate"></i>
+                <p>No certifications yet.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-head">
+            <i class="fa-solid fa-timeline" style="color:var(--primary)"></i>
+            <h3>Full Outcome Timeline</h3>
+            <div class="right"><span class="pill pill-gray">Auto-updated</span></div>
+          </div>
+          <div class="timeline" id="outcomeTimeline">
+            <div class="empty-state">
+              <i class="fa-solid fa-clock"></i>
+              <p>No timeline data available.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 3 : SKILL GAP & READINESS
+      ============================================================ -->
+      <section class="view" id="view-skillgap">
+        <div class="page-head">
+          <div>
+            <h2>Skill Gap &amp; Job Readiness</h2>
+            <p>See exactly what stands between you and your target role.</p>
+          </div>
+          <div class="head-actions">
+            <select id="roleSelect" style="width:auto;padding:6px 12px;border-radius:6px;font-size:12px;">
+              <option>Data Analyst</option>
+              <option>Business Analyst</option>
+              <option>MIS Executive</option>
+              <option>Data Entry Operator</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-3">
+          <div class="stat" style="text-align:center;padding:20px">
+            <div class="ring" id="skillgapRing" style="--p:0;margin:0 auto 10px;background:conic-gradient(var(--primary) calc(0% * 1%), #eef1f7 0)">
+              <div class="ring-inner" style="background:#fff">
+                <strong style="color:var(--primary)" id="skillgapReadiness">0%</strong>
+                <small style="color:var(--muted)">Ready</small>
+              </div>
+            </div>
+            <h4 style="font-size:13px">Job Readiness Score</h4>
+            <p id="skillgapTargetText">-- &middot; --</p>
+          </div>
+
+          <div class="stat">
+            <div class="stat-ico i-teal" style="margin-bottom:10px"><i class="fa-solid fa-circle-check"></i></div>
+            <h4 id="skillgapStrongCount">0</h4>
+            <p>Skills You Already Have</p>
+            <div class="course-tags" style="margin-top:10px" id="skillgapStrongTags"></div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-ico i-red" style="margin-bottom:10px"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <h4 id="skillgapGapCount">0</h4>
+            <p>Critical Skill Gaps</p>
+            <div class="course-tags" style="margin-top:10px" id="skillgapGapTags"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-head">
+            <i class="fa-solid fa-list-check" style="color:var(--primary)"></i>
+            <h3>Detailed Skill Analysis</h3>
+            <div class="right"><span class="pill pill-gray">Required vs Current</span></div>
+          </div>
+          <div id="skillGapList">
+            <div class="empty-state">
+              <i class="fa-solid fa-chart-bar"></i>
+              <p>No skill data available. Upload data to see analysis.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="margin-top:14px">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-graduation-cap" style="color:var(--primary)"></i>
+              <h3>How to Close Your Gaps</h3>
+            </div>
+            <div id="closeGapsList">
+              <div class="empty-state">
+                <i class="fa-solid fa-book"></i>
+                <p>No recommendations available.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-chart-line" style="color:var(--primary)"></i>
+              <h3>Readiness Simulation</h3>
+            </div>
+            <p style="font-size:11.5px;color:var(--muted);margin-bottom:14px">See how each skill changes your employability.</p>
+            <div id="simulationList">
+              <div class="empty-state">
+                <i class="fa-solid fa-arrow-trend-up"></i>
+                <p>Simulation requires skill data.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 4 : CAREER PATH EXPLORER
+      ============================================================ -->
+      <section class="view" id="view-career">
+        <div class="page-head">
+          <div>
+            <h2>Career Path Explorer</h2>
+            <p>Explore roles in demand, what they pay, and the path to get there.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn btn-ghost btn-sm" data-toast="Filters opened"><i class="fa-solid fa-filter"></i> Filters</button>
+          </div>
+        </div>
+
+        <div class="info-box" style="margin-bottom:14px">
+          <i class="fa-solid fa-location-dot"></i>
+          <div>Showing roles with demand in <strong id="careerDistrict">your district</strong> and remote opportunities. Based on live job postings and employer demand signals.</div>
+        </div>
+
+        <div class="grid grid-3" id="careerRoleGrid">
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <i class="fa-solid fa-route"></i>
+            <p>No career path data available. Upload data to explore roles.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-head">
+            <i class="fa-solid fa-route" style="color:var(--primary)"></i>
+            <h3>Your Career Path — <span id="careerPathRole">--</span></h3>
+            <div class="right"><span class="pill pill-blue">5 steps</span></div>
+          </div>
+          <div class="timeline" id="careerPathTimeline">
+            <div class="empty-state">
+              <i class="fa-solid fa-map-signs"></i>
+              <p>No career path mapped yet.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 5 : LEARNING HUB
+      ============================================================ -->
+      <section class="view" id="view-learning">
+        <div class="page-head">
+          <div>
+            <h2>Learning Hub</h2>
+            <p>Personalised courses picked to close your gaps fastest.</p>
+          </div>
+          <div class="head-actions">
+            <span class="pill pill-blue" style="padding:6px 12px"><i class="fa-solid fa-bolt"></i> AI Recommended</span>
+          </div>
+        </div>
+
+        <div class="grid grid-2" id="learningGrid">
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <i class="fa-solid fa-book-open"></i>
+            <p>No courses recommended. Upload data to get personalised learning paths.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-head">
+            <i class="fa-solid fa-trophy" style="color:var(--primary)"></i>
+            <h3>Your Achievements</h3>
+          </div>
+          <div class="grid grid-4" style="gap:10px" id="achievementsGrid">
+            <div class="empty-state" style="grid-column: 1 / -1;">
+              <i class="fa-solid fa-medal"></i>
+              <p>No achievements yet.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 6 : JOB MATCH
+      ============================================================ -->
+      <section class="view" id="view-jobs">
+        <div class="page-head">
+          <div>
+            <h2>Job &amp; Apprenticeship Match</h2>
+            <p id="jobMatchSubtitle">0 openings matched to your skills, location and salary expectation.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn btn-ghost btn-sm" data-toast="Filters opened"><i class="fa-solid fa-filter"></i> Filters</button>
+            <button class="btn btn-primary btn-sm" data-toast="Profile shared with matching employers"><i class="fa-solid fa-share-nodes"></i> Share Profile</button>
+          </div>
+        </div>
+
+        <div class="info-box" style="margin-bottom:14px">
+          <i class="fa-solid fa-shield-halved"></i>
+          <div>Your profile is shared with employers <strong>only when you apply</strong> or explicitly allow it. You can revoke access anytime from Privacy &amp; Consent.</div>
+        </div>
+
+        <div id="jobList" class="grid" style="gap:10px">
+          <div class="empty-state">
+            <i class="fa-solid fa-briefcase"></i>
+            <p>No jobs matched yet. Upload data to see matched openings.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 7 : APPLICATIONS
+      ============================================================ -->
+      <section class="view" id="view-applications">
+        <div class="page-head">
+          <div>
+            <h2>My Applications</h2>
+            <p>Track every application, interview and offer in one place.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-4" style="margin-bottom:14px">
+          <div class="stat"><div class="stat-ico i-indigo" style="margin-bottom:8px"><i class="fa-solid fa-paper-plane"></i></div><h4 id="appStatTotal">0</h4><p>Total Applied</p></div>
+          <div class="stat"><div class="stat-ico i-amber" style="margin-bottom:8px"><i class="fa-solid fa-comments"></i></div><h4 id="appStatInterview">0</h4><p>In Interview</p></div>
+          <div class="stat"><div class="stat-ico i-teal" style="margin-bottom:8px"><i class="fa-solid fa-circle-check"></i></div><h4 id="appStatOffer">0</h4><p>Offers Received</p></div>
+          <div class="stat"><div class="stat-ico i-red" style="margin-bottom:8px"><i class="fa-solid fa-circle-xmark"></i></div><h4 id="appStatRejected">0</h4><p>Not Selected</p></div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Employer</th>
+                <th>Role</th>
+                <th>Applied On</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="appTableBody">
+              <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;">No applications found.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 8 : WAGE & RETENTION
+      ============================================================ -->
+      <section class="view" id="view-wages">
+        <div class="page-head">
+          <div>
+            <h2>Wage &amp; Retention Insights</h2>
+            <p>Understand your earning potential and how to grow it.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-3" style="margin-bottom:14px">
+          <div class="stat">
+            <div class="stat-ico i-indigo" style="margin-bottom:8px"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+            <h4>₹0</h4>
+            <p>Your Expected Starting Band</p>
+          </div>
+          <div class="stat">
+            <div class="stat-ico i-teal" style="margin-bottom:8px"><i class="fa-solid fa-arrow-trend-up"></i></div>
+            <h4>₹0</h4>
+            <p>After Closing Skill Gaps</p>
+          </div>
+          <div class="stat">
+            <div class="stat-ico i-amber" style="margin-bottom:8px"><i class="fa-solid fa-clock"></i></div>
+            <h4>0%</h4>
+            <p>6-Month Retention (this role)</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <i class="fa-solid fa-chart-column" style="color:var(--primary)"></i>
+            <h3>Projected Wage Progression</h3>
+            <div class="right">
+              <span class="pill pill-blue">Current path</span>
+              <span class="pill pill-green">After skill gaps closed</span>
+            </div>
+          </div>
+
+          <div class="chart">
+            <div class="chart-col"><div class="chart-bar" style="height:0%"><span>₹0</span></div><small>Start</small></div>
+            <div class="chart-col"><div class="chart-bar" style="height:0%"><span>₹0</span></div><small>6 months</small></div>
+            <div class="chart-col"><div class="chart-bar" style="height:0%"><span>₹0</span></div><small>1 year</small></div>
+            <div class="chart-col"><div class="chart-bar" style="height:0%"><span>₹0</span></div><small>2 years</small></div>
+            <div class="chart-col"><div class="chart-bar proj" style="height:0%"><span>₹0</span></div><small>3 years*</small></div>
+          </div>
+
+          <p style="font-size:10.5px;color:var(--muted);margin-top:12px">
+            *Projected with certifications and portfolio projects. Based on market data for your target role.
+          </p>
+        </div>
+
+        <div class="grid grid-2" style="margin-top:14px">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-lightbulb" style="color:var(--primary)"></i>
+              <h3>How to Earn More</h3>
+            </div>
+            <div class="nba-item">
+              <div class="nba-num"><i class="fa-solid fa-database" style="font-size:9px"></i></div>
+              <div><h5>Learn in-demand skills</h5><p>Adds value to your monthly starting salary</p></div>
+            </div>
+            <div class="nba-item">
+              <div class="nba-num"><i class="fa-solid fa-chart-column" style="font-size:9px"></i></div>
+              <div><h5>Master tools</h5><p>Most requested tools in job postings</p></div>
+            </div>
+            <div class="nba-item">
+              <div class="nba-num"><i class="fa-solid fa-diagram-project" style="font-size:9px"></i></div>
+              <div><h5>Build a portfolio</h5><p>Candidates with projects get 2× more callbacks</p></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-people-group" style="color:var(--primary)"></i>
+              <h3>Retention Tips</h3>
+            </div>
+            <div class="info-box" style="margin-bottom:10px">
+              <i class="fa-solid fa-circle-check"></i>
+              <div>Complete a certification before joining to improve your long-term retention.</div>
+            </div>
+            <div class="info-box teal" style="margin-bottom:10px">
+              <i class="fa-solid fa-comments"></i>
+              <div>Ask about growth path and training support during your interview.</div>
+            </div>
+            <div class="info-box amber">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <div>Avoid roles more than 25 km away without transport support — distance is the #1 reason for early exit.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 9 : SELF-EMPLOYMENT
+      ============================================================ -->
+      <section class="view" id="view-selfemp">
+        <div class="page-head">
+          <div>
+            <h2>Self-Employment &amp; Apprenticeship</h2>
+            <p>Explore alternatives to salaried jobs — with support at every step.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="margin-bottom:14px">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-store" style="color:var(--primary)"></i>
+              <h3>Self-Employment Support</h3>
+            </div>
+            <p style="font-size:11.5px;color:var(--muted);margin-bottom:14px">If you're considering starting your own work, these resources help you plan and fund it.</p>
+
+            <div class="job-row" style="margin-bottom:8px;padding:10px">
+              <div class="job-logo" style="width:32px;height:32px;font-size:11px"><i class="fa-solid fa-sack-dollar"></i></div>
+              <div class="job-info"><h4>Mudra Loan (Shishu)</h4><p>Up to ₹50,000 &middot; No collateral</p></div>
+              <button class="btn btn-ghost btn-sm" data-toast="Scheme details opened">View</button>
+            </div>
+
+            <div class="job-row" style="margin-bottom:8px;padding:10px">
+              <div class="job-logo" style="width:32px;height:32px;font-size:11px"><i class="fa-solid fa-seedling"></i></div>
+              <div class="job-info"><h4>PMEGP</h4><p>Subsidy up to 35% for micro-enterprises</p></div>
+              <button class="btn btn-ghost btn-sm" data-toast="Scheme details opened">View</button>
+            </div>
+
+            <div class="job-row" style="padding:10px">
+              <div class="job-logo" style="width:32px;height:32px;font-size:11px"><i class="fa-solid fa-chalkboard-user"></i></div>
+              <div class="job-info"><h4>Free Business Mentorship</h4><p>1-on-1 with local entrepreneurs</p></div>
+              <button class="btn btn-primary btn-sm" data-toast="Mentor booking opened">Book</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-screwdriver-wrench" style="color:var(--primary)"></i>
+              <h3>Apprenticeship Openings</h3>
+            </div>
+            <p style="font-size:11.5px;color:var(--muted);margin-bottom:14px">Earn while you learn — with a stipend and a strong chance of full-time conversion.</p>
+
+            <div class="empty-state">
+              <i class="fa-solid fa-screwdriver-wrench"></i>
+              <p>No apprenticeship openings matched yet.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 10 : FOLLOW-UP SURVEY
+      ============================================================ -->
+      <section class="view" id="view-followup">
+        <div class="page-head">
+          <div>
+            <h2>Follow-Up Survey</h2>
+            <p>Your 3-month check-in. Takes 2 minutes and keeps your record active.</p>
+          </div>
+          <div class="head-actions">
+            <span class="pill pill-red" style="padding:6px 12px"><i class="fa-regular fa-clock"></i> Due now</span>
+          </div>
+        </div>
+
+        <div class="grid grid-2-1">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-clipboard-question" style="color:var(--primary)"></i>
+              <h3>Quick Check-In</h3>
+              <div class="right"><span class="pill pill-gray">Step 1 of 3</span></div>
+            </div>
+
+            <div class="survey-q">
+              <label>1. What is your current status?</label>
+              <div class="opt-grid" data-group="status">
+                <div class="opt">Employed</div>
+                <div class="opt">Self-employed</div>
+                <div class="opt">Apprenticeship</div>
+                <div class="opt">Studying further</div>
+                <div class="opt">Looking for work</div>
+                <div class="opt">Not available</div>
+              </div>
+            </div>
+
+            <div class="survey-q">
+              <label>2. If not employed, what is the main reason?</label>
+              <div class="opt-grid" data-group="reason">
+                <div class="opt">No nearby jobs</div>
+                <div class="opt">Salary mismatch</div>
+                <div class="opt">Skill gap</div>
+                <div class="opt">Family / health</div>
+                <div class="opt">Further education</div>
+                <div class="opt">Documentation</div>
+                <div class="opt">Transport / migration</div>
+                <div class="opt">Employer rejection</div>
+              </div>
+            </div>
+
+            <div class="survey-q">
+              <label>3. Anything else you'd like us to know?</label>
+              <textarea rows="2" placeholder="Optional — type your response here…"></textarea>
+            </div>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-primary btn-sm" id="submitSurvey"><i class="fa-solid fa-paper-plane"></i> Submit Response</button>
+              <button class="btn btn-ghost btn-sm" data-toast="Reminder set for tomorrow"><i class="fa-regular fa-clock"></i> Remind Me Later</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-circle-info" style="color:var(--primary)"></i>
+              <h3>Why This Matters</h3>
+            </div>
+            <div class="info-box" style="margin-bottom:10px">
+              <i class="fa-solid fa-bullseye"></i>
+              <div>Your responses help us improve courses for the next batch and match you better.</div>
+            </div>
+            <div class="info-box teal" style="margin-bottom:10px">
+              <i class="fa-solid fa-unlock"></i>
+              <div>Responding keeps you eligible for priority job matching and placement drives.</div>
+            </div>
+            <div class="info-box amber">
+              <i class="fa-solid fa-lock"></i>
+              <div>Your individual answers are never shown to employers — only anonymised trends.</div>
+            </div>
+
+            <div style="margin-top:14px">
+              <p style="font-size:10.5px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.4px;margin-bottom:6px">Past Responses</p>
+              <div class="timeline">
+                <div class="tl-item done"><h5>1-Month Follow-Up</h5><p>Status: In training</p><time>12 Feb 2024</time></div>
+                <div class="tl-item done"><h5>Enrolment Confirmation</h5><p>Status: Enrolled</p><time>12 Jan 2024</time></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 11 : PRIVACY & CONSENT
+      ============================================================ -->
+      <section class="view" id="view-consent">
+        <div class="page-head">
+          <div>
+            <h2>Privacy &amp; Consent</h2>
+            <p>You decide what is shared, with whom, and for how long.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn btn-ghost btn-sm" data-toast="Data export requested — you'll receive it by email"><i class="fa-solid fa-download"></i> Download My Data</button>
+          </div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-toggle-on" style="color:var(--primary)"></i>
+              <h3>Consent Controls</h3>
+              <div class="right"><span class="pill pill-green">Granular</span></div>
+            </div>
+
+            <div class="consent-row">
+              <div class="ico"><i class="fa-solid fa-briefcase"></i></div>
+              <div><h5>Share profile with employers</h5><p>Only when you apply or allow</p></div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+
+            <div class="consent-row">
+              <div class="ico"><i class="fa-solid fa-phone"></i></div>
+              <div><h5>Follow-up contact</h5><p>WhatsApp, SMS, IVR and calls</p></div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+
+            <div class="consent-row">
+              <div class="ico"><i class="fa-solid fa-chart-pie"></i></div>
+              <div><h5>Anonymised analytics</h5><p>Used for course and policy improvement</p></div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+
+            <div class="consent-row">
+              <div class="ico"><i class="fa-solid fa-building-columns"></i></div>
+              <div><h5>EPFO / UAN verification</h5><p>Confirms employment and wages</p></div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+
+            <div class="consent-row">
+              <div class="ico"><i class="fa-solid fa-bullhorn"></i></div>
+              <div><h5>Job alerts &amp; marketing</h5><p>New openings and events</p></div>
+              <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-clock-rotate-left" style="color:var(--primary)"></i>
+              <h3>Access Log</h3>
+              <div class="right"><span class="pill pill-gray">Last 30 days</span></div>
+            </div>
+
+            <div class="timeline">
+              <div class="tl-item done"><h5>Placement Officer viewed your profile</h5><p>Purpose: Job matching</p><time>18 Jun 2024, 11:42 AM</time></div>
+              <div class="tl-item done"><h5>Employer (TechNova) requested profile access</h5><p>Purpose: Application review &middot; Approved by you</p><time>16 Jun 2024, 04:15 PM</time></div>
+              <div class="tl-item done"><h5>System ran follow-up reminder</h5><p>Purpose: Outcome tracking</p><time>12 Jun 2024, 09:00 AM</time></div>
+              <div class="tl-item done"><h5>Analytics job generated anonymised report</h5><p>No personal identifiers used</p><time>01 Jun 2024, 02:30 AM</time></div>
+            </div>
+
+            <div class="info-box teal" style="margin-top:14px">
+              <i class="fa-solid fa-shield-halved"></i>
+              <div>You can revoke any consent at any time. Revoking stops future sharing but does not affect past lawful use.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-head">
+            <i class="fa-solid fa-scale-balanced" style="color:var(--primary)"></i>
+            <h3>Your Rights</h3>
+          </div>
+          <div class="grid grid-3" style="gap:10px">
+            <div style="padding:12px;background:#fafbfe;border-radius:8px">
+              <i class="fa-solid fa-eye" style="color:var(--primary);font-size:15px"></i>
+              <h5 style="font-size:12px;margin-top:6px">Right to Access</h5>
+              <p style="font-size:10.5px;color:var(--muted);margin-top:2px">See all data stored about you.</p>
+            </div>
+            <div style="padding:12px;background:#fafbfe;border-radius:8px">
+              <i class="fa-solid fa-pen" style="color:var(--primary);font-size:15px"></i>
+              <h5 style="font-size:12px;margin-top:6px">Right to Correct</h5>
+              <p style="font-size:10.5px;color:var(--muted);margin-top:2px">Fix inaccurate information anytime.</p>
+            </div>
+            <div style="padding:12px;background:#fafbfe;border-radius:8px">
+              <i class="fa-solid fa-trash-can" style="color:#b91c1c;font-size:15px"></i>
+              <h5 style="font-size:12px;margin-top:6px">Right to Erase</h5>
+              <p style="font-size:10.5px;color:var(--muted);margin-top:2px">Request deletion of your record.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 12 : FEEDBACK
+      ============================================================ -->
+      <section class="view" id="view-feedback">
+        <div class="page-head">
+          <div>
+            <h2>Feedback</h2>
+            <p>Your honest feedback directly shapes the next batch's curriculum.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-2-1">
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-comment-dots" style="color:var(--primary)"></i>
+              <h3>Share Your Experience</h3>
+            </div>
+
+            <div class="survey-q">
+              <label>How would you rate your training overall?</label>
+              <div class="opt-grid" data-group="rating">
+                <div class="opt">Excellent</div>
+                <div class="opt">Good</div>
+                <div class="opt">Average</div>
+                <div class="opt">Poor</div>
+              </div>
+            </div>
+
+            <div class="survey-q">
+              <label>Which area needs the most improvement?</label>
+              <div class="opt-grid" data-group="improve">
+                <div class="opt">Practical training</div>
+                <div class="opt">Trainer quality</div>
+                <div class="opt">Course content</div>
+                <div class="opt">Placement support</div>
+                <div class="opt">Infrastructure</div>
+                <div class="opt">Soft skills</div>
+              </div>
+            </div>
+
+            <div class="survey-q">
+              <label>Tell us more</label>
+              <textarea rows="3" placeholder="What worked well? What should change?"></textarea>
+            </div>
+
+            <button class="btn btn-primary btn-sm" id="submitFeedback"><i class="fa-solid fa-paper-plane"></i> Submit Feedback</button>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <i class="fa-solid fa-arrow-trend-up" style="color:var(--primary)"></i>
+              <h3>How Your Feedback Helps</h3>
+            </div>
+            <div class="timeline">
+              <div class="tl-item done"><h5>You report a gap</h5><p>e.g., "More practical SQL needed"</p></div>
+              <div class="tl-item done"><h5>Admin sees the pattern</h5><p>Aggregated across your batch</p></div>
+              <div class="tl-item done"><h5>Curriculum updated</h5><p>Next batch gets the improved module</p></div>
+              <div class="tl-item pending"><h5>Better outcomes</h5><p>Higher placement and retention</p></div>
+            </div>
+
+            <div class="info-box teal" style="margin-top:14px">
+              <i class="fa-solid fa-lightbulb"></i>
+              <div>Last batch's feedback added 20 hours of practical SQL training — placement rose by 14%.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ============================================================
+     MODALS
+============================================================ -->
+
+<!-- Edit Profile Modal -->
+<div class="modal-overlay" id="editProfileModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Edit Profile</h3>
+      <button class="close-btn" onclick="closeModal('editProfileModal')"><i class="fa-solid fa-xmark"></i></button>
+>>>>>>> db2fd515ee9423342e66d67b1a295cdc120746b5
     </div>
 
     <div class="greeting-banner">
