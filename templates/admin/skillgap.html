@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill Gap Analysis · Horizon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+
+  :root{
+    --bg: #FAF8F5;
+    --card: #FFFFFF;
+    --border: #EADEC9;
+    --ink: #0F172A;
+    --ink-soft: #5B6472;
+    --ink-faint: #94A0B0;
+    --orange: #EA580C;
+    --amber: #F59E0B;
+    --grad: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%);
+    --grad-soft: linear-gradient(135deg, rgba(234,88,12,0.10) 0%, rgba(245,158,11,0.10) 100%);
+    --green: #16A34A;
+    --blue: #2563EB;
+    --violet: #7C3AED;
+    --red: #DC2626;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+    --shadow: 0 1px 2px rgba(15,23,42,0.04), 0 8px 24px -12px rgba(15,23,42,0.10);
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3,h4,.brand-name,.nav-link,.metric-value{
+    font-family: 'Poppins', 'Inter', sans-serif;
+  }
+
+  a{ text-decoration:none; color:inherit; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb{ background: #E8DFCF; border-radius: 8px; }
+  ::-webkit-scrollbar-track{ background: transparent; }
+
+  :focus-visible{ outline: 2px solid var(--orange); outline-offset: 2px; }
+
+  /* ===== SHELL ===== */
+  .shell{
+    display:grid;
+    grid-template-columns: 258px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar{
+    background: #FFFFFF;
+    border-right: 1px solid var(--border);
+    padding: 26px 18px;
+    display:flex;
+    flex-direction:column;
+    position: sticky;
+    top:0;
+    height:100vh;
+    overflow-y: auto;
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding: 4px 10px 26px 10px;
+  }
+
+  .brand-mark{
+    width:42px; height:42px;
+    border-radius: 12px;
+    background: var(--grad);
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:800; font-size:19px;
+    box-shadow: 0 6px 18px -4px rgba(234,88,12,0.55), 0 0 0 4px rgba(245,158,11,0.12);
+    flex-shrink:0;
+  }
+
+  .brand-name{
+    font-weight:700;
+    font-size:19px;
+    letter-spacing:-0.02em;
+    line-height:1.1;
+  }
+  .brand-sub{
+    font-size:11px;
+    color: var(--ink-faint);
+    font-weight:500;
+    margin-top:2px;
+  }
+
+  .nav-group-label{
+    font-size:11px;
+    color: var(--ink-faint);
+    font-weight:600;
+    padding: 4px 14px 8px;
+  }
+
+  .nav{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+
+  .nav-link{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding: 11px 14px;
+    border-radius: 12px;
+    font-size:14.5px;
+    font-weight:500;
+    color: var(--ink-soft);
+    transition: background .15s ease, color .15s ease, transform .15s ease;
+    cursor: pointer;
+  }
+  .nav-link i{ width:18px; text-align:center; font-size:15px; color: var(--ink-faint); transition: color .15s ease; }
+
+  .nav-link:hover{ background: #FBF3E8; color: var(--ink); transform: translateX(2px); }
+  .nav-link:hover i{ color: var(--orange); }
+
+  .nav-link.active{
+    background: var(--grad);
+    color:#fff;
+    box-shadow: 0 6px 16px -6px rgba(234,88,12,0.55);
+  }
+  .nav-link.active i{ color:#fff; }
+
+  .sidebar-spacer{ flex:1; min-height: 20px; }
+
+  .sidebar-foot{
+    display:flex;
+    flex-direction:column;
+    gap: 14px;
+    padding-top: 16px;
+  }
+
+  .logout-link{
+    display:flex; align-items:center; gap:12px;
+    padding: 11px 14px;
+    border-radius: 12px;
+    font-size:14.5px;
+    font-weight:500;
+    color: #B33A2A;
+    transition: background .15s ease;
+    cursor: pointer;
+  }
+  .logout-link:hover{ background: #FDECEA; }
+  .logout-link i{ width:18px; text-align:center; }
+
+  .sidebar-graphic{
+    border-radius: var(--radius-md);
+    background: var(--grad-soft);
+    border: 1px solid var(--border);
+    padding: 16px 14px;
+    text-align:center;
+  }
+  .sidebar-graphic svg{ width:100%; height:auto; display:block; margin-bottom:8px; }
+  .sidebar-graphic p{
+    font-size:12px;
+    color: var(--ink-soft);
+    margin:0;
+    line-height:1.4;
+  }
+  .sidebar-graphic strong{ color: var(--orange); }
+
+  /* ===== MAIN ===== */
+  .main{
+    padding: 22px 30px 60px;
+    min-width:0;
+  }
+
+  /* Header */
+  .topbar{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    margin-bottom: 26px;
+  }
+
+  .search-pill{
+    flex:1;
+    max-width: 480px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 11px 18px;
+    box-shadow: var(--shadow);
+  }
+  .search-pill i{ color: var(--ink-faint); font-size:14px; }
+  .search-pill input{
+    border:none; outline:none; background:transparent;
+    font-size:14px; width:100%; color: var(--ink); font-family:'Inter',sans-serif;
+  }
+  .search-pill input::placeholder{ color: var(--ink-faint); }
+
+  .topbar-spacer{ flex:1; }
+
+  .icon-btn{
+    width:42px; height:42px;
+    border-radius: 12px;
+    border:1px solid var(--border);
+    background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+    color: var(--ink-soft);
+    box-shadow: var(--shadow);
+    transition: all .2s ease;
+  }
+  .icon-btn:hover{ transform: translateY(-1px); border-color: var(--orange); color: var(--orange); }
+  .icon-btn .dot{
+    position:absolute; top:9px; right:10px;
+    width:7px; height:7px; border-radius:50%;
+    background: var(--orange);
+    box-shadow: 0 0 0 2px #fff;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.7; }
+  }
+
+  .profile-trigger{
+    display:flex; align-items:center; gap:10px;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 16px 6px 6px;
+    box-shadow: var(--shadow);
+    transition: all .2s ease;
+  }
+  .profile-trigger:hover{ border-color: var(--orange); transform: translateY(-1px); }
+  .avatar{
+    width:32px; height:32px; border-radius:50%;
+    background: var(--grad);
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:700; font-size:13px;
+    background-size: cover;
+    background-position: center;
+  }
+  .profile-trigger span{ font-size:14px; font-weight:600; }
+  .profile-trigger i{ font-size:11px; color: var(--ink-faint); }
+
+  /* Title */
+  .page-title{ margin-bottom: 26px; }
+  .page-title h1{
+    font-size: 25px;
+    font-weight:700;
+    letter-spacing:-0.02em;
+    margin:0 0 6px;
+  }
+  .page-title p{
+    margin:0;
+    color: var(--ink-soft);
+    font-size:14px;
+  }
+
+  /* Data status badge */
+  .data-status{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 12px;
+    transition: all .3s ease;
+  }
+  .data-status.live {
+    background: #EAF7EE;
+    color: #15803D;
+    border: 1px solid #BBF7D0;
+  }
+  .data-status.demo {
+    background: #FEF3E0;
+    color: #B7791F;
+    border: 1px solid #FDE68A;
+  }
+  .data-status .pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 2s infinite;
+  }
+
+  /* Section headers */
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin: 34px 0 14px;
+  }
+  .section-head h2{
+    font-size:16px;
+    font-weight:600;
+    margin:0;
+  }
+  .section-head .section-note{
+    font-size:12.5px;
+    color: var(--ink-faint);
+  }
+
+  /* Metric card grids */
+  .grid-4{ display:grid; grid-template-columns: repeat(4, 1fr); gap:16px; }
+  .grid-5{ display:grid; grid-template-columns: repeat(5, 1fr); gap:14px; }
+
+  .metric-card{
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    box-shadow: var(--shadow);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+  }
+  .metric-card:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(15,23,42,0.04), 0 16px 32px -12px rgba(15,23,42,0.14);
+    border-color: rgba(234,88,12,0.25);
+  }
+  .metric-top{ display:flex; align-items:center; justify-content:space-between; }
+  .metric-icon{
+    width:38px; height:38px;
+    border-radius: 10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px;
+    color:#fff;
+  }
+  .metric-trend{
+    font-size:11.5px;
+    font-weight:600;
+    display:flex; align-items:center; gap:4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+  }
+  .trend-up{ color: var(--green); background: #EAF7EE; }
+  .trend-down{ color: var(--red); background: #FCEAEA; }
+  .trend-flat{ color: var(--ink-faint); background: #F2F2F2; }
+
+  .metric-value{ font-size:26px; font-weight:700; letter-spacing:-0.02em; }
+  .metric-label{ font-size:12.5px; color: var(--ink-soft); font-weight:500; }
+
+  .metric-card.compact{ padding:15px; gap:10px; }
+  .metric-card.compact .metric-value{ font-size:20px; }
+  .metric-card.compact .metric-icon{ width:32px; height:32px; font-size:13px; }
+
+  .bg-orange{ background: linear-gradient(135deg,#EA580C,#F97316); }
+  .bg-amber{ background: linear-gradient(135deg,#F59E0B,#FBBF24); }
+  .bg-slate{ background: linear-gradient(135deg,#334155,#0F172A); }
+  .bg-green{ background: linear-gradient(135deg,#16A34A,#22C55E); }
+  .bg-blue{ background: linear-gradient(135deg,#2563EB,#3B82F6); }
+  .bg-violet{ background: linear-gradient(135deg,#7C3AED,#A855F7); }
+  .bg-teal{ background: linear-gradient(135deg,#0D9488,#14B8A6); }
+  .bg-pink{ background: linear-gradient(135deg,#DB2777,#EC4899); }
+
+  /* Charts row */
+  .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
+
+  .panel{
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .panel-head{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 14px;
+  }
+  .panel-head h3{ font-size:14.5px; font-weight:600; margin:0; }
+  .panel-head .panel-sub{ font-size:11.5px; color: var(--ink-faint); }
+
+  .chart-wrap{ position:relative; height:230px; }
+  .chart-wrap.tall{ height:280px; }
+
+  .legend-row{
+    display:flex; flex-wrap:wrap; gap:10px 18px; margin-top:14px;
+  }
+  .legend-item{ display:flex; align-items:center; gap:7px; font-size:12px; color: var(--ink-soft); font-weight:500; }
+  .legend-dot{ width:9px; height:9px; border-radius:3px; flex-shrink:0; }
+
+  /* Highlights */
+  .highlight-scroll{
+    display:flex;
+    gap:14px;
+    overflow-x:auto;
+    padding: 4px 2px 14px;
+  }
+  .highlight-card{
+    min-width: 300px;
+    max-width: 300px;
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    flex-shrink:0;
+    transition: all .25s ease;
+  }
+  .highlight-card:hover{
+    transform: translateY(-2px);
+    border-color: rgba(234,88,12,0.25);
+    box-shadow: 0 12px 28px -10px rgba(15,23,42,0.14);
+  }
+  .highlight-badge{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:10.5px; font-weight:700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom:10px;
+    letter-spacing: 0.01em;
+  }
+  .badge-critical{ background:#FDECEA; color:#C0392B; }
+  .badge-warning{ background:#FEF3E0; color:#B7791F; }
+  .badge-info{ background:#E8F0FE; color:#1D4ED8; }
+
+  .highlight-card h4{ font-size:13.5px; font-weight:600; margin: 0 0 6px; line-height:1.35; }
+  .highlight-card p{ font-size:12px; color: var(--ink-soft); margin:0; line-height:1.5; }
+  .highlight-meta{
+    display:flex; align-items:center; gap:6px;
+    margin-top:12px; font-size:11px; color: var(--ink-faint);
+  }
+
+  /* Branch comparison */
+  .branch-panel .panel-head{ align-items:center; }
+  .branch-select{
+    border:1px solid var(--border);
+    border-radius: 10px;
+    padding: 9px 14px;
+    font-size:13px;
+    font-weight:500;
+    color: var(--ink);
+    background: #FCFAF7;
+    font-family:'Inter',sans-serif;
+    cursor: pointer;
+    transition: all .2s ease;
+  }
+  .branch-select:hover{ border-color: var(--orange); }
+  .branch-select:focus{ outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(234,88,12,0.12); }
+
+  .branch-stats-row{
+    display:grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:12px;
+    margin-top:16px;
+  }
+  .branch-stat{
+    background: #FCFAF6;
+    border:1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding:12px 14px;
+    transition: all .2s ease;
+  }
+  .branch-stat:hover{ border-color: rgba(234,88,12,0.25); }
+  .branch-stat .val{ font-size:18px; font-weight:700; }
+  .branch-stat .lbl{ font-size:11.5px; color: var(--ink-soft); margin-top:2px; }
+
+  /* Bottom summary cards */
+  .grid-3{ display:grid; grid-template-columns: repeat(3,1fr); gap:16px; }
+
+  .summary-card{
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding:20px;
+    box-shadow: var(--shadow);
+    transition: all .25s ease;
+  }
+  .summary-card:hover{ transform: translateY(-2px); box-shadow: 0 12px 28px -10px rgba(15,23,42,0.14); }
+  .summary-card .s-icon{
+    width:36px; height:36px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size:14px; margin-bottom:14px;
+  }
+  .summary-card h4{ font-size:14px; font-weight:600; margin:0 0 8px; }
+  .summary-card p{ font-size:12.5px; color: var(--ink-soft); line-height:1.55; margin:0 0 12px; }
+  .summary-stat-line{
+    display:flex; align-items:center; justify-content:space-between;
+    font-size:12.5px;
+    padding-top:10px;
+    border-top: 1px solid var(--border);
+  }
+  .summary-stat-line strong{ color: var(--ink); }
+
+  /* Empty state */
+  .empty-state{
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 32px;
+    text-align: center;
+    background: var(--card);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-lg);
+    margin: 20px 0;
+  }
+  .empty-state.show{ display: flex; }
+  .empty-icon{
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    background: var(--grad-soft);
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    color: var(--orange);
+    margin-bottom: 20px;
+    border: 1px solid rgba(234,88,12,0.2);
+  }
+  .empty-title{
+    font-family: 'Poppins', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .empty-sub{
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    max-width: 440px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .empty-cta{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    border-radius: 12px;
+    background: var(--grad);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 10px 24px -8px rgba(234,88,12,0.5);
+    transition: all .2s ease;
+  }
+  .empty-cta:hover{ transform: translateY(-2px); box-shadow: 0 16px 32px -8px rgba(234,88,12,0.6); }
+
+  /* ===== MODAL / DRAWER ===== */
+  .overlay{
+    position:fixed; inset:0;
+    background: rgba(15,23,42,0.38);
+    backdrop-filter: blur(2px);
+    display:none;
+    z-index: 90;
+  }
+  .overlay.open{ display:block; }
+
+  .drawer{
+    position:fixed;
+    top:0; right:-420px;
+    width:400px; max-width:92vw;
+    height:100vh;
+    background:#fff;
+    z-index: 100;
+    box-shadow: -12px 0 40px rgba(15,23,42,0.18);
+    transition: right .28s cubic-bezier(.4,0,.2,1);
+    display:flex; flex-direction:column;
+  }
+  .drawer.open{ right:0; }
+
+  .drawer-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--border);
+  }
+  .drawer-head h3{ margin:0; font-size:16px; font-weight:600; }
+  .drawer-close{
+    width:32px; height:32px; border-radius:9px;
+    border:1px solid var(--border); background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--ink-soft);
+    transition: all .2s ease;
+  }
+  .drawer-close:hover{ background:#F7F2EA; transform: rotate(90deg); }
+
+  .drawer-body{
+    padding: 22px;
+    overflow-y:auto;
+    flex:1;
+    display:flex; flex-direction:column; gap:20px;
+  }
+
+  .pic-upload{
+    display:flex; align-items:center; gap:16px;
+  }
+  .pic-upload .avatar-lg{
+    width:64px; height:64px; border-radius:50%;
+    background: var(--grad);
+    background-size: cover;
+    background-position: center;
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:700; font-size:22px;
+    flex-shrink:0;
+  }
+  .pic-upload label{
+    font-size:12.5px; font-weight:600;
+    padding: 9px 14px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    cursor:pointer;
+    color: var(--ink-soft);
+    transition: all .2s ease;
+  }
+  .pic-upload label:hover{ background:#F7F2EA; border-color: var(--orange); color: var(--orange); }
+  .pic-upload input[type=file]{ display:none; }
+
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field label{ font-size:12.5px; font-weight:600; color: var(--ink-soft); }
+  .field input{
+    border:1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 13px;
+    font-size:13.5px;
+    font-family:'Inter',sans-serif;
+    color: var(--ink);
+    background:#FCFAF7;
+    transition: all .2s ease;
+  }
+  .field input:focus{ outline:none; border-color: var(--orange); background:#fff; box-shadow: 0 0 0 3px rgba(234,88,12,0.10); }
+
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  .divider-label{
+    display:flex; align-items:center; gap:10px;
+    font-size:11.5px; font-weight:700; color: var(--ink-faint);
+    margin-top: 4px;
+  }
+  .divider-label::after{ content:''; flex:1; height:1px; background: var(--border); }
+
+  .drawer-foot{
+    padding: 18px 22px;
+    border-top: 1px solid var(--border);
+    display:flex; gap:10px;
+  }
+  .btn{
+    flex:1;
+    padding: 12px;
+    border-radius: 12px;
+    font-size:13.5px;
+    font-weight:600;
+    border:1px solid var(--border);
+    background:#fff;
+    color: var(--ink-soft);
+    transition: all .2s ease;
+  }
+  .btn:hover{ background:#F7F2EA; }
+  .btn-primary{
+    background: var(--grad);
+    color:#fff;
+    border:none;
+    box-shadow: 0 6px 16px -6px rgba(234,88,12,0.55);
+  }
+  .btn-primary:hover{ filter: brightness(1.05); transform: translateY(-1px); }
+
+  .toast{
+    position:fixed;
+    bottom: 26px; left:50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color:#fff;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size:13px;
+    font-weight:500;
+    display:flex; align-items:center; gap:10px;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .2s ease, transform .2s ease;
+    z-index: 200;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); pointer-events:auto; }
+  .toast i{ color: var(--amber); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1180px){
+    .grid-5{ grid-template-columns: repeat(3,1fr); }
+    .grid-3{ grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 980px){
+    .shell{ grid-template-columns: 1fr; }
+    .sidebar{ position:relative; height:auto; }
+    .grid-2{ grid-template-columns: 1fr; }
+    .grid-4{ grid-template-columns: 1fr 1fr; }
+    .grid-3{ grid-template-columns: 1fr; }
+  }
+  @media (max-width: 620px){
+    .grid-4{ grid-template-columns: 1fr 1fr; }
+    .grid-5{ grid-template-columns: 1fr 1fr; }
+    .main{ padding: 16px; }
+    .search-pill{ display:none; }
+    .field-row{ grid-template-columns:1fr; }
+    .branch-stats-row{ grid-template-columns:1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; }
+  }
+
+/* ===== SKILL GAP PAGE ===== */
+.page-title{margin-bottom:18px}
+.page-title h1{font-size:30px;line-height:1.2;margin:0 0 6px;letter-spacing:-.03em}
+.page-title p{margin:0;color:var(--ink-soft);font-size:14px;line-height:1.6}
+.data-status{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:7px 11px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:12px;color:var(--ink-soft);box-shadow:var(--shadow)}
+.data-status.live{color:#166534;border-color:#BBF7D0;background:#F0FDF4}.data-status.demo{color:#92400E;border-color:#FDE68A;background:#FFFBEB}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(234,88,12,.12)}
+.data-status.live .pulse-dot{background:var(--green);box-shadow:0 0 0 4px rgba(22,163,74,.12)}
+.actions{display:flex;gap:10px;align-items:center}
+.btn{border:1px solid var(--border);background:#fff;color:var(--ink);border-radius:10px;padding:10px 14px;font-weight:600;font-size:13px;box-shadow:var(--shadow);transition:.2s ease}
+.btn:hover{transform:translateY(-1px);border-color:var(--orange)}
+.btn-primary{border-color:transparent;background:var(--grad);color:#fff;box-shadow:0 8px 18px -8px rgba(234,88,12,.5)}
+.btn i{margin-right:7px}
+.title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:24px}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px}
+.kpi-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:18px;box-shadow:var(--shadow);min-width:0}
+.kpi-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.kpi-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.bg-blue{background:#EFF6FF;color:#2563EB}.bg-violet{background:#F5F3FF;color:#7C3AED}.bg-red{background:#FEF2F2;color:#DC2626}.bg-green{background:#F0FDF4;color:#16A34A}.bg-amber{background:#FFFBEB;color:#D97706}.bg-slate{background:#F8FAFC;color:#475569}.bg-orange{background:#FFF7ED;color:#EA580C}
+.kpi-label{font-size:12px;color:var(--ink-soft);margin-top:14px}.kpi-value{font-family:Poppins,Inter,sans-serif;font-size:26px;font-weight:700;letter-spacing:-.03em;margin-top:3px}.kpi-note{font-size:11px;color:var(--ink-faint);margin-top:4px}
+.filter-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:15px 16px;box-shadow:var(--shadow);margin-bottom:24px}
+.filter-grid{display:grid;grid-template-columns:repeat(5,1fr) auto;gap:12px;align-items:end}.field label{display:block;font-size:11px;font-weight:700;color:var(--ink-soft);margin:0 0 6px}.field select{width:100%;height:40px;border:1px solid var(--border);border-radius:10px;background:#fff;padding:0 11px;font:500 13px Inter;color:var(--ink);outline:none}.field select:focus{border-color:var(--orange)}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:22px 2px 11px}.section-head h2{margin:0;font-size:18px;letter-spacing:-.02em}.section-note{font-size:12px;color:var(--ink-faint)}
+.panel{background:#fff;border:1px solid var(--border);border-radius:var(--radius-md);padding:18px;box-shadow:var(--shadow)}
+.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:15px}.panel-head h3{margin:0;font-size:15px}.panel-sub{font-size:11px;color:var(--ink-faint)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid-3{display:grid;grid-template-columns:1.25fr .8fr .8fr;gap:16px}
+.skill-list{display:flex;flex-direction:column;gap:11px}.skill-row{display:grid;grid-template-columns:150px 56px 1fr 70px;gap:10px;align-items:center}.skill-name{font-size:12.5px;font-weight:600}.skill-gap{font-family:Poppins,Inter,sans-serif;font-size:13px;font-weight:700;color:var(--red);text-align:right}.bar-track{height:9px;background:#F1F5F9;border-radius:999px;overflow:hidden}.bar-fill{height:100%;border-radius:999px}.bar-red{background:#EF4444}.bar-orange{background:#F97316}.bar-amber{background:#F59E0B}.bar-green{background:#22C55E}.bar-blue{background:#3B82F6}.coverage-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}.pair-item{font-size:11px;color:var(--ink-faint)}.pair-value{font-size:12px;font-weight:700;color:var(--ink);margin-top:3px}.pair-track{height:7px;background:#EEF2F7;border-radius:999px;overflow:hidden;margin-top:5px}.pair-tr{height:100%;background:#2563EB;border-radius:999px}.pair-demand{height:100%;background:#16A34A;border-radius:999px}
+.table-wrap{overflow:auto}.data-table{width:100%;border-collapse:separate;border-spacing:0;min-width:680px}.data-table th,.data-table td{padding:11px 10px;border-bottom:1px solid #F1ECE4;text-align:left;font-size:12px;white-space:nowrap}.data-table th{font-size:11px;color:var(--ink-faint);font-weight:700;background:#FFFCF9}.data-table tr:last-child td{border-bottom:none}.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:700}.pill.critical{background:#FEF2F2;color:#B91C1C}.pill.high{background:#FFF7ED;color:#C2410C}.pill.medium{background:#FFFBEB;color:#A16207}.pill.low{background:#F0FDF4;color:#15803D}.severity-dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+.heatmap-wrap{overflow:auto}.heatmap{width:100%;min-width:780px;border-collapse:separate;border-spacing:4px}.heatmap th,.heatmap td{font-size:11px;text-align:center;padding:10px 8px;border-radius:6px}.heatmap th{color:var(--ink-faint);font-weight:700;background:#fff}.heatmap td:first-child{font-weight:700;text-align:left;background:#fff;color:var(--ink)}.heat-1{background:#DCFCE7;color:#166534}.heat-2{background:#FEF3C7;color:#92400E}.heat-3{background:#FED7AA;color:#9A3412}.heat-4{background:#FECACA;color:#991B1B}.heat-5{background:#FCA5A5;color:#7F1D1D}.legend{display:flex;justify-content:flex-end;gap:10px;align-items:center;margin-top:10px;font-size:10px;color:var(--ink-faint)}.legend span{display:inline-flex;align-items:center;gap:5px}.legend i{width:14px;height:10px;border-radius:3px;display:inline-block}
+.donut-wrap{display:grid;grid-template-columns:170px 1fr;align-items:center;gap:16px}.donut-chart{height:170px!important}.category-list{display:flex;flex-direction:column;gap:9px}.cat-row{display:grid;grid-template-columns:11px 1fr auto;gap:8px;align-items:center;font-size:12px}.cat-dot{width:10px;height:10px;border-radius:3px}.cat-val{font-weight:700}
+.insights{display:flex;flex-direction:column;gap:10px}.insight{padding:12px;border-radius:12px;border:1px solid var(--border);background:#FFFCF9}.insight-top{display:flex;align-items:center;gap:8px;font-weight:700;font-size:12px}.insight i{color:var(--orange)}.insight p{margin:5px 0 0;color:var(--ink-soft);font-size:11.5px;line-height:1.5}
+.reco-list{display:flex;flex-direction:column;gap:10px}.reco{display:grid;grid-template-columns:38px 1fr auto;gap:11px;align-items:start;padding:12px;border:1px solid var(--border);border-radius:12px;background:#FFFCF9}.reco-icon{width:38px;height:38px;border-radius:10px;background:var(--grad-soft);color:var(--orange);display:flex;align-items:center;justify-content:center}.reco h4{margin:0;font-size:12.5px}.reco p{margin:4px 0 0;font-size:11.5px;color:var(--ink-soft);line-height:1.45}.reco-gap{font-size:12px;font-weight:800;color:var(--red);white-space:nowrap}
+.empty-state{background:#fff;border:1px dashed var(--border);border-radius:var(--radius-md);padding:26px;text-align:center;box-shadow:var(--shadow);margin-bottom:20px}.empty-state i{font-size:28px;color:var(--orange)}.empty-state h3{margin:10px 0 6px;font-size:18px}.empty-state p{max-width:650px;margin:0 auto;color:var(--ink-soft);font-size:13px;line-height:1.6}.empty-state a{display:inline-flex;align-items:center;gap:8px;margin-top:15px;padding:10px 14px;border-radius:10px;background:var(--grad);color:#fff;font-size:13px;font-weight:700}
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.35);display:none;align-items:center;justify-content:center;z-index:500;padding:20px}.modal-backdrop.open{display:flex}.modal{width:min(580px,100%);background:#fff;border-radius:18px;box-shadow:0 24px 70px rgba(15,23,42,.22);border:1px solid var(--border);overflow:hidden}.modal-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}.modal-head h3{margin:0;font-size:16px}.modal-close{border:0;background:#F8FAFC;width:34px;height:34px;border-radius:9px}.modal-body{padding:20px}.modal-body p{color:var(--ink-soft);font-size:13px;line-height:1.6}.skill-detail{display:grid;grid-template-columns:1fr 1fr;gap:12px}.detail-box{border:1px solid var(--border);border-radius:12px;padding:12px;background:#FFFCF9}.detail-box span{font-size:11px;color:var(--ink-faint)}.detail-box strong{display:block;margin-top:4px;font-family:Poppins;font-size:20px}
+@media(max-width:1180px){.kpi-grid{grid-template-columns:repeat(3,1fr)}.filter-grid{grid-template-columns:repeat(3,1fr)}.grid-3{grid-template-columns:1fr 1fr}.grid-3 .panel:last-child{grid-column:1/-1}}
+@media(max-width:980px){.shell{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.title-row{flex-direction:column}.grid-2,.grid-3{grid-template-columns:1fr}.filter-grid{grid-template-columns:1fr 1fr}.kpi-grid{grid-template-columns:1fr 1fr}.donut-wrap{grid-template-columns:150px 1fr}}
+@media(max-width:620px){.main{padding:16px}.kpi-grid,.filter-grid{grid-template-columns:1fr}.actions{width:100%;flex-direction:column}.actions .btn{width:100%}.donut-wrap{grid-template-columns:1fr}.donut-chart{max-width:190px;margin:auto}.skill-row{grid-template-columns:118px 45px 1fr 58px}.topbar .search-pill{display:none}}
+
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">H</div>
+      <div><div class="brand-name">Horizon</div><div class="brand-sub">Skill Gap Analysis</div></div>
+    </div>
+    <div class="nav-group-label">MENU</div>
+    <nav class="nav">
+      <a class="nav-link" href="/admin/dashboard"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+      <a class="nav-link" href="/admin/branch"><i class="fa-solid fa-code-branch"></i> Branch Analysis</a>
+      <a class="nav-link" href="/admin/trainees"><i class="fa-solid fa-user-group"></i> Trainee Management</a>
+      <a class="nav-link active" href="/admin/skillgap"><i class="fa-solid fa-bullseye"></i> Skill Gap</a>
+      <a class="nav-link" href="/admin/upload"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data</a>
+      <a class="nav-link" href="#" id="reportsLink"><i class="fa-solid fa-chart-simple"></i> Reports</a>
+    </nav>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-foot">
+      <div class="sidebar-graphic">
+        <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 70 L35 40 L65 55 L100 20 L135 42 L165 25 L200 50" fill="none" stroke="#EA580C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+          <path d="M0 70 L35 40 L65 55 L100 20 L135 42 L165 25 L200 50 L200 90 L0 90 Z" fill="url(#g1)" opacity="0.5"/>
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F59E0B" stop-opacity="0.35"/><stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/></linearGradient></defs>
+          <circle cx="100" cy="20" r="5" fill="#EA580C"/>
+        </svg>
+        <p>Skill gaps focus — <strong id="trendBadge">actionable</strong> insights</p>
+      </div>
+      <a class="logout-link" href="{{ url_for('admin_logout') }}"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="search-pill"><i class="fa-solid fa-magnifying-glass"></i><input id="searchBox" type="text" placeholder="Search skills, branches, trainees..."></div>
+      <div class="topbar-spacer"></div>
+      <button class="icon-btn" aria-label="Notifications"><i class="fa-regular fa-bell"></i><span class="dot"></span></button>
+      <button class="profile-trigger" id="profileTrigger"><div class="avatar">A</div><span>Admin</span><i class="fa-solid fa-chevron-down"></i></button>
+    </div>
+
+    <div class="title-row">
+      <div class="page-title">
+        <h1>Skill Gap Analysis</h1>
+        <p>Identify the difference between trainee skill coverage and the capabilities demanded by employers.</p>
+        <div class="data-status demo" id="dataStatus"><span class="pulse-dot"></span><span id="dataStatusText">Demo Data · Upload Excel to see live skill gaps</span></div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="exportBtn"><i class="fa-solid fa-download"></i>Export Report</button>
+        <button class="btn btn-primary" id="refreshBtn"><i class="fa-solid fa-rotate"></i>Refresh Analysis</button>
+      </div>
+    </div>
+
+    <div class="kpi-grid" id="kpis"></div>
+
+    <section class="filter-card">
+      <div class="filter-grid">
+        <div class="field"><label for="branchFilter">Branch</label><select id="branchFilter"><option value="all">All Branches</option></select></div>
+        <div class="field"><label for="batchFilter">Batch</label><select id="batchFilter"><option value="all">All Batches</option></select></div>
+        <div class="field"><label for="programFilter">Training Program</label><select id="programFilter"><option value="all">All Programs</option></select></div>
+        <div class="field"><label for="typeFilter">Skill Type</label><select id="typeFilter"><option value="all">All</option></select></div>
+        <div class="field"><label for="demandFilter">Demand Level</label><select id="demandFilter"><option value="all">All</option><option value="critical">Critical</option><option value="high">High</option><option value="medium">Moderate</option><option value="low">Low</option></select></div>
+        <button class="btn btn-primary" id="applyBtn"><i class="fa-solid fa-filter"></i>Apply Filters</button>
+      </div>
+    </section>
+
+    <div class="grid-2">
+      <section class="panel">
+        <div class="panel-head"><div><h3>Top Skill Gaps</h3><div class="panel-sub">Based on industry demand vs trainee coverage</div></div><span class="panel-sub" id="gapCountLabel"></span></div>
+        <div class="skill-list" id="skillGapList"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><div><h3>Industry Demand vs Trainee Skills</h3><div class="panel-sub">Coverage compared with target demand</div></div></div>
+        <div class="table-wrap"><table class="data-table"><thead><tr><th>Skill</th><th>Trainee Coverage</th><th>Industry Demand</th></tr></thead><tbody id="comparisonBody"></tbody></table></div>
+      </section>
+    </div>
+
+    <div class="section-head"><h2>Critical Skill Gaps</h2><span class="section-note">Skills requiring institutional attention</span></div>
+    <section class="panel">
+      <div class="table-wrap"><table class="data-table"><thead><tr><th>Skill</th><th>Gap</th><th>Affected Trainees</th><th>Branches</th><th>Severity</th><th>Action</th></tr></thead><tbody id="criticalBody"></tbody></table></div>
+    </section>
+
+    <div class="section-head"><h2>Skill Gap by Category</h2><span class="section-note">Where the largest mismatch sits</span></div>
+    <div class="grid-3">
+      <section class="panel"><div class="panel-head"><div><h3>Category Mix</h3><div class="panel-sub">Share of tracked skills</div></div></div><div class="donut-wrap"><canvas id="categoryChart" class="donut-chart"></canvas><div class="category-list" id="categoryList"></div></div></section>
+      <section class="panel"><div class="panel-head"><div><h3>Quick Insights</h3><div class="panel-sub">Automatic observations</div></div></div><div class="insights" id="insights"></div></section>
+      <section class="panel"><div class="panel-head"><div><h3>Gap Snapshot</h3><div class="panel-sub">Current cohort</div></div></div><div id="snapshot" class="insights"></div></section>
+    </div>
+
+    <div class="section-head"><h2>Branch-wise Skill Gap Heatmap</h2><span class="section-note">Gap % by branch and skill</span></div>
+    <section class="panel">
+      <div class="heatmap-wrap"><table class="heatmap" id="heatmapTable"></table></div>
+      <div class="legend"><span><i class="heat-1"></i> 0–20%</span><span><i class="heat-2"></i> 21–40%</span><span><i class="heat-3"></i> 41–60%</span><span><i class="heat-4"></i> 61–80%</span><span><i class="heat-5"></i> &gt;80%</span></div>
+    </section>
+
+    <div class="section-head"><h2>Recommended Actions</h2><span class="section-note">Focus on the highest-impact gaps first</span></div>
+    <section class="panel"><div class="reco-list" id="recommendations"></div></section>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="detailModal">
+  <div class="modal"><div class="modal-head"><h3 id="modalTitle">Skill Gap Detail</h3><button class="modal-close" id="modalClose"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body" id="modalBody"></div></div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const STORAGE_KEY = 'horizon_trainee_data';
+  const INDUSTRY = {
+    'Python': {demand:90, category:'Technical'},
+    'SQL': {demand:88, category:'Data'},
+    'Machine Learning': {demand:74, category:'AI & ML'},
+    'Data Visualization': {demand:70, category:'Data'},
+    'AWS': {demand:79, category:'Cloud & DevOps'},
+    'Cloud Computing': {demand:78, category:'Cloud & DevOps'},
+    'Docker': {demand:67, category:'Cloud & DevOps'},
+    'React': {demand:71, category:'Development'},
+    'System Design': {demand:74, category:'Engineering'},
+    'Cybersecurity': {demand:69, category:'Security'},
+    'Git': {demand:67, category:'Tools'},
+    'Communication': {demand:76, category:'Soft Skills'}
+  };
+  const ALIASES = {
+    python:'Python', py:'Python', sql:'SQL', 'machine learning':'Machine Learning', ml:'Machine Learning',
+    'data visualization':'Data Visualization', tableau:'Data Visualization', powerbi:'Data Visualization',
+    aws:'AWS', 'amazon web services':'AWS', cloud:'Cloud Computing', 'cloud computing':'Cloud Computing',
+    docker:'Docker', react:'React', 'react.js':'React', 'system design':'System Design', cybersecurity:'Cybersecurity',
+    'cyber security':'Cybersecurity', git:'Git', github:'Git', communication:'Communication', 'communication skills':'Communication'
+  };
+  const DEMO = [
+    {branch:'CSE',batch:'2026',program:'AI/ML',skills:['Python','SQL','Machine Learning','AWS','Docker','React','System Design']},
+    {branch:'CSBS',batch:'2026',program:'Full Stack',skills:['Python','SQL','React','Git','Communication']},
+    {branch:'IT',batch:'2026',program:'Cloud & DevOps',skills:['Python','SQL','AWS','Docker','Git']},
+    {branch:'ECE',batch:'2026',program:'Embedded',skills:['Python','Git','Communication']},
+    {branch:'MECH',batch:'2026',program:'Core',skills:['Python','Communication']},
+    {branch:'CIVIL',batch:'2026',program:'Core',skills:['AutoCAD','Communication']}
+  ];
+  let uploadedRows = loadRows();
+  let useDemo = !uploadedRows.length;
+  let rows = useDemo ? DEMO : normalizeRows(uploadedRows);
+  let activeFilter = {branch:'all',batch:'all',program:'all',type:'all',demand:'all',search:''};
+  let categoryChart;
+
+  function loadRows(){
+    try { const raw = localStorage.getItem(STORAGE_KEY); const parsed = raw ? JSON.parse(raw) : []; return Array.isArray(parsed) ? parsed : []; }
+    catch(e){ return []; }
+  }
+  function header(obj, candidates){
+    const keys = Object.keys(obj || {});
+    const normalized = keys.map(k => [k, String(k).toLowerCase().replace(/[\s_-]+/g,'')]);
+    for(const c of candidates){ const nc = c.replace(/[\s_-]+/g,'').toLowerCase(); const hit = normalized.find(x => x[1].includes(nc)); if(hit) return hit[0]; }
+    return null;
+  }
+  function normalizeRows(raw){
+    return raw.map(obj => {
+      const branchKey = header(obj,['branch','department','dept']);
+      const batchKey = header(obj,['batch','year','cohort']);
+      const programKey = header(obj,['training program','program','course','training']);
+      const skillsKey = header(obj,['skills','skillset','skill set','competencies']);
+      const skills = parseSkills(skillsKey ? obj[skillsKey] : '');
+      return {branch:String(branchKey ? obj[branchKey] : 'Unknown').trim() || 'Unknown', batch:String(batchKey ? obj[batchKey] : 'Unknown').trim() || 'Unknown', program:String(programKey ? obj[programKey] : 'Unknown').trim() || 'Unknown', skills};
+    });
+  }
+  function parseSkills(value){
+    if(Array.isArray(value)) return value.map(canon).filter(Boolean);
+    return String(value || '').split(/[,;|\n\/]+/).map(canon).filter(Boolean);
+  }
+  function canon(s){ const raw=String(s||'').trim(); if(!raw) return ''; const key=raw.toLowerCase(); if(ALIASES[key]) return ALIASES[key]; const exact=Object.keys(INDUSTRY).find(k=>k.toLowerCase()===key); return exact || ''; }
+  function filteredRows(){
+    return rows.filter(r => (!activeFilter.branch || activeFilter.branch==='all' || r.branch===activeFilter.branch) && (!activeFilter.batch || activeFilter.batch==='all' || r.batch===activeFilter.batch) && (!activeFilter.program || activeFilter.program==='all' || r.program===activeFilter.program) && (!activeFilter.search || (r.branch+' '+r.program+' '+r.skills.join(' ')).toLowerCase().includes(activeFilter.search.toLowerCase())));
+  }
+  function unique(key){ return [...new Set(rows.map(r=>r[key]).filter(Boolean))].sort(); }
+  function setupFilters(){
+    fill('branchFilter', unique('branch')); fill('batchFilter', unique('batch')); fill('programFilter', unique('program'));
+    const types=[...new Set(Object.values(INDUSTRY).map(x=>x.category))].sort(); fill('typeFilter',types);
+    document.getElementById('branchFilter').value=activeFilter.branch; document.getElementById('batchFilter').value=activeFilter.batch; document.getElementById('programFilter').value=activeFilter.program;
+  }
+  function fill(id, values){ const s=document.getElementById(id); const first=s.querySelector('option'); s.innerHTML=''; s.appendChild(first); values.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;s.appendChild(o)}); }
+  function compute(){
+    const fr=filteredRows(); const total=fr.length || 1; const skills = Object.keys(INDUSTRY).map(skill=>{
+      const holders=fr.filter(r=>r.skills.includes(skill)); const coverage=Math.round((holders.length/total)*100); const demand=INDUSTRY[skill].demand; const gap=Math.max(0,demand-coverage); const affected=holders.length ? Math.max(0,total-holders.length) : total; return {skill,coverage,demand,gap,affected,category:INDUSTRY[skill].category};
+    });
+    let visibleSkills = skills;
+    if(activeFilter.type && activeFilter.type!=='all') visibleSkills = visibleSkills.filter(x => x.category===activeFilter.type);
+    if(activeFilter.demand && activeFilter.demand!=='all') {
+      visibleSkills = visibleSkills.filter(x => severity(x.gap)[0]===activeFilter.demand);
+    }
+    return {rows:fr,total:fr.length,skills:visibleSkills.sort((a,b)=>b.gap-a.gap)};
+  }
+  function severity(g){ if(g>=60)return ['critical','Critical']; if(g>=40)return ['high','High']; if(g>=20)return ['medium','Moderate']; return ['low','Low']; }
+  function barClass(g){ return g>=60?'bar-red':g>=40?'bar-orange':g>=20?'bar-amber':'bar-green'; }
+  function heatClass(g){ return g<=20?'heat-1':g<=40?'heat-2':g<=60?'heat-3':g<=80?'heat-4':'heat-5'; }
+  function render(){
+    const data=compute();
+    renderStatus(); renderKPIs(data); renderTopGaps(data); renderComparison(data); renderCritical(data); renderCategories(data); renderHeatmap(data); renderRecommendations(data); renderInsights(data); renderSnapshot(data);
+  }
+  function renderStatus(){ const status=document.getElementById('dataStatus'); const text=document.getElementById('dataStatusText'); if(useDemo){status.className='data-status demo'; text.textContent='Demo Data · Upload Excel to see live skill gaps';} else {status.className='data-status live'; text.textContent='Live Data · Loaded from uploaded Excel';} }
+  function renderKPIs(data){ const avg=Math.round(data.skills.reduce((s,x)=>s+x.gap,0)/data.skills.length); const critical=data.skills.filter(x=>x.gap>=60).length; const match=Math.max(0,100-avg); document.getElementById('kpis').innerHTML=[
+      ['fa-users','bg-blue','Total Trainees',data.total.toLocaleString(),useDemo?'Demo cohort':'Current cohort'],
+      ['fa-layer-group','bg-violet','Skills Tracked',data.skills.length,'Across technical + soft skills'],
+      ['fa-bullseye','bg-amber','Avg Skill Gap',avg+'%','Demand minus coverage'],
+      ['fa-triangle-exclamation','bg-red','Critical Gaps',critical,'Gap ≥ 60%'],
+      ['fa-chart-simple','bg-green','Industry Match',match+'%','1 − average gap']
+    ].map(x=>`<div class="kpi-card"><div class="kpi-top"><div class="kpi-icon ${x[1]}"><i class="fa-solid ${x[0]}"></i></div></div><div class="kpi-label">${x[2]}</div><div class="kpi-value">${x[3]}</div><div class="kpi-note">${x[4]}</div></div>`).join(''); }
+  function renderTopGaps(data){ const top=data.skills.slice(0,8); document.getElementById('gapCountLabel').textContent=top.length+' focus areas'; document.getElementById('skillGapList').innerHTML=top.map(x=>`<div class="skill-row"><div class="skill-name">${x.skill}</div><div class="skill-gap">${x.gap}%</div><div class="bar-track"><div class="bar-fill ${barClass(x.gap)}" style="width:${Math.min(100,x.gap)}%"></div></div><div style="font-size:10px;color:var(--ink-faint);text-align:right">${x.coverage}% / ${x.demand}%</div></div>`).join(''); }
+  function renderComparison(data){ document.getElementById('comparisonBody').innerHTML=data.skills.slice(0,8).map(x=>`<tr><td><strong>${x.skill}</strong><div style="font-size:10px;color:var(--ink-faint)">${x.category}</div></td><td><div class="coverage-pair"><div><div class="pair-value">${x.coverage}%</div><div class="pair-track"><div class="pair-tr" style="width:${x.coverage}%"></div></div></div></div></td><td><div class="pair-value">${x.demand}%</div><div class="pair-track"><div class="pair-demand" style="width:${x.demand}%"></div></div></td></tr>`).join(''); }
+  function renderCritical(data){ document.getElementById('criticalBody').innerHTML=data.skills.slice(0,7).map(x=>{const [cls,label]=severity(x.gap); const branches=[...new Set(data.rows.filter(r=>!r.skills.includes(x.skill)).map(r=>r.branch))].slice(0,3); return `<tr><td><strong>${x.skill}</strong></td><td style="color:var(--red);font-weight:800">${x.gap}%</td><td>${x.affected}</td><td>${branches.length?branches.join(', '):'—'}</td><td><span class="pill ${cls}"><span class="severity-dot"></span>${label}</span></td><td><button class="btn" style="padding:6px 9px;font-size:10px" data-detail="${x.skill}">View</button></td></tr>`;}).join(''); document.querySelectorAll('[data-detail]').forEach(b=>b.addEventListener('click',()=>openDetail(b.dataset.detail,data))); }
+  function renderCategories(data){ const map={}; data.skills.forEach(x=>{map[x.category]=(map[x.category]||0)+x.gap}); const entries=Object.entries(map).map(([k,v])=>[k,v]).sort((a,b)=>b[1]-a[1]); const total=entries.reduce((s,x)=>s+x[1],0)||1; document.getElementById('categoryList').innerHTML=entries.slice(0,7).map((x,i)=>`<div class="cat-row"><span class="cat-dot" style="background:${['#2563EB','#16A34A','#F59E0B','#7C3AED','#EA580C','#0D9488','#DC2626'][i%7]}"></span><span>${x[0]}</span><span class="cat-val">${Math.round(x[1]/total*100)}%</span></div>`).join(''); if(categoryChart) categoryChart.destroy(); categoryChart=new Chart(document.getElementById('categoryChart'),{type:'doughnut',data:{labels:entries.map(x=>x[0]),datasets:[{data:entries.map(x=>x[1])}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}}); }
+  function renderInsights(data){ const top=data.skills[0], second=data.skills[1]; const best=data.skills.slice().sort((a,b)=>a.gap-b.gap)[0]; document.getElementById('insights').innerHTML=[
+      ['fa-triangle-exclamation',`${data.skills.filter(x=>x.gap>=60).length} critical skill gaps`, 'These are the gaps with the largest distance from current trainee coverage to industry demand.'],
+      ['fa-cloud-arrow-up',`${top.skill} needs the most attention`,`${top.gap}% gap with ${top.coverage}% trainee coverage against ${top.demand}% demand.`],
+      ['fa-arrow-trend-down',`${best.skill} is closest to target`,`${best.coverage}% trainee coverage leaves a ${best.gap}% gap.`]
+    ].map(x=>`<div class="insight"><div class="insight-top"><i class="fa-solid ${x[0]}"></i>${x[1]}</div><p>${x[2]}</p></div>`).join(''); }
+  function renderSnapshot(data){ const critical=data.skills.filter(x=>x.gap>=60).length; const affected=data.skills.slice(0,3).reduce((s,x)=>s+x.affected,0); document.getElementById('snapshot').innerHTML=[
+      ['Trainees analyzed',data.total],['Top 3 gaps',data.skills.slice(0,3).map(x=>x.skill).join(' · ')],['People affected across top gaps',affected]
+    ].map(x=>`<div class="insight"><div class="insight-top"><i class="fa-solid fa-circle-info"></i>${x[0]}</div><p style="font-size:15px;font-weight:800;color:var(--ink);margin-top:7px">${x[1]}</p></div>`).join(''); }
+  function renderHeatmap(data){ const branches=[...new Set(data.rows.map(r=>r.branch))].slice(0,8); const skills=data.skills.slice(0,6); let html='<thead><tr><th>Skill</th>'+branches.map(b=>`<th>${b}</th>`).join('')+'</tr></thead><tbody>'; skills.forEach(s=>{html+=`<tr><td>${s.skill}</td>`; branches.forEach(b=>{const subset=data.rows.filter(r=>r.branch===b); const cov=subset.length?Math.round(subset.filter(r=>r.skills.includes(s.skill)).length/subset.length*100):0; const gap=Math.max(0,s.demand-cov); html+=`<td class="${heatClass(gap)}">${gap}%</td>`}); html+='</tr>'}); html+='</tbody>'; document.getElementById('heatmapTable').innerHTML=html; }
+  function renderRecommendations(data){ const picks=data.skills.slice(0,5); document.getElementById('recommendations').innerHTML=picks.map(x=>{const msg=x.skill==='AWS'?'Introduce AWS fundamentals + certification prep.':x.skill==='Docker'?'Add containerization and CI/CD hands-on labs.':x.skill==='React'?'Run a frontend project track with React + API integration.':x.skill==='SQL'?'Strengthen SQL querying, optimization and database projects.':x.skill==='System Design'?'Add architecture, scalability and case-study sessions.':`Add a focused ${x.skill} learning module with practical assessment.`; const branches=[...new Set(data.rows.filter(r=>!r.skills.includes(x.skill)).map(r=>r.branch))].slice(0,2); return `<div class="reco"><div class="reco-icon"><i class="fa-solid fa-bullseye"></i></div><div><h4>${x.skill} — ${x.gap}% gap</h4><p>${msg} ${branches.length?'Prioritize '+branches.join(' + ')+' first.':''}</p></div><div class="reco-gap">${x.gap}%</div></div>`}).join(''); }
+  function openDetail(skill,data){ const x=data.skills.find(s=>s.skill===skill); if(!x)return; const branches=[...new Set(data.rows.filter(r=>!r.skills.includes(skill)).map(r=>r.branch))]; document.getElementById('modalTitle').textContent=skill+' Skill Gap'; document.getElementById('modalBody').innerHTML=`<p>This view compares current trainee coverage with a configurable industry-demand benchmark. It is based on the skills present in the uploaded cohort.</p><div class="skill-detail"><div class="detail-box"><span>Industry demand</span><strong>${x.demand}%</strong></div><div class="detail-box"><span>Trainee coverage</span><strong>${x.coverage}%</strong></div><div class="detail-box"><span>Gap</span><strong style="color:var(--red)">${x.gap}%</strong></div><div class="detail-box"><span>Affected trainees</span><strong>${x.affected}</strong></div></div><div class="detail-box" style="margin-top:12px"><span>Most affected branches</span><strong style="font-size:14px;line-height:1.6">${branches.slice(0,6).join(', ')||'None'}</strong></div>`; document.getElementById('detailModal').classList.add('open'); }
+  document.getElementById('modalClose').onclick=()=>document.getElementById('detailModal').classList.remove('open'); document.getElementById('detailModal').onclick=e=>{if(e.target.id==='detailModal')document.getElementById('detailModal').classList.remove('open')};
+  document.getElementById('applyBtn').onclick=()=>{ activeFilter.branch=document.getElementById('branchFilter').value; activeFilter.batch=document.getElementById('batchFilter').value; activeFilter.program=document.getElementById('programFilter').value; activeFilter.type=document.getElementById('typeFilter').value; activeFilter.demand=document.getElementById('demandFilter').value; render(); };
+  document.getElementById('refreshBtn').onclick=()=>{uploadedRows=loadRows();useDemo=!uploadedRows.length;rows=useDemo?DEMO:normalizeRows(uploadedRows);setupFilters();render();};
+  document.getElementById('searchBox').addEventListener('input',e=>{activeFilter.search=e.target.value;render()});
+  document.getElementById('reportsLink').addEventListener('click',e=>{e.preventDefault();alert('Reports module can be connected here next.');});
+  document.getElementById('exportBtn').onclick=()=>{ const data=compute(); const lines=['Skill,Category,Trainee Coverage %,Industry Demand %,Gap %,Affected Trainees']; data.skills.forEach(x=>lines.push([x.skill,x.category,x.coverage,x.demand,x.gap,x.affected].join(','))); const blob=new Blob([lines.join('\n')],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='horizon_skill_gap_report.csv'; a.click(); URL.revokeObjectURL(a.href); };
+  setupFilters(); render();
+})();
+</script>
+</body>
+</html>
