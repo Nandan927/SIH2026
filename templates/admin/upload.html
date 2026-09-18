@@ -316,11 +316,11 @@
   .info-tile .t { font-family: var(--display); font-size: 14px; font-weight: 700; color: var(--text-0); margin-bottom: 4px; }
   .info-tile .d { font-size: 12.5px; color: var(--text-2); line-height: 1.55; }
 
-  /* ═══════════════ UPLOAD ROW — 2cm gap ═══════════════ */
+  /* ═══════════════ UPLOAD ROW ═══════════════ */
   .upload-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2cm; /* ← was 7cm, now 2cm */
+    gap: 2cm;
     align-items: stretch;
   }
   @media (max-width: 900px) {
@@ -347,14 +347,21 @@
   }
   .action-title i { color: var(--orange); }
 
-  /* ── Dropzone ── */
+  /* ── Dropzone (FIXED) ── */
   .dropzone {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+
     border: 2px dashed var(--border-2);
     border-radius: var(--r);
     background: #fffdf6;
     padding: 30px 20px;
-    text-align: center;
+    min-height: 230px;
     cursor: pointer;
     transition: border-color 220ms ease, background 220ms ease, transform 220ms ease;
   }
@@ -367,35 +374,45 @@
     background: var(--amber-soft);
     transform: scale(1.01);
   }
+
+  /* The invisible file input covers the whole dropzone */
   .dropzone input[type="file"] {
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100%;
     opacity: 0;
     cursor: pointer;
+    z-index: 2;
   }
+
+  /* Icon block — now a proper block so it sits on its own line */
   .dz-icon {
+    display: grid;
+    place-items: center;
     width: 54px;
     height: 54px;
     border-radius: 16px;
     background: var(--accent-gradient);
-    display: inline-grid;
-    place-items: center;
     color: #fff;
     font-size: 22px;
-    margin-bottom: 14px;
+    margin: 0 auto 6px;
     box-shadow: var(--shadow-amber);
+    pointer-events: none;
   }
+
   .dz-title {
     font-family: var(--display);
     font-size: 15px;
     font-weight: 700;
     color: var(--text-0);
-    margin-bottom: 4px;
+    line-height: 1.35;
+    pointer-events: none;
   }
   .dz-sub {
     font-size: 12.5px;
     color: var(--text-2);
-    margin-bottom: 12px;
+    pointer-events: none;
   }
   .dz-browse {
     display: inline-flex;
@@ -410,12 +427,14 @@
     font-weight: 700;
     box-shadow: var(--shadow-amber);
     pointer-events: none;
+    margin-top: 4px;
   }
   .dz-hint {
     font-size: 11.5px;
     color: var(--text-3);
-    margin-top: 10px;
+    margin-top: 6px;
     letter-spacing: 0.02em;
+    pointer-events: none;
   }
 
   /* ── File chip ── */
@@ -922,44 +941,44 @@
         </div>
 
         <form
-  id="uploadForm"
-  action="{{ url_for('admin_upload') }}"
-  method="POST"
-  enctype="multipart/form-data"
->
-  <label class="dropzone" id="dropzone">
-    <input
-      type="file"
-      id="fileInput"
-      name="excel_file"
-      accept=".xlsx,.xls"
-    />
+          id="uploadForm"
+          action="{{ url_for('admin_upload') }}"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <label class="dropzone" id="dropzone" for="fileInput">
+            <input
+              type="file"
+              id="fileInput"
+              name="excel_file"
+              accept=".xlsx,.xls"
+            />
 
-    <div class="dz-icon">
-      <i class="fa-solid fa-file-excel"></i>
-    </div>
+            <span class="dz-icon">
+              <i class="fa-solid fa-file-excel"></i>
+            </span>
 
-    <div class="dz-title">
-      Drag &amp; drop your Excel file here
-    </div>
+            <span class="dz-title">
+              Drag &amp; drop your Excel file here
+            </span>
 
-    <div class="dz-sub">or</div>
+            <span class="dz-sub">or</span>
 
-    <span class="dz-browse">
-      <i class="fa-solid fa-folder-open"></i>
-      Browse Files
-    </span>
+            <span class="dz-browse">
+              <i class="fa-solid fa-folder-open"></i>
+              Browse Files
+            </span>
 
-    <div class="dz-hint">
-      Supported formats: .xlsx, .xls · max 20 MB
-    </div>
-  </label>
+            <span class="dz-hint">
+              Supported formats: .xlsx, .xls · max 20 MB
+            </span>
+          </label>
 
-  <button type="submit" class="btn btn-primary">
-    <i class="fa-solid fa-cloud-arrow-up"></i>
-    Upload to Server
-  </button>
-</form>
+          <button type="submit" class="btn btn-primary" style="margin-top:14px;">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            Upload to Server
+          </button>
+        </form>
 
         <div class="file-chip" id="fileChip">
           <i class="fa-solid fa-circle-check"></i>
