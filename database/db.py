@@ -22,6 +22,7 @@ def init_db():
 
     cursor = connection.cursor()
 
+    # Create admins table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS admins (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,6 +30,29 @@ def init_db():
             email TEXT UNIQUE NOT NULL,
             phone TEXT,
             password TEXT NOT NULL
+        )
+    """)
+
+    # Create trainees table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS trainees (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            trainee_id TEXT NOT NULL UNIQUE,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+
+            branch TEXT,
+            batch TEXT,
+            training_status TEXT,
+            outcome_status TEXT,
+            skills TEXT,
+
+            password TEXT NOT NULL,
+
+            admin_id INTEGER,
+
+            FOREIGN KEY (admin_id) REFERENCES admins(id)
         )
     """)
 
@@ -100,3 +124,49 @@ def check_admin(email, password):
         return admin
 
     return None
+
+def insert_trainee(
+    trainee_id,
+    name,
+    email,
+    branch,
+    batch,
+    training_status,
+    outcome_status,
+    skills,
+    hashed_password,
+    admin_id
+):
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        INSERT INTO trainees (
+            trainee_id,
+            name,
+            email,
+            branch,
+            batch,
+            training_status,
+            outcome_status,
+            skills,
+            password,
+            admin_id
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        trainee_id,
+        name,
+        email,
+        branch,
+        batch,
+        training_status,
+        outcome_status,
+        skills,
+        hashed_password,
+        admin_id
+    ))
+
+    connection.commit()
+    connection.close()

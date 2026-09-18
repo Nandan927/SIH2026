@@ -921,16 +921,45 @@
           Upload Excel Sheet
         </div>
 
-        <label class="dropzone" id="dropzone">
-          <input type="file" id="fileInput" accept=".xlsx,.xls" />
-          <div class="dz-icon"><i class="fa-solid fa-file-excel"></i></div>
-          <div class="dz-title">Drag &amp; drop your Excel file here</div>
-          <div class="dz-sub">or</div>
-          <span class="dz-browse">
-            <i class="fa-solid fa-folder-open"></i> Browse Files
-          </span>
-          <div class="dz-hint">Supported formats: .xlsx, .xls · max 20 MB</div>
-        </label>
+        <form
+  id="uploadForm"
+  action="{{ url_for('admin_upload') }}"
+  method="POST"
+  enctype="multipart/form-data"
+>
+  <label class="dropzone" id="dropzone">
+    <input
+      type="file"
+      id="fileInput"
+      name="excel_file"
+      accept=".xlsx,.xls"
+    />
+
+    <div class="dz-icon">
+      <i class="fa-solid fa-file-excel"></i>
+    </div>
+
+    <div class="dz-title">
+      Drag &amp; drop your Excel file here
+    </div>
+
+    <div class="dz-sub">or</div>
+
+    <span class="dz-browse">
+      <i class="fa-solid fa-folder-open"></i>
+      Browse Files
+    </span>
+
+    <div class="dz-hint">
+      Supported formats: .xlsx, .xls · max 20 MB
+    </div>
+  </label>
+
+  <button type="submit" class="btn btn-primary">
+    <i class="fa-solid fa-cloud-arrow-up"></i>
+    Upload to Server
+  </button>
+</form>
 
         <div class="file-chip" id="fileChip">
           <i class="fa-solid fa-circle-check"></i>
