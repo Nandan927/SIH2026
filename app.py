@@ -23,7 +23,8 @@ from database.db import (
     check_admin,
     insert_trainee,
     get_trainees_by_admin,
-    get_all_trainees
+    get_all_trainees,
+    get_branch_analysis_trainees
 )
 
 
@@ -112,9 +113,7 @@ def admin_signin():
                 "success"
             )
 
-            return redirect(
-                url_for("admin_upload")
-            )
+            return redirect(url_for("admin_dashboard"))
 
         else:
 
@@ -187,7 +186,7 @@ def admin_signup():
             )
 
             return redirect(
-                url_for("admin_signin")
+        url_for("admin_upload")
             )
 
         else:
@@ -1082,6 +1081,54 @@ def admin_dashboard():
         "admin/dashboard.html",
 
         dashboard_data=dashboard_data,
+
+        trainees=trainees
+
+    )
+
+
+# =========================================================
+# ADMIN BRANCH ANALYSIS
+# =========================================================
+
+@app.route("/admin/branch")
+def admin_branch_analysis():
+
+    # -----------------------------------------------------
+    # AUTHENTICATION CHECK
+    # -----------------------------------------------------
+
+    if "admin_id" not in session:
+
+        return redirect(
+            url_for("admin_signin")
+        )
+
+    # -----------------------------------------------------
+    # GET CURRENT ADMIN ID
+    # -----------------------------------------------------
+
+    current_admin_id = session["admin_id"]
+
+    # -----------------------------------------------------
+    # FETCH CURRENT ADMIN'S TRAINEES
+    # -----------------------------------------------------
+
+    trainees = get_branch_analysis_trainees(
+        current_admin_id
+    )
+
+    if trainees is None:
+
+        trainees = []
+
+    # -----------------------------------------------------
+    # SEND DATA TO BRANCH ANALYSIS HTML
+    # -----------------------------------------------------
+
+    return render_template(
+
+        "admin/branch.html",
 
         trainees=trainees
 

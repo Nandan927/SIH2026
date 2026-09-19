@@ -671,11 +671,11 @@
 
     <div class="nav-group-label">MENU</div>
     <nav class="nav">
-      <a class="nav-link" href="{{ url_for('admin.dashboard') }}"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+      <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
       <a class="nav-link active" href="#"><i class="fa-solid fa-code-branch"></i> Branch Analysis</a>
       <a class="nav-link" href="#"><i class="fa-solid fa-user-group"></i> Trainee Management</a>
       <a class="nav-link" href="#"><i class="fa-solid fa-bullseye"></i> Skill Gap</a>
-      <a class="nav-link" href="{{ url_for('admin.upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data</a>
+      <a class="nav-link" href="{{ url_for('admin_upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data</a>
       <a class="nav-link" href="#"><i class="fa-solid fa-chart-simple"></i> Reports</a>
     </nav>
 
@@ -697,7 +697,7 @@
         <p>Branch performance — <strong>+6.2%</strong> QoQ</p>
       </div>
 
-      <a class="logout-link" href="{{ url_for('common.role_selection') }}"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+      <a class="logout-link" href="{{ url_for('role_selection') }}"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
     </div>
   </aside>
 
@@ -868,278 +868,258 @@
 <script>
   
 
-const STORAGE_KEY = 'horizon_trainee_data';
+const BACKEND_TRAINEES = {{ trainees | tojson }};
 
-const DEFAULT_BRANCH_DATA = {
-  "B.Tech Overall": {
-    totals: { total: 1284, trained: 1027, nonTrained: 257 },
-    outcomes: { employed: 486, higherStudies: 194, partTime: 121, internships: 158, seeking: 68 },
-    batches: {
-      "2022-2026": { total: 410, completion: 78, employment: 62 },
-      "2023-2027": { total: 398, completion: 74, employment: 58 },
-      "Batch A":   { total: 248, completion: 82, employment: 66 },
-      "Batch B":   { total: 228, completion: 70, employment: 54 }
-    },
-    skills: [
-      { name: "Python",     icon: "fa-brands fa-python",     count: 312 },
-      { name: "SQL",        icon: "fa-solid fa-database",    count: 268 },
-      { name: "React",      icon: "fa-brands fa-react",      count: 194 },
-      { name: "Flask",      icon: "fa-solid fa-flask",       count: 142 },
-      { name: "Cloud (AWS)",icon: "fa-solid fa-cloud",       count: 118 },
-      { name: "Java",       icon: "fa-brands fa-java",       count: 96 }
-    ]
-  },
-  "CSE": {
-    totals: { total: 312, trained: 274, nonTrained: 38 },
-    outcomes: { employed: 148, higherStudies: 52, partTime: 32, internships: 44, seeking: 12 },
-    batches: {
-      "2022-2026": { total: 120, completion: 88, employment: 74 },
-      "2023-2027": { total: 98,  completion: 84, employment: 70 },
-      "Batch A":   { total: 52,  completion: 90, employment: 78 },
-      "Batch B":   { total: 42,  completion: 82, employment: 68 }
-    },
-    skills: [
-      { name: "Python",     icon: "fa-brands fa-python",     count: 96 },
-      { name: "React",      icon: "fa-brands fa-react",      count: 78 },
-      { name: "SQL",        icon: "fa-solid fa-database",    count: 72 },
-      { name: "Cloud (AWS)",icon: "fa-solid fa-cloud",       count: 54 },
-      { name: "Node.js",    icon: "fa-brands fa-node-js",    count: 48 },
-      { name: "Java",       icon: "fa-brands fa-java",       count: 36 }
-    ]
-  },
-  "CSBS": {
-    totals: { total: 168, trained: 149, nonTrained: 19 },
-    outcomes: { employed: 78, higherStudies: 28, partTime: 18, internships: 22, seeking: 8 },
-    batches: {
-      "2022-2026": { total: 62, completion: 86, employment: 70 },
-      "2023-2027": { total: 58, completion: 82, employment: 66 },
-      "Batch A":   { total: 28, completion: 88, employment: 74 },
-      "Batch B":   { total: 20, completion: 78, employment: 62 }
-    },
-    skills: [
-      { name: "Python",     icon: "fa-brands fa-python",     count: 62 },
-      { name: "SQL",        icon: "fa-solid fa-database",    count: 48 },
-      { name: "React",      icon: "fa-brands fa-react",      count: 40 },
-      { name: "Cloud (AWS)",icon: "fa-solid fa-cloud",       count: 28 },
-      { name: "Flask",      icon: "fa-solid fa-flask",       count: 22 },
-      { name: "Tableau",    icon: "fa-solid fa-chart-column",count: 16 }
-    ]
-  },
-  "ECE": {
-    totals: { total: 196, trained: 151, nonTrained: 45 },
-    outcomes: { employed: 72, higherStudies: 34, partTime: 18, internships: 24, seeking: 12 },
-    batches: {
-      "2022-2026": { total: 74, completion: 78, employment: 56 },
-      "2023-2027": { total: 68, completion: 74, employment: 52 },
-      "Batch A":   { total: 32, completion: 80, employment: 60 },
-      "Batch B":   { total: 26, completion: 70, employment: 48 }
-    },
-    skills: [
-      { name: "Python",     icon: "fa-brands fa-python",     count: 54 },
-      { name: "SQL",        icon: "fa-solid fa-database",    count: 42 },
-      { name: "Embedded C", icon: "fa-solid fa-microchip",   count: 38 },
-      { name: "MATLAB",     icon: "fa-solid fa-square-root-variable", count: 30 },
-      { name: "Cloud (AWS)",icon: "fa-solid fa-cloud",       count: 18 },
-      { name: "React",      icon: "fa-brands fa-react",      count: 14 }
-    ]
-  },
-  "IT": {
-    totals: { total: 244, trained: 205, nonTrained: 39 },
-    outcomes: { employed: 108, higherStudies: 40, partTime: 24, internships: 34, seeking: 14 },
-    batches: {
-      "2022-2026": { total: 92, completion: 86, employment: 72 },
-      "2023-2027": { total: 84, completion: 82, employment: 68 },
-      "Batch A":   { total: 42, completion: 88, employment: 76 },
-      "Batch B":   { total: 36, completion: 78, employment: 64 }
-    },
-    skills: [
-      { name: "Python",     icon: "fa-brands fa-python",     count: 78 },
-      { name: "SQL",        icon: "fa-solid fa-database",    count: 62 },
-      { name: "React",      icon: "fa-brands fa-react",      count: 52 },
-      { name: "Cloud (AWS)",icon: "fa-solid fa-cloud",       count: 44 },
-      { name: "Flask",      icon: "fa-solid fa-flask",       count: 34 },
-      { name: "Node.js",    icon: "fa-brands fa-node-js",    count: 28 }
-    ]
-  },
-  "MECH": {
-    totals: { total: 172, trained: 122, nonTrained: 50 },
-    outcomes: { employed: 52, higherStudies: 22, partTime: 14, internships: 18, seeking: 16 },
-    batches: {
-      "2022-2026": { total: 62, completion: 74, employment: 48 },
-      "2023-2027": { total: 58, completion: 70, employment: 44 },
-      "Batch A":   { total: 28, completion: 76, employment: 52 },
-      "Batch B":   { total: 24, completion: 66, employment: 40 }
-    },
-    skills: [
-      { name: "AutoCAD",    icon: "fa-solid fa-drafting-compass", count: 58 },
-      { name: "SolidWorks", icon: "fa-solid fa-cube",        count: 44 },
-      { name: "Python",     icon: "fa-brands fa-python",     count: 36 },
-      { name: "MATLAB",     icon: "fa-solid fa-square-root-variable", count: 26 },
-      { name: "SQL",        icon: "fa-solid fa-database",    count: 20 },
-      { name: "Cloud (AWS)",icon: "fa-solid fa-cloud",       count: 10 }
-    ]
-  },
-  "CIVIL": {
-    totals: { total: 122, trained: 88, nonTrained: 34 },
-    outcomes: { employed: 32, higherStudies: 14, partTime: 8, internships: 12, seeking: 22 },
-    batches: {
-      "2022-2026": { total: 44, completion: 72, employment: 42 },
-      "2023-2027": { total: 40, completion: 68, employment: 38 },
-      "Batch A":   { total: 20, completion: 74, employment: 44 },
-      "Batch B":   { total: 18, completion: 64, employment: 34 }
-    },
-    skills: [
-      { name: "AutoCAD",    icon: "fa-solid fa-drafting-compass", count: 42 },
-      { name: "STAAD Pro",  icon: "fa-solid fa-building",    count: 28 },
-      { name: "Python",     icon: "fa-brands fa-python",     count: 22 },
-      { name: "SQL",        icon: "fa-solid fa-database",    count: 18 },
-      { name: "Revit",      icon: "fa-solid fa-cubes",       count: 14 },
-      { name: "Cloud (AWS)",icon: "fa-solid fa-cloud",       count: 6 }
-    ]
-  }
-};
+function buildBranchData(trainees) {
+    const branchData = {};
 
+    function createEmptyBranch() {
+        return {
+            totals: {
+                total: 0,
+                trained: 0,
+                nonTrained: 0
+            },
 
-function loadBranchData(){
-  const base = JSON.parse(JSON.stringify(DEFAULT_BRANCH_DATA));
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return base;
-    const rows = JSON.parse(raw);
-    if(!Array.isArray(rows) || rows.length === 0) return base;
+            outcomes: {
+                employed: 0,
+                higherStudies: 0,
+                partTime: 0,
+                internships: 0,
+                seeking: 0
+            },
 
-    const normalize = (obj) => {
-      const out = {};
-      Object.keys(obj).forEach(k => {
-        out[k.toLowerCase().trim().replace(/\s+/g,'_')] = obj[k];
-      });
-      return out;
-    };
-    const normalized = rows.map(normalize);
-    const keys = Object.keys(normalized[0]);
-    const findKey = (cands) => {
-      for(const c of cands){
-        const found = keys.find(k => k.includes(c));
-        if(found) return found;
-      }
-      return null;
-    };
-    const colBranch  = findKey(['branch','department','dept']);
-    const colTraining= findKey(['training_status','trainingstatus','trained','training']);
-    const colOutcome = findKey(['outcome_status','outcomestatus','outcome','status']);
-    const colBatch   = findKey(['batch','cohort','year']);
-    const colSkill   = findKey(['skill','skills','tech']);
+            batches: {},
 
-    const agg = {};
-    const skillCounts = {};
+            skills: []
+        };
+    }
 
-    normalized.forEach(r => {
-      const branchRaw = colBranch ? String(r[colBranch] || '').trim() : 'UNKNOWN';
-      const branch = branchRaw.toUpperCase();
-      if(!agg[branch]) agg[branch] = {
-        totals: { total:0, trained:0, nonTrained:0 },
-        outcomes: { employed:0, higherStudies:0, partTime:0, internships:0, seeking:0 },
-        batches: {},
-        skills: []
-      };
-      const b = agg[branch];
-      b.totals.total++;
+    function normalize(value) {
+        return String(value || "")
+            .trim()
+            .toLowerCase();
+    }
 
-      const tStatus = colTraining ? String(r[colTraining] || '').toLowerCase() : '';
-      const isTrained = tStatus.includes('train') && !tStatus.includes('non') && !tStatus.includes('not') && !tStatus.includes('un');
-      if(isTrained) b.totals.trained++; else b.totals.nonTrained++;
+    function isTrained(status) {
+        return (
+            status === "completed" ||
+            status === "complete" ||
+            status === "trained"
+        );
+    }
 
-      const oStatus = colOutcome ? String(r[colOutcome] || '').toLowerCase() : '';
-      if(oStatus.includes('employ') && !oStatus.includes('seek') && !oStatus.includes('un')) b.outcomes.employed++;
-      else if(oStatus.includes('higher') || oStatus.includes('stud')) b.outcomes.higherStudies++;
-      else if(oStatus.includes('freelanc') || oStatus.includes('part')) b.outcomes.partTime++;
-      else if(oStatus.includes('intern')) b.outcomes.internships++;
-      else if(oStatus.includes('seek')) b.outcomes.seeking++;
+    function addSkill(branch, skillName) {
+        const existingSkill = branch.skills.find(
+            skill => skill.name.toLowerCase() === skillName.toLowerCase()
+        );
 
-      const batch = colBatch ? String(r[colBatch] || '').trim() : 'Unassigned';
-      if(!b.batches[batch]) b.batches[batch] = { total:0, trained:0, employed:0 };
-      b.batches[batch].total++;
-      if(isTrained) b.batches[batch].trained++;
-      if(oStatus.includes('employ')) b.batches[batch].employed++;
-
-      if(colSkill){
-        const skillsRaw = String(r[colSkill] || '');
-        skillsRaw.split(/[,;|]/).forEach(s => {
-          const sName = s.trim();
-          if(!sName) return;
-          const key = branch + '||' + sName;
-          skillCounts[key] = (skillCounts[key] || 0) + 1;
-        });
-      }
-    });
-
-    // Convert batch aggregates
-    Object.keys(agg).forEach(branch => {
-      const b = agg[branch];
-      Object.keys(b.batches).forEach(batch => {
-        const bd = b.batches[batch];
-        const completion = bd.total ? Math.round((bd.trained / bd.total) * 100) : 0;
-        const employment = bd.total ? Math.round((bd.employed / bd.total) * 100) : 0;
-        b.batches[batch] = { total: bd.total, completion, employment };
-      });
-    });
-
-    // Build skill arrays for each branch
-    Object.keys(agg).forEach(branch => {
-      const skills = [];
-      Object.keys(skillCounts).forEach(k => {
-        const [b, skill] = k.split('||');
-        if(b === branch){
-          skills.push({ name: skill, icon: 'fa-solid fa-code', count: skillCounts[k] });
+        if (existingSkill) {
+            existingSkill.count++;
+        } else {
+            branch.skills.push({
+                name: skillName,
+                count: 1,
+                icon: "fa-solid fa-code"
+            });
         }
-      });
-      skills.sort((a,b) => b.count - a.count);
-      agg[branch].skills = skills.slice(0, 8);
+    }
+
+    trainees.forEach(trainee => {
+        const branchName = String(
+            trainee.branch || "Unknown"
+        ).trim();
+
+        if (!branchData[branchName]) {
+            branchData[branchName] = createEmptyBranch();
+        }
+
+        const branch = branchData[branchName];
+
+        const trainingStatus = normalize(
+            trainee.training_status
+        );
+
+        const outcomeStatus = normalize(
+            trainee.outcome_status
+        );
+
+        const batchName = String(
+            trainee.batch || "Unknown"
+        ).trim();
+
+        // Total trainee count
+        branch.totals.total++;
+
+        // Training status
+        if (isTrained(trainingStatus)) {
+            branch.totals.trained++;
+        } else {
+            branch.totals.nonTrained++;
+        }
+
+        // Outcome status
+        if (outcomeStatus.includes("employ")) {
+            branch.outcomes.employed++;
+        } else if (
+            outcomeStatus.includes("higher") ||
+            outcomeStatus.includes("study")
+        ) {
+            branch.outcomes.higherStudies++;
+        } else if (
+            outcomeStatus.includes("part") ||
+            outcomeStatus.includes("freelance")
+        ) {
+            branch.outcomes.partTime++;
+        } else if (
+            outcomeStatus.includes("intern")
+        ) {
+            branch.outcomes.internships++;
+        } else if (
+            outcomeStatus.includes("seek") ||
+            outcomeStatus.includes("unemploy") ||
+            outcomeStatus.includes("looking")
+        ) {
+            branch.outcomes.seeking++;
+        }
+
+        // Batch creation
+        if (!branch.batches[batchName]) {
+            branch.batches[batchName] = {
+                total: 0,
+                trained: 0,
+                employed: 0,
+                completion: 0,
+                employment: 0
+            };
+        }
+
+        const batch = branch.batches[batchName];
+
+        batch.total++;
+
+        if (isTrained(trainingStatus)) {
+            batch.trained++;
+        }
+
+        if (outcomeStatus.includes("employ")) {
+            batch.employed++;
+        }
+
+        // Skills
+        const skills = String(
+            trainee.skills || ""
+        )
+            .split(",")
+            .map(skill => skill.trim())
+            .filter(skill => skill !== "");
+
+        skills.forEach(skill => {
+            addSkill(branch, skill);
+        });
     });
 
-    // Merge into base — overwrite only branches that exist in uploaded data
-    Object.keys(agg).forEach(branch => {
-      base[branch] = agg[branch];
+    // Calculate batch percentages
+    Object.values(branchData).forEach(branch => {
+        Object.values(branch.batches).forEach(batch => {
+            batch.completion = pct(
+                batch.trained,
+                batch.total
+            );
+
+            batch.employment = pct(
+                batch.employed,
+                batch.total
+            );
+        });
+
+        // Sort skills by count
+        branch.skills.sort(
+            (a, b) => b.count - a.count
+        );
     });
 
-    // Recompute B.Tech Overall totals
-    const overall = { totals:{ total:0, trained:0, nonTrained:0 }, outcomes:{ employed:0, higherStudies:0, partTime:0, internships:0, seeking:0 }, batches:{}, skills:[] };
-    Object.keys(base).forEach(branch => {
-      if(branch === 'B.Tech Overall') return;
-      const b = base[branch];
-      overall.totals.total += b.totals.total;
-      overall.totals.trained += b.totals.trained;
-      overall.totals.nonTrained += b.totals.nonTrained;
-      overall.outcomes.employed += b.outcomes.employed;
-      overall.outcomes.higherStudies += b.outcomes.higherStudies;
-      overall.outcomes.partTime += b.outcomes.partTime;
-      overall.outcomes.internships += b.outcomes.internships;
-      overall.outcomes.seeking += b.outcomes.seeking;
-      Object.keys(b.batches).forEach(batch => {
-        if(!overall.batches[batch]) overall.batches[batch] = { total:0, trained:0, employed:0, completion:0, employment:0 };
-        overall.batches[batch].total += b.batches[batch].total;
-        overall.batches[batch].trained += b.batches[batch].trained;
-        overall.batches[batch].employed += b.batches[batch].employed;
-      });
-    });
-    Object.keys(overall.batches).forEach(batch => {
-      const bd = overall.batches[batch];
-      bd.completion = bd.total ? Math.round((bd.trained/bd.total)*100) : 0;
-      bd.employment = bd.total ? Math.round((bd.employed/bd.total)*100) : 0;
-    });
-    base['B.Tech Overall'].totals = overall.totals;
-    base['B.Tech Overall'].outcomes = overall.outcomes;
-    base['B.Tech Overall'].batches = overall.batches;
-    base['B.Tech Overall'].skills = base['CSE'].skills.slice(0,6);
+    // Create B.Tech Overall
+    const overall = createEmptyBranch();
 
-    return base;
-  }catch(e){
-    console.warn('Horizon: falling back to default branch data.', e);
-    return base;
-  }
+    Object.values(branchData).forEach(branch => {
+        overall.totals.total += branch.totals.total;
+        overall.totals.trained += branch.totals.trained;
+        overall.totals.nonTrained += branch.totals.nonTrained;
+
+        overall.outcomes.employed +=
+            branch.outcomes.employed;
+
+        overall.outcomes.higherStudies +=
+            branch.outcomes.higherStudies;
+
+        overall.outcomes.partTime +=
+            branch.outcomes.partTime;
+
+        overall.outcomes.internships +=
+            branch.outcomes.internships;
+
+        overall.outcomes.seeking +=
+            branch.outcomes.seeking;
+
+        Object.entries(branch.batches).forEach(
+            ([batchName, batch]) => {
+
+                if (!overall.batches[batchName]) {
+                    overall.batches[batchName] = {
+                        total: 0,
+                        trained: 0,
+                        employed: 0,
+                        completion: 0,
+                        employment: 0
+                    };
+                }
+
+                overall.batches[batchName].total +=
+                    batch.total;
+
+                overall.batches[batchName].trained +=
+                    batch.trained;
+
+                overall.batches[batchName].employed +=
+                    batch.employed;
+            }
+        );
+
+        branch.skills.forEach(skill => {
+            addSkill(overall, skill.name);
+            
+            const overallSkill = overall.skills.find(
+                item =>
+                    item.name.toLowerCase() ===
+                    skill.name.toLowerCase()
+            );
+
+            overallSkill.count += skill.count - 1;
+        });
+    });
+
+    Object.values(overall.batches).forEach(batch => {
+        batch.completion = pct(
+            batch.trained,
+            batch.total
+        );
+
+        batch.employment = pct(
+            batch.employed,
+            batch.total
+        );
+    });
+
+    overall.skills.sort(
+        (a, b) => b.count - a.count
+    );
+
+    branchData["B.Tech Overall"] = overall;
+
+    return branchData;
 }
-
-const BRANCH_DATA = loadBranchData();
+const BRANCH_DATA = buildBranchData(BACKEND_TRAINEES);
 
 let currentBranch = 'B.Tech Overall';
 let currentBatch  = '__all__';
@@ -1157,17 +1137,42 @@ Chart.defaults.color = '#5B6472';
 function renderBlock1(){
   const b = BRANCH_DATA[currentBranch];
   const t = b.totals;
+
   const completion = pct(t.trained, t.total);
+
   const cards = [
-    { icon:'fa-users',     bg:'bg-slate',  label:'Total Trainees',      value: t.total.toLocaleString() },
-    { icon:'fa-user-check',bg:'bg-green',  label:'Trained Trainees',    value: t.trained.toLocaleString() },
-    { icon:'fa-user-clock',bg:'bg-orange', label:'Non-Trained Trainees',value: t.nonTrained.toLocaleString() },
-    { icon:'fa-chart-pie', bg:'bg-amber',  label:'Completion Rate',     value: completion + '%' }
+    {
+      icon:'fa-users',
+      bg:'bg-slate',
+      label:'Total Trainees',
+      value: t.total.toLocaleString()
+    },
+    {
+      icon:'fa-user-check',
+      bg:'bg-green',
+      label:'Trained Trainees',
+      value: t.trained.toLocaleString()
+    },
+    {
+      icon:'fa-user-clock',
+      bg:'bg-orange',
+      label:'Non-Trained Trainees',
+      value: t.nonTrained.toLocaleString()
+    },
+    {
+      icon:'fa-chart-pie',
+      bg:'bg-amber',
+      label:'Completion Rate',
+      value: completion + '%'
+    }
   ];
+
   document.getElementById('block1').innerHTML = cards.map(c => `
     <div class="metric-card">
       <div class="metric-top">
-        <div class="metric-icon ${c.bg}"><i class="fa-solid ${c.icon}"></i></div>
+        <div class="metric-icon ${c.bg}">
+          <i class="fa-solid ${c.icon}"></i>
+        </div>
       </div>
       <div>
         <div class="metric-value">${c.value}</div>
@@ -1335,19 +1340,35 @@ function renderAll(){
 document.getElementById('branchPicker').addEventListener('change', (e) => {
   currentBranch = e.target.value;
   currentBatch = '__all__';
+
+  refreshBatchOptions();
+
   document.getElementById('batchSelect').value = '__all__';
+
   renderAll();
+
   showToast(`Switched to ${currentBranch}`);
 });
 
 
 function refreshBatchOptions(){
   const sel = document.getElementById('batchSelect');
-  const batches = Object.keys(BRANCH_DATA[currentBranch].batches);
-  sel.innerHTML = `<option value="__all__">All Batches</option>` +
-    batches.map(b => `<option value="${b}">${b}</option>`).join('');
-}
 
+  const branch = BRANCH_DATA[currentBranch];
+
+  if (!branch) {
+    sel.innerHTML = `<option value="__all__">All Batches</option>`;
+    return;
+  }
+
+  const batches = Object.keys(branch.batches || {});
+
+  sel.innerHTML =
+    `<option value="__all__">All Batches</option>` +
+    batches
+      .map(batch => `<option value="${batch}">${batch}</option>`)
+      .join('');
+}
 document.getElementById('batchSelect').addEventListener('change', (e) => {
   currentBatch = e.target.value;
   renderBatchChart();

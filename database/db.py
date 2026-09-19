@@ -884,3 +884,78 @@ def debug_database():
     finally:
 
         connection.close()
+
+# =========================================================
+# GET BRANCH ANALYSIS TRAINEES OF CURRENT ADMIN
+# =========================================================
+
+def get_branch_analysis_trainees(admin_id):
+
+    connection = get_connection()
+
+    cursor = connection.cursor()
+
+    try:
+
+        cursor.execute("""
+            SELECT
+
+                trainee_id,
+                name,
+                branch,
+                batch,
+                training_status,
+                outcome_status,
+                skills,
+                admin_id
+
+            FROM trainees
+
+            WHERE admin_id = ?
+
+            ORDER BY id DESC
+
+        """, (
+
+            admin_id,
+
+        ))
+
+        rows = cursor.fetchall()
+
+        trainees = [
+
+            dict(row)
+
+            for row in rows
+
+        ]
+
+        print(
+            "GET BRANCH ANALYSIS TRAINEES"
+        )
+
+        print(
+            "Admin ID:",
+            admin_id
+        )
+
+        print(
+            "Fetched count:",
+            len(trainees)
+        )
+
+        return trainees
+
+    except Exception as error:
+
+        print(
+            "GET BRANCH ANALYSIS TRAINEES ERROR:",
+            repr(error)
+        )
+
+        return []
+
+    finally:
+
+        connection.close()
