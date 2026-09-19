@@ -1,0 +1,2416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill Gap Analysis · Horizon</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<style>
+:root{
+  --bg:#FAF8F5; --card:#FFFFFF; --border:#EADEC9; --border-soft:#F1EBDD;
+  --ink:#0F172A; --ink-soft:#5B6472; --ink-faint:#94A0B0;
+  --orange:#EA580C; --amber:#F59E0B;
+  --grad:linear-gradient(135deg, #EA580C 0%, #F59E0B 100%);
+  --grad-soft:linear-gradient(135deg, rgba(234,88,12,.10) 0%, rgba(245,158,11,.10) 100%);
+  --green:#16A34A; --blue:#2563EB; --violet:#7C3AED; --red:#DC2626; --teal:#0D9488;
+  --r-lg:14px; --r-md:11px; --r-sm:8px;
+  --shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 18px -10px rgba(15,23,42,.10);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{ height:100%; }
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'Inter',-apple-system,sans-serif; font-size:12.5px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.brand-name,.metric-value,.nav-link{font-family:'Poppins','Inter',sans-serif;letter-spacing:-.015em;}
+a{color:inherit;text-decoration:none;} button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+::-webkit-scrollbar{width:7px;height:7px;}
+::-webkit-scrollbar-thumb{background:#E8DFCF;border-radius:7px;}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px;}
+
+/* ═════════ SHELL ═════════ */
+.shell{display:grid;grid-template-columns:216px 1fr;min-height:100vh;}
+
+/* ═════════ SIDEBAR ═════════ */
+.sidebar{
+  background:#fff;border-right:1px solid var(--border);padding:18px 12px;
+  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+.brand{display:flex;align-items:center;gap:9px;padding:2px 6px 14px;border-bottom:1px solid var(--border);margin-bottom:12px;}
+.brand-mark{
+  width:32px;height:32px;border-radius:9px;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;
+  box-shadow:0 5px 14px -4px rgba(234,88,12,.55),0 0 0 3px rgba(245,158,11,.12);
+  flex-shrink:0;position:relative;overflow:hidden;
+}
+.brand-mark::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.55),transparent 55%);}
+.brand-name{font-weight:700;font-size:14.5px;line-height:1.1;}
+.brand-sub{font-size:9.5px;color:var(--ink-faint);font-weight:600;margin-top:2px;letter-spacing:.08em;text-transform:uppercase;}
+.nav-group-label{font-size:9px;color:var(--ink-faint);font-weight:700;padding:4px 10px 6px;letter-spacing:.15em;text-transform:uppercase;}
+.nav{display:flex;flex-direction:column;gap:2px;}
+.nav-link{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font-size:11.5px;font-weight:500;color:var(--ink-soft);transition:all .15s ease;position:relative;}
+.nav-link i{width:15px;text-align:center;font-size:12px;color:var(--ink-faint);transition:color .15s ease;}
+.nav-link:hover{background:#FBF3E8;color:var(--ink);transform:translateX(2px);}
+.nav-link:hover i{color:var(--orange);}
+.nav-link.active{background:var(--grad);color:#fff;font-weight:600;box-shadow:0 5px 12px -5px rgba(234,88,12,.55);}
+.nav-link.active i{color:#fff;}
+.nav-badge{margin-left:auto;font-size:8.5px;font-weight:700;padding:1px 6px;border-radius:999px;background:#FCEAEA;color:var(--red);}
+.nav-link.active .nav-badge{background:rgba(255,255,255,.25);color:#fff;}
+.nav-divider{height:1px;background:var(--border);margin:10px 6px;}
+.sidebar-spacer{flex:1;min-height:12px;}
+.sidebar-foot{display:flex;flex-direction:column;gap:10px;padding-top:10px;border-top:1px solid var(--border);}
+.sidebar-graphic{border-radius:var(--r-md);background:var(--grad-soft);border:1px solid var(--border);padding:11px 10px;text-align:center;}
+.sidebar-graphic svg{width:100%;height:auto;display:block;margin-bottom:5px;}
+.sidebar-graphic p{font-size:10px;color:var(--ink-soft);line-height:1.4;font-weight:500;}
+.sidebar-graphic strong{color:var(--orange);font-weight:700;}
+.logout-link{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font-size:11.5px;font-weight:500;color:#B33A2A;transition:background .15s ease;}
+.logout-link:hover{background:#FDECEA;}
+.logout-link i{width:15px;text-align:center;font-size:12px;}
+
+/* ═════════ MAIN ═════════ */
+.main{padding:16px 22px 50px;min-width:0;}
+.topbar{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.search-pill{
+  flex:1;max-width:460px;display:flex;align-items:center;gap:8px;background:#fff;
+  border:1px solid var(--border);border-radius:999px;padding:8px 15px;
+  box-shadow:var(--shadow);transition:all .2s ease;
+}
+.search-pill:focus-within{border-color:var(--orange);box-shadow:0 0 0 3px rgba(234,88,12,.10);}
+.search-pill i{color:var(--ink-faint);font-size:12px;}
+.search-pill input{border:none;outline:none;background:transparent;font-size:12px;width:100%;color:var(--ink);}
+.search-pill input::placeholder{color:var(--ink-faint);}
+.topbar-spacer{flex:1;}
+.icon-btn{
+  width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:#fff;
+  display:flex;align-items:center;justify-content:center;position:relative;color:var(--ink-soft);
+  box-shadow:var(--shadow);transition:all .2s ease;font-size:12px;
+}
+.icon-btn:hover{transform:translateY(-1px);border-color:var(--orange);color:var(--orange);}
+.icon-btn .dot{position:absolute;top:7px;right:8px;width:6px;height:6px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 2px #fff;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.2);opacity:.7;}}
+.profile-trigger{
+  display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);
+  border-radius:999px;padding:4px 12px 4px 4px;box-shadow:var(--shadow);transition:all .2s ease;
+}
+.profile-trigger:hover{border-color:var(--orange);transform:translateY(-1px);}
+.avatar{
+  width:26px;height:26px;border-radius:50%;background:var(--grad);background-size:cover;
+  background-position:center;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:700;font-size:10.5px;flex-shrink:0;box-shadow:0 3px 8px -2px rgba(234,88,12,.4);
+}
+.profile-trigger .p-info{line-height:1.15;text-align:left;}
+.profile-trigger .p-name{font-size:11px;font-weight:700;color:var(--ink);}
+.profile-trigger .p-roll{font-size:9px;color:var(--ink-faint);font-weight:500;margin-top:1px;}
+.profile-trigger .chev{font-size:8px;color:var(--ink-faint);}
+
+/* ═════════ PAGE HEADER ═════════ */
+.page-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;flex-wrap:wrap;}
+.back-btn{
+  width:34px;height:34px;border-radius:9px;background:#fff;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:12px;
+  transition:all .2s ease;flex-shrink:0;box-shadow:var(--shadow);
+}
+.back-btn:hover{border-color:var(--orange);color:var(--orange);transform:translateX(-2px);background:#FEF3E0;}
+.page-title-block{flex:1;min-width:0;}
+.page-title{font-size:18px;font-weight:700;letter-spacing:-.025em;margin-bottom:4px;display:flex;align-items:center;gap:8px;color:var(--ink);}
+.page-title i{color:var(--orange);font-size:15px;}
+.page-sub{color:var(--ink-soft);font-size:11.5px;line-height:1.5;max-width:760px;}
+.head-actions{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;}
+
+/* ═════════ BUTTONS ═════════ */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:9px;
+  font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;transition:all .2s ease;
+  white-space:nowrap;
+}
+.btn-ghost{background:#fff;color:var(--ink-soft);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--orange);color:var(--orange);background:#FEF3E0;}
+.btn-primary{
+  background:var(--grad);color:#fff;box-shadow:0 6px 16px -6px rgba(234,88,12,.55);
+  border:none;
+}
+.btn-primary:hover{filter:brightness(1.05);transform:translateY(-1px);box-shadow:0 10px 20px -8px rgba(234,88,12,.65);}
+.btn i{font-size:10px;}
+
+/* ═════════ CARDS ═════════ */
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:14px 16px;box-shadow:var(--shadow);
+}
+
+/* ═════════ ROLE SEARCH ═════════ */
+.role-search-card{
+  background:linear-gradient(135deg, #FFFFFF 0%, #FFF9F0 100%);
+  border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;
+  box-shadow:var(--shadow);margin-bottom:14px;
+}
+.role-search-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.role-search-label{font-family:'Poppins',sans-serif;font-size:11.5px;font-weight:700;color:var(--ink);white-space:nowrap;display:flex;align-items:center;gap:7px;}
+.role-search-label i{color:var(--orange);font-size:12px;}
+.role-search-input-wrap{
+  flex:1;min-width:260px;position:relative;
+}
+.role-search-input-wrap i{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  color:var(--ink-faint);font-size:12px;pointer-events:none;
+}
+.role-search-input{
+  width:100%;border:1px solid var(--border);border-radius:9px;padding:8px 12px 8px 34px;
+  font-size:12px;background:#fff;color:var(--ink);outline:none;transition:all .2s ease;
+  font-family:'Inter',sans-serif;
+}
+.role-search-input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(234,88,12,.10);}
+.role-suggestions{
+  position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;
+  border:1px solid var(--border);border-radius:9px;box-shadow:0 12px 28px -8px rgba(15,23,42,.18);
+  max-height:220px;overflow-y:auto;z-index:50;display:none;
+}
+.role-suggestions.open{display:block;}
+.role-suggestion{
+  padding:9px 12px;font-size:11.5px;color:var(--ink);cursor:pointer;
+  border-bottom:1px solid var(--border-soft);transition:background .15s ease;
+}
+.role-suggestion:last-child{border-bottom:none;}
+.role-suggestion:hover,.role-suggestion.active{background:#FBF3E8;color:var(--orange);font-weight:600;}
+
+.target-role-pill{
+  display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;
+  background:var(--grad-soft);border:1px solid rgba(234,88,12,.25);
+  font-size:11px;font-weight:700;color:#B45309;font-family:'Poppins',sans-serif;
+}
+.target-role-pill i{color:var(--orange);font-size:10.5px;}
+
+/* ═════════ COMPLETENESS BAR ═════════ */
+.completeness{
+  display:flex;align-items:center;gap:12px;padding:10px 14px;
+  background:#fff;border:1px solid var(--border);border-radius:var(--r-md);
+  margin-bottom:14px;box-shadow:var(--shadow);
+}
+.completeness-text{font-size:11px;color:var(--ink-soft);white-space:nowrap;font-weight:500;}
+.completeness-text strong{color:var(--ink);font-weight:700;font-family:'Poppins',sans-serif;}
+.completeness-bar{
+  flex:1;height:6px;background:#F1E7D8;border-radius:999px;overflow:hidden;
+}
+.completeness-bar > span{
+  display:block;height:100%;background:var(--grad);border-radius:999px;
+  transition:width .6s cubic-bezier(.4,0,.2,1);
+}
+.completeness-icon{
+  width:24px;height:24px;border-radius:7px;display:grid;place-items:center;
+  background:var(--grad-soft);color:var(--orange);font-size:11px;flex-shrink:0;
+}
+
+/* ═════════ METRIC GRID ═════════ */
+.metric-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:16px;
+}
+.metric-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:13px 14px;box-shadow:var(--shadow);display:flex;flex-direction:column;
+  gap:9px;transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;
+}
+.metric-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 4px 6px rgba(15,23,42,.04),0 14px 28px -12px rgba(15,23,42,.14);
+  border-color:rgba(234,88,12,.25);
+}
+.metric-top{display:flex;align-items:center;justify-content:space-between;}
+.metric-icon{
+  width:30px;height:30px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-size:12px;color:#fff;
+}
+.bg-orange{background:linear-gradient(135deg,#EA580C,#F97316);}
+.bg-green{background:linear-gradient(135deg,#16A34A,#22C55E);}
+.bg-amber{background:linear-gradient(135deg,#F59E0B,#FBBF24);}
+.bg-red{background:linear-gradient(135deg,#DC2626,#EF4444);}
+.bg-blue{background:linear-gradient(135deg,#2563EB,#3B82F6);}
+.bg-slate{background:linear-gradient(135deg,#334155,#0F172A);}
+.bg-muted{background:linear-gradient(135deg,#CBD5E1,#94A3B8);}
+.bg-violet{background:linear-gradient(135deg,#7C3AED,#A855F7);}
+.metric-pill{
+  font-size:9px;font-weight:700;padding:2px 7px;border-radius:999px;
+  background:#F1F2F4;color:var(--ink-faint);letter-spacing:.03em;text-transform:uppercase;
+}
+.metric-pill.ok{background:#EAF7EE;color:#15803D;}
+.metric-pill.warn{background:#FEF3E0;color:#B7791F;}
+.metric-pill.danger{background:#FCEAEA;color:#B91C1C;}
+.metric-pill.info{background:#E8F0FE;color:#1D4ED8;}
+.metric-value{font-size:20px;font-weight:700;letter-spacing:-.025em;line-height:1.1;}
+.metric-label{font-size:10.5px;color:var(--ink-soft);font-weight:500;margin-top:2px;}
+.metric-progress{height:5px;background:#F1E7D8;border-radius:4px;overflow:hidden;margin-top:3px;}
+.metric-progress > span{display:block;height:100%;background:var(--grad);border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+
+/* ═════════ SECTION HEADS ═════════ */
+.section-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin:22px 0 10px;gap:14px;flex-wrap:wrap;
+}
+.section-head h2{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;letter-spacing:-.01em;}
+.section-head h2 i{color:var(--orange);font-size:12px;}
+.section-head .section-note{font-size:10.5px;color:var(--ink-faint);font-weight:500;}
+
+/* ═════════ CHART / COMPARISON ═════════ */
+.chart-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:15px 16px;box-shadow:var(--shadow);
+}
+.chart-wrap{position:relative;height:280px;}
+
+/* ═════════ SKILL TABLE ═════════ */
+.table-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.table-scroll{overflow-x:auto;}
+table.skill-table{width:100%;border-collapse:collapse;font-size:11.5px;min-width:760px;}
+table.skill-table thead th{
+  text-align:left;padding:10px 14px;background:#FCFAF6;color:var(--ink-faint);
+  font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  border-bottom:1px solid var(--border);white-space:nowrap;
+}
+table.skill-table tbody td{
+  padding:10px 14px;border-bottom:1px solid var(--border-soft);color:var(--ink-soft);
+  vertical-align:middle;white-space:nowrap;
+}
+table.skill-table tbody tr:last-child td{border-bottom:none;}
+table.skill-table tbody tr:hover{background:#FDF7EC;}
+.skill-name-cell{font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px;}
+.skill-name-cell .skill-bar-track{
+  width:50px;height:4px;background:#F1E7D8;border-radius:999px;overflow:hidden;flex-shrink:0;
+}
+.skill-name-cell .skill-bar-fill{
+  height:100%;background:var(--grad);border-radius:999px;
+}
+.status-badge{
+  display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;
+  font-size:9.5px;font-weight:700;letter-spacing:.02em;
+}
+.status-badge::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;}
+.status-matched{background:#EAF7EE;color:#15803D;}
+.status-weak{background:#FEF3E0;color:#B7791F;}
+.status-missing{background:#FCEAEA;color:#B91C1C;}
+.status-outdated{background:#F3EDFF;color:#6D28D9;}
+.gap-positive{color:var(--red);font-weight:700;font-family:'Poppins',sans-serif;}
+.gap-zero{color:var(--green);font-weight:700;font-family:'Poppins',sans-serif;}
+.evidence-chip{
+  display:inline-block;font-size:9.5px;padding:2px 7px;border-radius:5px;
+  background:#F8FAFC;border:1px solid var(--border-soft);color:var(--ink-soft);
+  margin-right:4px;font-weight:500;
+}
+.action-btn{
+  padding:5px 10px;border-radius:7px;font-size:10px;font-weight:700;
+  background:#fff;border:1px solid var(--border);color:var(--ink-soft);
+  font-family:'Poppins',sans-serif;transition:all .2s ease;white-space:nowrap;
+}
+.action-btn:hover{border-color:var(--orange);color:var(--orange);background:#FEF3E0;}
+
+/* ═════════ CERTIFICATE / TRAINING / EXP ═════════ */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.info-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:14px 16px;box-shadow:var(--shadow);
+}
+.info-card-title{
+  font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;color:var(--ink);
+  margin-bottom:12px;display:flex;align-items:center;gap:7px;
+}
+.info-card-title i{color:var(--orange);font-size:11px;}
+.info-card-sub{font-size:10px;color:var(--ink-faint);font-weight:500;margin-left:auto;}
+
+.stat-row{display:flex;justify-content:space-between;padding:7px 0;font-size:11.5px;color:var(--ink-soft);border-bottom:1px dashed var(--border-soft);}
+.stat-row:last-child{border-bottom:none;padding-bottom:0;}
+.stat-row .stat-label{display:flex;align-items:center;gap:6px;}
+.stat-row .stat-label i{color:var(--ink-faint);font-size:10px;width:12px;text-align:center;}
+.stat-row .stat-value{font-weight:700;color:var(--ink);font-family:'Poppins',sans-serif;}
+
+.cert-row{
+  display:flex;align-items:flex-start;gap:10px;padding:10px 11px;border-radius:9px;
+  background:#FCFAF6;border:1px solid var(--border-soft);margin-bottom:8px;
+}
+.cert-row:last-child{margin-bottom:0;}
+.cert-icon{
+  width:28px;height:28px;border-radius:8px;display:grid;place-items:center;
+  background:var(--grad-soft);color:var(--orange);font-size:12px;flex-shrink:0;
+}
+.cert-body{flex:1;min-width:0;}
+.cert-name{font-size:11.5px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.cert-meta{font-size:10px;color:var(--ink-faint);font-weight:500;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.cert-flag{
+  display:inline-flex;align-items:center;gap:4px;font-size:9px;padding:2px 7px;
+  border-radius:5px;font-weight:700;letter-spacing:.02em;
+}
+.cert-flag.valid{background:#EAF7EE;color:#15803D;}
+.cert-flag.warn{background:#FEF3E0;color:#B7791F;}
+.cert-flag.expired{background:#FCEAEA;color:#B91C1C;}
+.cert-flag.irrelevant{background:#F1F2F4;color:var(--ink-faint);}
+
+.training-row{
+  display:flex;align-items:center;gap:10px;padding:9px 11px;
+  border-bottom:1px solid var(--border-soft);font-size:11.5px;
+}
+.training-row:last-child{border-bottom:none;}
+.training-row .tr-name{flex:1;min-width:0;font-weight:600;color:var(--ink);}
+.training-row .tr-skills{font-size:9.5px;color:var(--ink-faint);font-weight:500;}
+.training-row .tr-score{
+  font-family:'Poppins',sans-serif;font-size:13px;font-weight:800;
+  min-width:52px;text-align:right;
+}
+.tr-score.strong{color:var(--green);}
+.tr-score.mid{color:var(--amber);}
+.tr-score.weak{color:var(--red);}
+.tr-perf{
+  font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:5px;
+}
+.tr-perf.strong{background:#EAF7EE;color:#15803D;}
+.tr-perf.mid{background:#FEF3E0;color:#B7791F;}
+.tr-perf.weak{background:#FCEAEA;color:#B91C1C;}
+
+/* ═════════ RECOMMENDATIONS ═════════ */
+.reco-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.reco-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;
+  transition:all .25s ease;position:relative;overflow:hidden;
+}
+.reco-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;}
+.reco-card.course::before{background:linear-gradient(90deg,#2563EB,#3B82F6);}
+.reco-card.cert::before{background:linear-gradient(90deg,#7C3AED,#A855F7);}
+.reco-card.project::before{background:linear-gradient(90deg,#16A34A,#22C55E);}
+.reco-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px -12px rgba(15,23,42,.14);}
+.reco-head{display:flex;align-items:flex-start;gap:9px;}
+.reco-ico{
+  width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+  color:#fff;font-size:12px;flex-shrink:0;
+}
+.reco-card.course .reco-ico{background:linear-gradient(135deg,#2563EB,#3B82F6);}
+.reco-card.cert .reco-ico{background:linear-gradient(135deg,#7C3AED,#A855F7);}
+.reco-card.project .reco-ico{background:linear-gradient(135deg,#16A34A,#22C55E);}
+.reco-title-wrap{flex:1;min-width:0;}
+.reco-cat{
+  font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-faint);margin-bottom:3px;
+}
+.reco-title{
+  font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;
+  color:var(--ink);line-height:1.25;
+}
+.reco-priority{
+  position:absolute;top:12px;right:12px;
+  font-size:8.5px;font-weight:800;padding:2px 7px;border-radius:999px;
+  letter-spacing:.05em;text-transform:uppercase;
+}
+.reco-priority.critical{background:#FCEAEA;color:#B91C1C;}
+.reco-priority.high{background:#FEF3E0;color:#B7791F;}
+.reco-priority.medium{background:#E8F0FE;color:#1D4ED8;}
+.reco-priority.low{background:#F1F2F4;color:var(--ink-faint);}
+.reco-reason{
+  font-size:11px;color:var(--ink-soft);line-height:1.55;flex:1;
+  padding-top:2px;
+}
+.reco-reason strong{color:var(--ink);font-weight:700;}
+.reco-meta{
+  display:flex;flex-wrap:wrap;gap:6px;font-size:10px;color:var(--ink-faint);
+  font-weight:600;
+}
+.reco-meta span{display:inline-flex;align-items:center;gap:4px;}
+.reco-meta i{font-size:9px;color:var(--orange);}
+.reco-cta{
+  margin-top:auto;padding:7px 12px;border-radius:8px;background:var(--grad);
+  color:#fff;font-size:10.5px;font-weight:700;text-align:center;
+  font-family:'Poppins',sans-serif;transition:all .2s ease;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.reco-cta:hover{filter:brightness(1.05);transform:translateY(-1px);box-shadow:0 8px 18px -6px rgba(234,88,12,.5);}
+.reco-cta i{font-size:9px;}
+
+/* ═════════ EMPTY STATE ═════════ */
+.empty-block{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:34px 20px;text-align:center;
+  background:linear-gradient(135deg,#FFFDF8 0%,#FFF8ED 100%);
+  border:1px dashed var(--border);border-radius:var(--r-lg);margin-bottom:16px;
+}
+.empty-icon{
+  width:52px;height:52px;border-radius:14px;background:var(--grad-soft);
+  border:1px solid rgba(234,88,12,.2);display:grid;place-items:center;
+  font-size:20px;color:var(--orange);margin-bottom:12px;
+}
+.empty-block h3{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.empty-block p{font-size:11.5px;color:var(--ink-soft);margin-bottom:16px;max-width:420px;line-height:1.6;}
+.empty-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+
+/* ═════════ PRIVACY NOTE ═════════ */
+.privacy-note{
+  display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:var(--r-md);
+  background:#F8FAFC;border:1px solid var(--border-soft);
+  font-size:10.5px;color:var(--ink-faint);font-weight:500;margin-top:16px;
+}
+.privacy-note i{color:var(--green);font-size:11px;}
+
+/* ═════════ MODAL / DRAWER ═════════ */
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.42);backdrop-filter:blur(2px);display:none;z-index:90;}
+.overlay.open{display:block;}
+.drawer{
+  position:fixed;top:0;right:-520px;width:500px;max-width:94vw;height:100vh;background:#fff;
+  z-index:100;box-shadow:-12px 0 40px rgba(15,23,42,.18);
+  transition:right .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;
+}
+.drawer.open{right:0;}
+.drawer-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:15px 18px;border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg,#fff 0%,#FEFBF3 100%);
+}
+.drawer-head h3{font-size:14px;font-weight:800;font-family:'Poppins',sans-serif;color:var(--ink);}
+.drawer-close{
+  width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:#fff;
+  display:grid;place-items:center;color:var(--ink-soft);font-size:12px;transition:all .2s ease;
+}
+.drawer-close:hover{background:#F7F2EA;color:var(--orange);transform:rotate(90deg);}
+.drawer-body{padding:18px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:16px;}
+.drawer-section{}
+.drawer-section-title{
+  font-family:'Poppins',sans-serif;font-size:11.5px;font-weight:800;color:var(--ink);
+  margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  letter-spacing:.02em;text-transform:uppercase;
+}
+.drawer-section-title span{color:var(--ink);}
+.drawer-section-title .add-btn{
+  font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:6px;
+  background:var(--grad);color:#fff;display:inline-flex;align-items:center;gap:5px;
+  letter-spacing:0;text-transform:none;cursor:pointer;
+}
+.drawer-section-title .add-btn:hover{filter:brightness(1.05);}
+.drawer-section-title .add-btn i{font-size:9px;}
+
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:10.5px;font-weight:700;color:var(--ink-soft);font-family:'Poppins',sans-serif;}
+.field input,.field select,.field textarea{
+  border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:11.5px;
+  font-family:'Inter',sans-serif;color:var(--ink);background:#FCFAF7;outline:none;
+  transition:all .2s ease;resize:vertical;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--orange);background:#fff;box-shadow:0 0 0 3px rgba(234,88,12,.10);
+}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+.mini-item{
+  display:flex;gap:8px;padding:8px 10px;background:#FCFAF6;
+  border:1px solid var(--border-soft);border-radius:8px;margin-bottom:6px;
+  align-items:flex-start;font-size:11px;
+}
+.mini-item-body{flex:1;min-width:0;}
+.mini-item-title{font-weight:700;color:var(--ink);font-size:11px;margin-bottom:2px;}
+.mini-item-meta{font-size:9.5px;color:var(--ink-faint);font-weight:500;}
+.mini-item-remove{
+  color:var(--red);font-size:11px;padding:3px 6px;border-radius:5px;
+  transition:all .15s ease;flex-shrink:0;
+}
+.mini-item-remove:hover{background:#FCEAEA;}
+
+.drawer-foot{
+  padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:9px;
+  background:#FEFBF3;
+}
+.btn-soft{
+  flex:1;padding:9px;border-radius:10px;font-size:11.5px;font-weight:700;
+  border:1px solid var(--border);background:#fff;color:var(--ink-soft);
+  font-family:'Poppins',sans-serif;transition:all .2s ease;
+}
+.btn-soft:hover{background:#F7F2EA;border-color:var(--orange);color:var(--orange);}
+.btn-save{
+  flex:1.3;padding:9px;border-radius:10px;font-size:11.5px;font-weight:700;
+  background:var(--grad);color:#fff;font-family:'Poppins',sans-serif;
+  box-shadow:0 6px 14px -6px rgba(234,88,12,.55);transition:all .2s ease;
+}
+.btn-save:hover{filter:brightness(1.05);transform:translateY(-1px);}
+
+/* ═════════ TOAST ═════════ */
+.toast{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;
+  font-size:11.5px;font-weight:500;display:flex;align-items:center;gap:8px;
+  opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;
+  z-index:200;box-shadow:0 10px 30px rgba(0,0,0,.25);
+  font-family:'Poppins',sans-serif;max-width:90vw;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+.toast i{color:var(--amber);font-size:11px;}
+
+/* ═════════ RESPONSIVE ═════════ */
+@media (max-width:1180px){
+  .metric-grid{grid-template-columns:repeat(2,1fr);}
+  .reco-grid{grid-template-columns:1fr 1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .three-col{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:980px){
+  .shell{grid-template-columns:1fr;}
+  .sidebar{position:relative;height:auto;}
+  .reco-grid{grid-template-columns:1fr;}
+  .three-col{grid-template-columns:1fr;}
+}
+@media (max-width:620px){
+  .main{padding:14px;}
+  .search-pill{display:none;}
+  .field-row{grid-template-columns:1fr;}
+  .metric-grid{grid-template-columns:1fr;}
+  .page-title{font-size:15px;}
+  .profile-trigger .p-info{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ═══════════════ SIDEBAR ═══════════════ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">H</div>
+      <div>
+        <div class="brand-name">Horizon</div>
+        <div class="brand-sub">Trainee Portal</div>
+      </div>
+    </div>
+
+    <div class="nav-group-label">My Dashboard</div>
+    <nav class="nav">
+      <a class="nav-link" href="{{ url_for('trainee.dashboard') }}"><i class="fa-solid fa-house"></i> Overview</a>
+      <a class="nav-link" href="{{ url_for('trainee.profile') }}"><i class="fa-solid fa-user"></i> My Profile</a>
+      <a class="nav-link" href="{{ url_for('trainee.training') }}"><i class="fa-solid fa-graduation-cap"></i> My Training</a>
+      <a class="nav-link" href="{{ url_for('trainee.employment') }}"><i class="fa-solid fa-briefcase"></i> Employment</a>
+      <a class="nav-link active" href="{{ url_for('trainee.skill_gap') }}"><i class="fa-solid fa-brain"></i> Skill Gap</a>
+      <a class="nav-link" href="{{ url_for('trainee.career') }}"><i class="fa-solid fa-arrow-trend-up"></i> Career Growth</a>
+      <a class="nav-link" href="{{ url_for('trainee.opportunities') }}"><i class="fa-solid fa-magnifying-glass-dollar"></i> Opportunities</a>
+    </nav>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-group-label">Account</div>
+    <nav class="nav">
+      <a class="nav-link" href="#"><i class="fa-solid fa-list-check"></i> Follow-ups</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-shield-halved"></i> Privacy &amp; Consent</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-bell"></i> Notifications</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-circle-question"></i> Support</a>
+    </nav>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="sidebar-foot">
+      <div class="sidebar-graphic">
+        <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 70 L35 40 L65 55 L100 20 L135 42 L165 25 L200 50" fill="none" stroke="#EA580C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+          <path d="M0 70 L35 40 L65 55 L100 20 L135 42 L165 25 L200 50 L200 90 L0 90 Z" fill="url(#g1)" opacity="0.5"/>
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <circle cx="100" cy="20" r="5" fill="#EA580C"/>
+        </svg>
+        <p id="sidebarNote">Complete profile to analyse</p>
+      </div>
+      <a class="logout-link" href="{{ url_for('common.role_selection') }}"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+    </div>
+  </aside>
+
+  <!-- ═══════════════ MAIN ═══════════════ -->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="search-pill">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="topSearch" placeholder="Search skills, roles, gaps, or recommendations...">
+      </div>
+      <div class="topbar-spacer"></div>
+      <button class="icon-btn" aria-label="Notifications"><i class="fa-regular fa-bell"></i></button>
+      <button class="profile-trigger" id="profileTrigger">
+        <div class="avatar" id="topAvatar">?</div>
+        <div class="p-info">
+          <div class="p-name" id="topTraineeName">Trainee</div>
+          <div class="p-roll" id="topTraineeRoll">—</div>
+        </div>
+        <i class="fa-solid fa-chevron-down chev"></i>
+      </button>
+    </div>
+
+    <!-- PAGE HEADER -->
+    <div class="page-head">
+      <a class="back-btn" href="{{ url_for('trainee.dashboard') }}" title="Back to Dashboard">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <div class="page-title-block">
+        <h1 class="page-title"><i class="fa-solid fa-brain"></i> Skill Gap Analysis</h1>
+        <p class="page-sub">Understand exactly what skills you need to improve for your target career — calculated from your profile, training, projects, and certificates.</p>
+      </div>
+      <div class="head-actions">
+        <button class="btn btn-ghost" id="loadDemoBtn"><i class="fa-solid fa-flask"></i> Load Demo</button>
+        <button class="btn btn-primary" id="editProfileBtn"><i class="fa-solid fa-pen"></i> Update Profile</button>
+      </div>
+    </div>
+
+    <!-- TARGET ROLE SEARCH -->
+    <div class="role-search-card">
+      <div class="role-search-row">
+        <div class="role-search-label"><i class="fa-solid fa-bullseye"></i> What role are you preparing for?</div>
+        <div class="role-search-input-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" class="role-search-input" id="roleSearchInput"
+                 placeholder="Search or select a target job role...">
+          <div class="role-suggestions" id="roleSuggestions"></div>
+        </div>
+        <div class="target-role-pill" id="targetRolePill" style="display:none;">
+          <i class="fa-solid fa-check-circle"></i>
+          <span id="targetRolePillText">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE COMPLETENESS -->
+    <div class="completeness" id="completenessBar" style="display:none;">
+      <div class="completeness-icon"><i class="fa-solid fa-circle-check"></i></div>
+      <div class="completeness-text">Your profile is <strong id="completenessPct">0%</strong> complete</div>
+      <div class="completeness-bar"><span id="completenessFill" style="width:0%"></span></div>
+    </div>
+
+    <!-- MAIN CONTENT — only shown when profile + role exist -->
+    <div id="analysisArea" style="display:none;">
+
+      <!-- METRIC CARDS -->
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="metric-top">
+            <div class="metric-icon bg-orange"><i class="fa-solid fa-chart-line"></i></div>
+            <span class="metric-pill info" id="matchPill">—</span>
+          </div>
+          <div>
+            <div class="metric-value" id="overallMatch">0%</div>
+            <div class="metric-label">Overall Skill Match</div>
+            <div class="metric-progress"><span id="overallMatchFill" style="width:0%"></span></div>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-top">
+            <div class="metric-icon bg-green"><i class="fa-solid fa-circle-check"></i></div>
+            <span class="metric-pill ok">Matched</span>
+          </div>
+          <div>
+            <div class="metric-value" id="strongCount">0</div>
+            <div class="metric-label">Strong Skills</div>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-top">
+            <div class="metric-icon bg-amber"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <span class="metric-pill warn">Improve</span>
+          </div>
+          <div>
+            <div class="metric-value" id="weakCount">0</div>
+            <div class="metric-label">Skills to Improve</div>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-top">
+            <div class="metric-icon bg-red"><i class="fa-solid fa-circle-xmark"></i></div>
+            <span class="metric-pill danger">Critical</span>
+          </div>
+          <div>
+            <div class="metric-value" id="criticalCount">0</div>
+            <div class="metric-label">Critical Gaps</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPARISON CHART -->
+      <div class="section-head">
+        <h2><i class="fa-solid fa-chart-simple"></i> Current vs Required Skills</h2>
+        <span class="section-note" id="chartNote">—</span>
+      </div>
+      <div class="chart-card">
+        <div class="chart-wrap">
+          <canvas id="comparisonChart"></canvas>
+        </div>
+      </div>
+
+      <!-- SKILL GAP TABLE -->
+      <div class="section-head">
+        <h2><i class="fa-solid fa-table-list"></i> Detailed Skill Gap Table</h2>
+        <span class="section-note" id="tableNote">—</span>
+      </div>
+      <div class="table-card">
+        <div class="table-scroll">
+          <table class="skill-table">
+            <thead>
+              <tr>
+                <th>Skill</th>
+                <th>Current Level</th>
+                <th>Required</th>
+                <th>Gap</th>
+                <th>Evidence</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="skillTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CERTIFICATE & EXPERIENCE -->
+      <div class="section-head">
+        <h2><i class="fa-solid fa-certificate"></i> Certificate &amp; Experience Analysis</h2>
+        <span class="section-note" id="certNote">—</span>
+      </div>
+      <div class="two-col">
+        <div class="info-card">
+          <div class="info-card-title">
+            <i class="fa-solid fa-certificate"></i> Certificate Relevance
+            <span class="info-card-sub" id="certCount">0</span>
+          </div>
+          <div id="certList"></div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">
+            <i class="fa-solid fa-briefcase"></i> Experience Impact
+          </div>
+          <div id="experienceList"></div>
+        </div>
+      </div>
+
+      <!-- TRAINING PERFORMANCE -->
+      <div class="section-head">
+        <h2><i class="fa-solid fa-graduation-cap"></i> Training Performance</h2>
+        <span class="section-note" id="trainingNote">—</span>
+      </div>
+      <div class="info-card">
+        <div id="trainingList"></div>
+      </div>
+
+      <!-- RECOMMENDATIONS -->
+      <div class="section-head">
+        <h2><i class="fa-solid fa-lightbulb"></i> Personalised Recommendations</h2>
+        <span class="section-note">Generated from your skill gaps</span>
+      </div>
+      <div class="reco-grid" id="recoGrid"></div>
+
+      <!-- PRIVACY NOTE -->
+      <div class="privacy-note">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Your skill analysis is based on the information you have provided and your consent settings. Data is stored locally on your device.</span>
+      </div>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div id="emptyState" class="empty-block" style="display:none;">
+      <div class="empty-icon"><i class="fa-solid fa-brain"></i></div>
+      <h3>Complete your profile to generate your Skill Gap Analysis</h3>
+      <p>Add your target role, skills, training, certificates and projects so the engine can calculate your personalised gap analysis.</p>
+      <div class="empty-actions">
+        <button class="btn btn-primary" onclick="openDrawer()"><i class="fa-solid fa-pen"></i> Update Profile</button>
+        <button class="btn btn-ghost" id="loadDemoBtn2"><i class="fa-solid fa-flask"></i> Load Demo Profile</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════════ PROFILE EDIT DRAWER ═══════════════ -->
+<div class="overlay" id="overlay"></div>
+<div class="drawer" id="profileDrawer" role="dialog" aria-modal="true">
+  <div class="drawer-head">
+    <h3>Update Skill Profile</h3>
+    <button class="drawer-close" id="drawerClose"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="drawer-body">
+
+    <div class="drawer-section">
+      <div class="drawer-section-title">Basic Info</div>
+      <div class="field"><label>Full Name</label><input type="text" id="pName" placeholder="Your full name"></div>
+      <div class="field-row">
+        <div class="field"><label>Target Role</label><input type="text" id="pTargetRole" placeholder="e.g. Data Analyst"></div>
+        <div class="field"><label>Education</label><input type="text" id="pEducation" placeholder="e.g. B.Tech CSE"></div>
+      </div>
+    </div>
+
+    <div class="drawer-section">
+      <div class="drawer-section-title">Experience (years)</div>
+      <div class="field-row">
+        <div class="field"><label>Total</label><input type="number" step="0.1" id="pExpTotal" placeholder="0.5"></div>
+        <div class="field"><label>Relevant</label><input type="number" step="0.1" id="pExpRelevant" placeholder="0.5"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Internships</label><input type="number" step="0.1" id="pExpIntern" placeholder="0"></div>
+        <div class="field"><label>Apprenticeships</label><input type="number" step="0.1" id="pExpAppr" placeholder="0"></div>
+      </div>
+    </div>
+
+    <div class="drawer-section">
+      <div class="drawer-section-title">
+        Technical Skills
+        <span class="add-btn" id="addSkillBtn"><i class="fa-solid fa-plus"></i> Add</span>
+      </div>
+      <div id="skillsList"></div>
+    </div>
+
+    <div class="drawer-section">
+      <div class="drawer-section-title">
+        Certificates
+        <span class="add-btn" id="addCertBtn"><i class="fa-solid fa-plus"></i> Add</span>
+      </div>
+      <div id="certsList"></div>
+    </div>
+
+    <div class="drawer-section">
+      <div class="drawer-section-title">
+        Projects
+        <span class="add-btn" id="addProjectBtn"><i class="fa-solid fa-plus"></i> Add</span>
+      </div>
+      <div id="projectsList"></div>
+    </div>
+
+    <div class="drawer-section">
+      <div class="drawer-section-title">
+        Training Modules
+        <span class="add-btn" id="addTrainingBtn"><i class="fa-solid fa-plus"></i> Add</span>
+      </div>
+      <div id="trainingList"></div>
+    </div>
+
+  </div>
+  <div class="drawer-foot">
+    <button class="btn-soft" id="cancelProfile">Cancel</button>
+    <button class="btn-save" id="saveProfileBtn"><i class="fa-solid fa-check"></i> Save &amp; Analyse</button>
+  </div>
+</div>
+
+<!-- ═══════════════ SUB-MODALS ═══════════════ -->
+<!-- Skill edit modal -->
+<div class="overlay" id="skillModalOverlay"></div>
+<div class="drawer" id="skillModal" style="width:420px;">
+  <div class="drawer-head">
+    <h3 id="skillModalTitle">Add Skill</h3>
+    <button class="drawer-close" onclick="closeSkillModal()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="drawer-body">
+    <div class="field"><label>Skill Name</label><input type="text" id="mSkillName" placeholder="e.g. Python"></div>
+    <div class="field-row">
+      <div class="field"><label>Proficiency %</label><input type="number" min="0" max="100" id="mSkillPercent" placeholder="65"></div>
+      <div class="field"><label>Years of Experience</label><input type="number" step="0.1" id="mSkillYears" placeholder="1.5"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Last Used (month)</label><input type="month" id="mSkillLastUsed"></div>
+      <div class="field"><label>&nbsp;</label><label style="display:flex;gap:6px;align-items:center;padding:8px 0;font-size:11px;">
+        <input type="checkbox" id="mSkillViaTraining" style="width:auto;"> Learned via training</label></div>
+    </div>
+    <div class="field"><label style="display:flex;gap:6px;align-items:center;font-size:11px;">
+      <input type="checkbox" id="mSkillViaProject" style="width:auto;"> Demonstrated through project</label></div>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn-soft" onclick="closeSkillModal()">Cancel</button>
+    <button class="btn-save" onclick="saveSkillModal()">Save Skill</button>
+  </div>
+</div>
+
+<!-- Cert edit modal -->
+<div class="overlay" id="certModalOverlay"></div>
+<div class="drawer" id="certModal" style="width:420px;">
+  <div class="drawer-head">
+    <h3>Add Certificate</h3>
+    <button class="drawer-close" onclick="closeCertModal()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="drawer-body">
+    <div class="field"><label>Certificate Name</label><input type="text" id="mCertName" placeholder="e.g. Google Data Analytics"></div>
+    <div class="field"><label>Issuing Organization</label><input type="text" id="mCertIssuer" placeholder="e.g. Google"></div>
+    <div class="field"><label>Related Skill</label><input type="text" id="mCertSkill" placeholder="e.g. Data Analytics"></div>
+    <div class="field-row">
+      <div class="field"><label>Issue Date</label><input type="month" id="mCertIssue"></div>
+      <div class="field"><label>Expiry (optional)</label><input type="month" id="mCertExpiry"></div>
+    </div>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn-soft" onclick="closeCertModal()">Cancel</button>
+    <button class="btn-save" onclick="saveCertModal()">Save Certificate</button>
+  </div>
+</div>
+
+<!-- Project edit modal -->
+<div class="overlay" id="projectModalOverlay"></div>
+<div class="drawer" id="projectModal" style="width:420px;">
+  <div class="drawer-head">
+    <h3>Add Project</h3>
+    <button class="drawer-close" onclick="closeProjectModal()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="drawer-body">
+    <div class="field"><label>Project Name</label><input type="text" id="mProjectName" placeholder="e.g. Sales Dashboard"></div>
+    <div class="field"><label>Technologies Used (comma-separated)</label><input type="text" id="mProjectTech" placeholder="Python, SQL, Power BI"></div>
+    <div class="field"><label>Completion Date</label><input type="month" id="mProjectDate"></div>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn-soft" onclick="closeProjectModal()">Cancel</button>
+    <button class="btn-save" onclick="saveProjectModal()">Save Project</button>
+  </div>
+</div>
+
+<!-- Training edit modal -->
+<div class="overlay" id="trainingModalOverlay"></div>
+<div class="drawer" id="trainingModal" style="width:420px;">
+  <div class="drawer-head">
+    <h3>Add Training</h3>
+    <button class="drawer-close" onclick="closeTrainingModal()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="drawer-body">
+    <div class="field"><label>Course / Module Name</label><input type="text" id="mTrainingName" placeholder="e.g. SQL Fundamentals"></div>
+    <div class="field"><label>Provider</label><input type="text" id="mTrainingProvider" placeholder="e.g. Coursera"></div>
+    <div class="field-row">
+      <div class="field"><label>Assessment Score %</label><input type="number" min="0" max="100" id="mTrainingScore" placeholder="82"></div>
+      <div class="field"><label>Completed</label><input type="month" id="mTrainingDate"></div>
+    </div>
+    <div class="field"><label>Skills Covered (comma-separated)</label><input type="text" id="mTrainingSkills" placeholder="SQL, Databases"></div>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn-soft" onclick="closeTrainingModal()">Cancel</button>
+    <button class="btn-save" onclick="saveTrainingModal()">Save Training</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastText">Saved</span></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   HORIZON — SKILL GAP ANALYSIS ENGINE
+   ─────────────────────────────────────────────────────────────────────
+   DATA FLOW:
+     traineeProfile (localStorage)
+        ↓
+     current skill profile (weighted from evidence)
+        ↓
+     target role requirements (jobRequirements)
+        ↓
+     skill gap engine → classification + gaps
+        ↓
+     recommendations (course / certificate / project)
+        ↓
+     render (metrics, chart, table, cards)
+═══════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════
+   1. CONFIG — weights, thresholds, storage keys
+   ═══════════════════════════════════════════════════════════════ */
+
+const STORAGE_KEY = 'horizonTraineeProfile';
+
+/* Evidence weighting — sum should be 1.0
+   Missing evidence doesn't get scored as 0 — see normalizeScore(). */
+const SCORING_WEIGHTS = {
+  proficiency: 0.30,   // what the trainee self-reports
+  assessment:  0.20,   // training assessment scores
+  experience:  0.15,   // years of relevant experience
+  project:     0.15,   // practical project usage
+  certificate: 0.10,   // certificate relevance
+  recency:     0.10    // how recently the skill was used
+};
+
+/* Gap → priority thresholds */
+const PRIORITY_THRESHOLDS = {
+  CRITICAL: 40,
+  HIGH:     25,
+  MEDIUM:   10
+};
+
+/* Outdated threshold: months since last use */
+const OUTDATED_MONTHS = 18;
+
+/* ═══════════════════════════════════════════════════════════════
+   2. INDUSTRY REQUIREMENT DATA
+   Later this object can be replaced by a REST call to a real
+   industry/job-data source.
+   ═══════════════════════════════════════════════════════════════ */
+
+const jobRequirements = {
+  "Data Analyst": {
+    icon: "fa-chart-line",
+    skills: {
+      "Excel": 70,
+      "SQL": 75,
+      "Python": 60,
+      "Power BI": 70,
+      "Statistics": 65,
+      "Communication": 65
+    },
+    minExperience: 2
+  },
+  "Software Developer": {
+    icon: "fa-code",
+    skills: {
+      "Programming": 80,
+      "Data Structures": 75,
+      "Database": 65,
+      "Git": 60,
+      "Problem Solving": 75,
+      "Communication": 60
+    },
+    minExperience: 2
+  },
+  "Web Developer": {
+    icon: "fa-laptop-code",
+    skills: {
+      "HTML/CSS": 80,
+      "JavaScript": 80,
+      "React": 70,
+      "Git": 60,
+      "REST APIs": 65,
+      "Problem Solving": 70
+    },
+    minExperience: 1.5
+  },
+  "Business Analyst": {
+    icon: "fa-briefcase",
+    skills: {
+      "Excel": 75,
+      "SQL": 65,
+      "Communication": 80,
+      "Problem Solving": 75,
+      "Statistics": 60,
+      "Presentation": 70
+    },
+    minExperience: 2
+  },
+  "Cloud Engineer": {
+    icon: "fa-cloud",
+    skills: {
+      "AWS": 80,
+      "Linux": 75,
+      "Docker": 70,
+      "Kubernetes": 70,
+      "Networking": 65,
+      "Python": 65
+    },
+    minExperience: 2
+  },
+  "Cybersecurity Analyst": {
+    icon: "fa-shield-halved",
+    skills: {
+      "Networking": 80,
+      "Linux": 75,
+      "Security Tools": 75,
+      "Python": 65,
+      "Problem Solving": 75,
+      "Communication": 65
+    },
+    minExperience: 2
+  },
+  "Digital Marketing Executive": {
+    icon: "fa-bullhorn",
+    skills: {
+      "SEO": 70,
+      "Google Analytics": 75,
+      "Content Writing": 70,
+      "Social Media": 70,
+      "Excel": 60,
+      "Communication": 75
+    },
+    minExperience: 1
+  },
+  "HR Analyst": {
+    icon: "fa-users",
+    skills: {
+      "Excel": 75,
+      "SQL": 60,
+      "Communication": 80,
+      "Statistics": 65,
+      "Presentation": 70,
+      "Problem Solving": 70
+    },
+    minExperience: 1
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   3. DEMO PROFILE — matches the SIH test case
+   Used ONLY when user explicitly clicks "Load Demo"
+   ═══════════════════════════════════════════════════════════════ */
+
+const DEMO_PROFILE = {
+  name: "Aarav Reddy",
+  targetRole: "Data Analyst",
+  education: "B.Tech CSE",
+  experience: { total: 1.0, relevant: 1.0, internships: 1.0, apprenticeships: 0 },
+  skills: [
+    { name: "Excel",      percent: 80, years: 2, lastUsed: "2025-06", viaTraining: true,  viaProject: true  },
+    { name: "SQL",        percent: 35, years: 0.5, lastUsed: "2024-11", viaTraining: true,  viaProject: false },
+    { name: "Python",     percent: 65, years: 1.5, lastUsed: "2025-03", viaTraining: true,  viaProject: true  },
+    { name: "Power BI",   percent: 20, years: 0.2, lastUsed: "2024-08", viaTraining: false, viaProject: false },
+    { name: "Statistics", percent: 70, years: 1, lastUsed: "2025-01", viaTraining: true,  viaProject: true  },
+    { name: "Communication", percent: 70, years: 3, lastUsed: "2025-06", viaTraining: false, viaProject: false }
+  ],
+  certificates: [
+    { name: "Google Data Analytics", issuer: "Google", skill: "Data Analytics", issueDate: "2024-06", expiryDate: null }
+  ],
+  projects: [
+    { name: "Sales Analytics Dashboard", tech: "Python, SQL, Excel", date: "2025-02" }
+  ],
+  training: [
+    { name: "SQL Fundamentals",   provider: "Coursera",   score: 45, date: "2024-11", skillsCovered: "SQL" },
+    { name: "Python Programming", provider: "Udemy",      score: 78, date: "2025-01", skillsCovered: "Python" },
+    { name: "Advanced Excel",     provider: "Coursera",   score: 82, date: "2024-12", skillsCovered: "Excel" },
+    { name: "Business Communication", provider: "NPTEL",  score: 75, date: "2025-02", skillsCovered: "Communication" }
+  ]
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   4. STORAGE HELPERS
+   Loads/saves trainee profile — swap this for a Flask API call
+   when integrating with a backend.
+   ═══════════════════════════════════════════════════════════════ */
+
+function loadTraineeProfile() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return (parsed && typeof parsed === 'object') ? parsed : null;
+  } catch (e) {
+    console.warn('Horizon: could not read trainee profile.', e);
+    return null;
+  }
+}
+
+function saveTraineeProfile(profile) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    return true;
+  } catch (e) {
+    console.warn('Horizon: could not save trainee profile.', e);
+    return false;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   5. UTILITY HELPERS
+   ═══════════════════════════════════════════════════════════════ */
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+/* Months since the given YYYY-MM date */
+function monthsSince(yyyymm) {
+  if (!yyyymm) return 999;
+  const [y, m] = yyyymm.split('-').map(Number);
+  const then = new Date(y, m - 1, 1);
+  const now = new Date();
+  return (now.getFullYear() - then.getFullYear()) * 12 + (now.getMonth() - then.getMonth());
+}
+
+function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+
+/* ═══════════════════════════════════════════════════════════════
+   6. SKILL GAP ENGINE
+   ─────────────────────────────────────────────────────────────────────
+   For every required skill:
+     1. Gather evidence from the trainee profile
+     2. Score each evidence type 0–100
+     3. Weighted average (only over available evidence)
+     4. Classify: MATCHED | WEAK | MISSING | OUTDATED
+     5. Compute gap = required - current
+   ═══════════════════════════════════════════════════════════════ */
+
+function normalizeSkillName(name) {
+  return String(name || '').trim().toLowerCase();
+}
+
+function findTraineeSkill(profile, skillName) {
+  const target = normalizeSkillName(skillName);
+  return (profile.skills || []).find(s => normalizeSkillName(s.name) === target) || null;
+}
+
+/* Evidence scorers — each returns { value: 0-100, available: bool } */
+
+function evidenceProficiency(profile, skillName) {
+  const s = findTraineeSkill(profile, skillName);
+  if (!s || typeof s.percent !== 'number') return { value: 0, available: false };
+  return { value: clamp(s.percent, 0, 100), available: true };
+}
+
+function evidenceAssessment(profile, skillName) {
+  const target = normalizeSkillName(skillName);
+  const training = (profile.training || []).filter(t => {
+    const covered = String(t.skillsCovered || '')
+      .split(',').map(x => normalizeSkillName(x)).filter(Boolean);
+    return covered.includes(target);
+  });
+  if (!training.length) return { value: 0, available: false };
+  const avg = training.reduce((sum, t) => sum + (Number(t.score) || 0), 0) / training.length;
+  return { value: clamp(avg, 0, 100), available: true };
+}
+
+function evidenceExperience(profile, skillName) {
+  const s = findTraineeSkill(profile, skillName);
+  if (!s || typeof s.years !== 'number') {
+    /* Fall back to overall relevant experience */
+    const rel = (profile.experience && profile.experience.relevant) || 0;
+    if (rel <= 0) return { value: 0, available: false };
+    /* 3+ years of relevant experience → 100 */
+    return { value: clamp((rel / 3) * 100, 0, 100), available: true };
+  }
+  return { value: clamp((s.years / 3) * 100, 0, 100), available: true };
+}
+
+function evidenceProject(profile, skillName) {
+  const target = normalizeSkillName(skillName);
+  const projects = (profile.projects || []).filter(p => {
+    const tech = String(p.tech || '')
+      .split(',').map(x => normalizeSkillName(x)).filter(Boolean);
+    return tech.includes(target);
+  });
+  const s = findTraineeSkill(profile, skillName);
+  if (!projects.length && !(s && s.viaProject)) return { value: 0, available: false };
+  const count = projects.length + (s && s.viaProject ? 1 : 0);
+  return { value: clamp(count * 40, 0, 100), available: true };
+}
+
+function evidenceCertificate(profile, skillName) {
+  const target = normalizeSkillName(skillName);
+  const certs = (profile.certificates || []).filter(c => {
+    const related = normalizeSkillName(c.skill || '');
+    return related.includes(target) || target.includes(related);
+  });
+  if (!certs.length) return { value: 0, available: false };
+  /* A certificate gives partial evidence — capped at 60 to prevent
+     "certificate = proficiency" misclassification. */
+  return { value: 60, available: true };
+}
+
+function evidenceRecency(profile, skillName) {
+  const s = findTraineeSkill(profile, skillName);
+  if (!s || !s.lastUsed) return { value: 0, available: false };
+  const months = monthsSince(s.lastUsed);
+  if (months <= 3)  return { value: 100, available: true };
+  if (months <= 6)  return { value: 85,  available: true };
+  if (months <= 12) return { value: 65,  available: true };
+  if (months <= 18) return { value: 45,  available: true };
+  return { value: 20, available: true };
+}
+
+/* Compute current skill score using weighted average over available evidence */
+function calculateCurrentSkillScore(profile, skillName) {
+  const evidence = {
+    proficiency: evidenceProficiency(profile, skillName),
+    assessment:  evidenceAssessment(profile, skillName),
+    experience:  evidenceExperience(profile, skillName),
+    project:     evidenceProject(profile, skillName),
+    certificate: evidenceCertificate(profile, skillName),
+    recency:     evidenceRecency(profile, skillName)
+  };
+
+  let totalWeight = 0;
+  let weightedSum = 0;
+  Object.keys(SCORING_WEIGHTS).forEach(key => {
+    if (evidence[key].available) {
+      totalWeight += SCORING_WEIGHTS[key];
+      weightedSum += evidence[key].value * SCORING_WEIGHTS[key];
+    }
+  });
+
+  /* Normalise so missing evidence doesn't unfairly drag the score to 0 */
+  const score = totalWeight > 0 ? weightedSum / totalWeight : 0;
+
+  return {
+    score: Math.round(clamp(score, 0, 100)),
+    evidence,
+    hasAnyEvidence: totalWeight > 0
+  };
+}
+
+/* Classify the skill gap */
+function classifySkillGap(current, required, lastUsed) {
+  const gap = required - current;
+
+  /* Outdated overrides other statuses if skill was meaningful but stale */
+  if (current >= required * 0.5 && monthsSince(lastUsed) >= OUTDATED_MONTHS) {
+    return 'OUTDATED';
+  }
+  if (current >= required)         return 'MATCHED';
+  if (current >= required * 0.5)   return 'WEAK';
+  return 'MISSING';
+}
+
+/* Priority from gap */
+function gapToPriority(gap) {
+  if (gap >= PRIORITY_THRESHOLDS.CRITICAL) return 'CRITICAL';
+  if (gap >= PRIORITY_THRESHOLDS.HIGH)     return 'HIGH';
+  if (gap >= PRIORITY_THRESHOLDS.MEDIUM)   return 'MEDIUM';
+  return 'LOW';
+}
+
+/* Full skill-by-skill analysis */
+function calculateSkillGap(profile) {
+  const role = profile.targetRole;
+  const req = jobRequirements[role];
+  if (!req) return null;
+
+  const skillResults = Object.keys(req.skills).map(skillName => {
+    const required = req.skills[skillName];
+    const { score: current, evidence, hasAnyEvidence } = calculateCurrentSkillScore(profile, skillName);
+    const gap = Math.max(0, required - current);
+    const s = findTraineeSkill(profile, skillName);
+    const lastUsed = s ? s.lastUsed : null;
+    const status = classifySkillGap(current, required, lastUsed);
+
+    /* Build evidence label — which sources contributed */
+    const evidenceSources = [];
+    if (evidence.proficiency.available) evidenceSources.push('Self-rated');
+    if (evidence.assessment.available)  evidenceSources.push('Assessment');
+    if (evidence.experience.available)  evidenceSources.push('Experience');
+    if (evidence.project.available)     evidenceSources.push('Project');
+    if (evidence.certificate.available) evidenceSources.push('Certificate');
+    if (evidence.recency.available)     evidenceSources.push('Recent use');
+
+    return {
+      skill: skillName,
+      current,
+      required,
+      gap,
+      status,
+      priority: gapToPriority(gap),
+      evidence: evidenceSources,
+      hasAnyEvidence,
+      lastUsed
+    };
+  });
+
+  /* Sort: critical first, then by gap */
+  const statusOrder = { MISSING: 0, OUTDATED: 1, WEAK: 2, MATCHED: 3 };
+  skillResults.sort((a, b) => {
+    if (statusOrder[a.status] !== statusOrder[b.status]) {
+      return statusOrder[a.status] - statusOrder[b.status];
+    }
+    return b.gap - a.gap;
+  });
+
+  return skillResults;
+}
+
+/* Overall match — weighted average of current/required per skill */
+function calculateOverallMatch(skillResults) {
+  if (!skillResults || !skillResults.length) return 0;
+  let totalReq = 0;
+  let totalCurrent = 0;
+  skillResults.forEach(r => {
+    totalCurrent += Math.min(r.current, r.required);
+    totalReq     += r.required;
+  });
+  return Math.round((totalCurrent / totalReq) * 100);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   7. RECOMMENDATION ENGINE
+   ─────────────────────────────────────────────────────────────────────
+   For every skill with a gap, generate:
+     - A course suggestion (if gap > 20)
+     - A project suggestion (if no project evidence)
+     - A certificate suggestion (if no cert evidence AND gap > 25)
+   Sorted by priority.
+   ═══════════════════════════════════════════════════════════════ */
+
+const COURSE_LIBRARY = {
+  "SQL":        { title: "Intermediate SQL", provider: "Coursera / DataCamp" },
+  "Python":     { title: "Python for Data Science", provider: "Coursera" },
+  "Power BI":   { title: "Power BI Fundamentals", provider: "Microsoft Learn" },
+  "Excel":      { title: "Advanced Excel", provider: "Coursera" },
+  "Statistics": { title: "Statistics for Analysts", provider: "Khan Academy" },
+  "AWS":        { title: "AWS Certified Cloud Practitioner", provider: "AWS Skill Builder" },
+  "Docker":     { title: "Docker Deep Dive", provider: "Udemy" },
+  "JavaScript": { title: "Modern JavaScript", provider: "Frontend Masters" },
+  "React":      { title: "React - The Complete Guide", provider: "Udemy" },
+  "Communication": { title: "Business Communication", provider: "NPTEL" },
+  "_default":   { title: "Foundations of", provider: "Coursera" }
+};
+
+const CERT_LIBRARY = {
+  "Power BI": { title: "Microsoft Power BI Data Analyst", provider: "Microsoft" },
+  "AWS":      { title: "AWS Solutions Architect Associate", provider: "AWS" },
+  "SQL":      { title: "SQL for Data Science", provider: "Coursera" },
+  "Python":   { title: "PCAP - Python Certified Associate", provider: "Python Institute" },
+  "Statistics": { title: "Google Advanced Data Analytics", provider: "Google" },
+  "_default": { title: "Industry-recognised certification in", provider: "—" }
+};
+
+const PROJECT_LIBRARY = {
+  "SQL":        { title: "Sales Analytics Dashboard", desc: "Build a dashboard using SQL + Power BI" },
+  "Power BI":   { title: "Interactive KPI Dashboard", desc: "Design a multi-page Power BI dashboard" },
+  "Python":     { title: "Automated Data Pipeline", desc: "Build an end-to-end ETL pipeline in Python" },
+  "AWS":        { title: "Deploy a 3-tier App", desc: "Host a full-stack app on AWS free tier" },
+  "Docker":     { title: "Containerise a Flask App", desc: "Dockerfile + docker-compose project" },
+  "React":      { title: "SPA consuming a REST API", desc: "Build a React app with routing and state" },
+  "_default":   { title: "Applied Project", desc: "Ship a small project that uses this skill end-to-end" }
+};
+
+function generateRecommendations(profile, skillResults) {
+  const recommendations = [];
+
+  skillResults.forEach(r => {
+    /* Skip matched skills entirely */
+    if (r.status === 'MATCHED' && r.gap <= 5) return;
+
+    const priority = r.priority;
+
+    /* COURSE suggestion */
+    if (r.gap >= 15) {
+      const courseKey = COURSE_LIBRARY[r.skill] ? r.skill : '_default';
+      const course = COURSE_LIBRARY[courseKey];
+      recommendations.push({
+        type: 'course',
+        priority,
+        skill: r.skill,
+        title: courseKey === '_default' ? `${course.title} ${r.skill}` : course.title,
+        provider: course.provider,
+        reason: `Your ${r.skill} proficiency is <strong>${r.current}%</strong>, while the target role requires <strong>${r.required}%</strong>.`,
+        current: r.current,
+        required: r.required
+      });
+    }
+
+    /* PROJECT suggestion — only if not already demonstrated */
+    const hasProject = r.evidence.includes('Project');
+    if (!hasProject && r.gap >= 20) {
+      const projKey = PROJECT_LIBRARY[r.skill] ? r.skill : '_default';
+      const proj = PROJECT_LIBRARY[projKey];
+      recommendations.push({
+        type: 'project',
+        priority,
+        skill: r.skill,
+        title: proj.title,
+        desc: proj.desc,
+        reason: `You haven't demonstrated <strong>${r.skill}</strong> through a project yet. This would close the ${r.gap}% gap.`,
+        current: r.current,
+        required: r.required
+      });
+    }
+
+    /* CERTIFICATE suggestion — only if no certificate evidence AND gap is large */
+    const hasCert = r.evidence.includes('Certificate');
+    if (!hasCert && r.gap >= 25) {
+      const certKey = CERT_LIBRARY[r.skill] ? r.skill : '_default';
+      const cert = CERT_LIBRARY[certKey];
+      recommendations.push({
+        type: 'cert',
+        priority,
+        skill: r.skill,
+        title: certKey === '_default' ? `${cert.title} ${r.skill}` : cert.title,
+        provider: cert.provider,
+        reason: `No certificate evidence exists for <strong>${r.skill}</strong>. A recognised certification would strengthen your profile.`,
+        current: r.current,
+        required: r.required
+      });
+    }
+  });
+
+  /* Sort recommendations by priority + gap */
+  const priorityOrder = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+  recommendations.sort((a, b) => {
+    if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+      return priorityOrder[a.priority] - priorityOrder[b.priority];
+    }
+    return (b.required - b.current) - (a.required - a.current);
+  });
+
+  /* Cap at 6 items total, keeping type diversity */
+  const buckets = { course: [], cert: [], project: [] };
+  recommendations.forEach(r => buckets[r.type].push(r));
+
+  const final = [];
+  const maxPerType = 3;
+  ['course', 'cert', 'project'].forEach(type => {
+    final.push(...buckets[type].slice(0, maxPerType));
+  });
+
+  return final.slice(0, 6);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   8. PROFILE COMPLETENESS
+   ═══════════════════════════════════════════════════════════════ */
+
+function calculateProfileCompleteness(profile) {
+  const checks = [
+    { ok: !!(profile.name && profile.name.trim()),               weight: 1 },
+    { ok: !!(profile.targetRole && profile.targetRole.trim()),   weight: 1 },
+    { ok: !!(profile.education && profile.education.trim()),     weight: 1 },
+    { ok: !!(profile.experience && profile.experience.relevant), weight: 1 },
+    { ok: (profile.skills || []).length >= 3,                    weight: 2 },
+    { ok: (profile.certificates || []).length >= 1,              weight: 1 },
+    { ok: (profile.projects || []).length >= 1,                  weight: 1 },
+    { ok: (profile.training || []).length >= 1,                  weight: 1 }
+  ];
+  const totalWeight = checks.reduce((s, c) => s + c.weight, 0);
+  const doneWeight  = checks.reduce((s, c) => s + (c.ok ? c.weight : 0), 0);
+  return Math.round((doneWeight / totalWeight) * 100);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   9. RENDERING — all UI updates live here
+   ═══════════════════════════════════════════════════════════════ */
+
+let currentChart = null;
+
+function render() {
+  const profile = loadTraineeProfile();
+
+  /* No profile → empty state */
+  if (!profile || !profile.targetRole) {
+    document.getElementById('emptyState').style.display = '';
+    document.getElementById('analysisArea').style.display = 'none';
+    document.getElementById('completenessBar').style.display = 'none';
+    document.getElementById('targetRolePill').style.display = 'none';
+    updateTopProfile();
+    return;
+  }
+
+  /* Has role but role unknown */
+  if (!jobRequirements[profile.targetRole]) {
+    document.getElementById('emptyState').style.display = '';
+    document.getElementById('emptyState').querySelector('h3').textContent = `"${profile.targetRole}" isn't in the requirement library yet`;
+    document.getElementById('emptyState').querySelector('p').textContent = 'Try a different role or use the Custom Role option from the search box.';
+    document.getElementById('analysisArea').style.display = 'none';
+    document.getElementById('completenessBar').style.display = 'none';
+    updateTopProfile();
+    return;
+  }
+
+  /* Show analysis */
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('analysisArea').style.display = '';
+  document.getElementById('completenessBar').style.display = '';
+
+  /* Completeness */
+  const pct = calculateProfileCompleteness(profile);
+  document.getElementById('completenessPct').textContent = pct + '%';
+  document.getElementById('completenessFill').style.width = pct + '%';
+
+  /* Target role pill */
+  document.getElementById('targetRolePill').style.display = '';
+  document.getElementById('targetRolePillText').textContent = profile.targetRole;
+
+  /* Run engine */
+  const skillResults = calculateSkillGap(profile);
+  const overallMatch = calculateOverallMatch(skillResults);
+
+  const strongCount   = skillResults.filter(r => r.status === 'MATCHED').length;
+  const weakCount     = skillResults.filter(r => r.status === 'WEAK').length;
+  const outdatedCount = skillResults.filter(r => r.status === 'OUTDATED').length;
+  const criticalCount = skillResults.filter(r => r.status === 'MISSING').length;
+
+  /* Metrics */
+  document.getElementById('overallMatch').textContent = overallMatch + '%';
+  document.getElementById('overallMatchFill').style.width = overallMatch + '%';
+  document.getElementById('strongCount').textContent = strongCount;
+  document.getElementById('weakCount').textContent = weakCount + (outdatedCount ? ` (+${outdatedCount} outdated)` : '');
+  document.getElementById('criticalCount').textContent = criticalCount;
+
+  const matchPill = document.getElementById('matchPill');
+  if (overallMatch >= 75) { matchPill.textContent = 'Strong'; matchPill.className = 'metric-pill ok'; }
+  else if (overallMatch >= 50) { matchPill.textContent = 'Moderate'; matchPill.className = 'metric-pill warn'; }
+  else { matchPill.textContent = 'Low'; matchPill.className = 'metric-pill danger'; }
+
+  /* Chart */
+  renderComparisonChart(skillResults);
+  document.getElementById('chartNote').textContent = `${skillResults.length} skills compared against ${profile.targetRole} benchmarks`;
+
+  /* Table */
+  renderSkillTable(skillResults);
+  document.getElementById('tableNote').textContent = `${skillResults.length} skills analysed · ${criticalCount} critical, ${weakCount} weak`;
+
+  /* Certificates */
+  renderCertificateAnalysis(profile, skillResults);
+  document.getElementById('certNote').textContent = `${(profile.certificates || []).length} certificates reviewed`;
+
+  /* Experience */
+  renderExperienceAnalysis(profile);
+
+  /* Training */
+  renderTrainingPerformance(profile);
+  document.getElementById('trainingNote').textContent = `${(profile.training || []).length} modules completed`;
+
+  /* Recommendations */
+  const recos = generateRecommendations(profile, skillResults);
+  renderRecommendations(recos);
+
+  /* Topbar + sidebar */
+  updateTopProfile();
+}
+
+function updateTopProfile() {
+  const profile = loadTraineeProfile();
+  const name = profile && profile.name ? profile.name : 'Trainee';
+  const initial = name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+
+  document.getElementById('topTraineeName').textContent = name;
+  document.getElementById('topTraineeRoll').textContent = profile && profile.targetRole
+    ? profile.targetRole
+    : 'No target role';
+  document.getElementById('topAvatar').textContent = initial;
+}
+
+function renderComparisonChart(skillResults) {
+  const wrap = document.getElementById('comparisonChart').getContext('2d');
+  if (currentChart) currentChart.destroy();
+
+  const labels = skillResults.map(r => r.skill);
+  const current = skillResults.map(r => r.current);
+  const required = skillResults.map(r => r.required);
+
+  const gradAmber = wrap.createLinearGradient(0, 0, 0, 300);
+  gradAmber.addColorStop(0, 'rgba(245,158,11,0.9)');
+  gradAmber.addColorStop(1, 'rgba(234,88,12,0.9)');
+
+  currentChart = new Chart(wrap, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Your Level',
+          data: current,
+          backgroundColor: gradAmber,
+          borderRadius: 6,
+          maxBarThickness: 26
+        },
+        {
+          label: 'Required',
+          data: required,
+          backgroundColor: '#E2E8F0',
+          borderRadius: 6,
+          maxBarThickness: 26
+        }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+          align: 'end',
+          labels: {
+            usePointStyle: true, boxWidth: 8, boxHeight: 8, padding: 14,
+            font: { size: 11, weight: '600', family: 'Inter' }
+          }
+        },
+        tooltip: {
+          backgroundColor: '#0F172A', padding: 10, cornerRadius: 8,
+          callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.x}%` }
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true, max: 100,
+          grid: { color: '#F1EBDD' },
+          ticks: { font: { size: 10.5 }, callback: v => v + '%' }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { font: { size: 11, weight: '600' } }
+        }
+      }
+    }
+  });
+}
+
+function renderSkillTable(skillResults) {
+  const tbody = document.getElementById('skillTableBody');
+
+  if (!skillResults.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--ink-faint);">No skills compared yet.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = skillResults.map(r => {
+    const statusLabel = {
+      MATCHED:  'Matched',
+      WEAK:     'Weak',
+      MISSING:  'Missing',
+      OUTDATED: 'Outdated'
+    }[r.status];
+
+    const statusClass = `status-${r.status.toLowerCase()}`;
+    const gapHtml = r.gap > 0
+      ? `<span class="gap-positive">${r.gap}%</span>`
+      : `<span class="gap-zero">0%</span>`;
+
+    const evidenceHtml = r.evidence.length
+      ? r.evidence.map(e => `<span class="evidence-chip">${escapeHtml(e)}</span>`).join('')
+      : '<span class="evidence-chip">No evidence</span>';
+
+    const actionText = {
+      MATCHED:  'Maintain',
+      WEAK:     `Improve ${r.skill}`,
+      MISSING:  `Start ${r.skill}`,
+      OUTDATED: `Refresh ${r.skill}`
+    }[r.status];
+
+    return `
+      <tr>
+        <td>
+          <div class="skill-name-cell">
+            <span>${escapeHtml(r.skill)}</span>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:${r.current}%"></div></div>
+          </div>
+        </td>
+        <td><strong style="color:var(--ink);font-family:'Poppins',sans-serif;">${r.current}%</strong></td>
+        <td>${r.required}%</td>
+        <td>${gapHtml}</td>
+        <td>${evidenceHtml}</td>
+        <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+        <td><button class="action-btn" data-skill="${escapeHtml(r.skill)}" data-status="${r.status}">${actionText}</button></td>
+      </tr>
+    `;
+  }).join('');
+
+  /* Wire action buttons to scroll to recommendations */
+  tbody.querySelectorAll('.action-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const recosSection = document.getElementById('recoGrid');
+      if (recosSection) {
+        recosSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        showToast(`Showing recommendations for ${btn.dataset.skill}`);
+      }
+    });
+  });
+}
+
+function renderCertificateAnalysis(profile, skillResults) {
+  const container = document.getElementById('certList');
+  const certs = profile.certificates || [];
+  document.getElementById('certCount').textContent = `${certs.length} certificate${certs.length === 1 ? '' : 's'}`;
+
+  if (!certs.length) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:20px;color:var(--ink-faint);font-size:11px;">
+        <i class="fa-solid fa-certificate" style="display:block;font-size:22px;margin-bottom:8px;opacity:.4;"></i>
+        No certificates added yet. Add one from Update Profile.
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = certs.map(c => {
+    const expired = c.expiryDate && new Date(c.expiryDate) < new Date();
+    const relevant = (profile.targetRole && c.skill &&
+      normalizeSkillName(c.skill).includes(normalizeSkillName(profile.targetRole).split(' ')[0])) ||
+      (skillResults || []).some(r => normalizeSkillName(c.skill || '').includes(normalizeSkillName(r.skill)));
+
+    let validityFlag = 'valid';
+    let validityText = 'Valid';
+    if (expired) { validityFlag = 'expired'; validityText = 'Expired'; }
+
+    let relevanceFlag = relevant ? 'valid' : 'irrelevant';
+    let relevanceText = relevant ? 'High' : 'Low';
+
+    /* Evidence strength — check if related skill has assessment/project support */
+    const related = (skillResults || []).find(r =>
+      normalizeSkillName(r.skill) === normalizeSkillName(c.skill) ||
+      normalizeSkillName(c.skill || '').includes(normalizeSkillName(r.skill))
+    );
+    let strengthFlag = 'warn';
+    let strengthText = 'Moderate';
+    if (related) {
+      const hasAssessment = related.evidence.includes('Assessment');
+      const hasProject    = related.evidence.includes('Project');
+      if (hasAssessment && hasProject) { strengthFlag = 'valid'; strengthText = 'Strong'; }
+      else if (hasAssessment || hasProject) { strengthFlag = 'warn'; strengthText = 'Moderate'; }
+      else { strengthFlag = 'irrelevant'; strengthText = 'Weak'; }
+    }
+
+    const issue = (!relevant) ? 'This certificate is not directly relevant to your target role.'
+                : (expired) ? 'This certificate has expired — consider renewing it.'
+                : (related && related.gap > 20) ? 'Certificate exists but practical proficiency is low — strengthen with a project.'
+                : null;
+
+    return `
+      <div class="cert-row">
+        <div class="cert-icon"><i class="fa-solid fa-certificate"></i></div>
+        <div class="cert-body">
+          <div class="cert-name">${escapeHtml(c.name || 'Untitled Certificate')}</div>
+          <div class="cert-meta">
+            <span><i class="fa-solid fa-building"></i> ${escapeHtml(c.issuer || '—')}</span>
+            <span><i class="fa-solid fa-tag"></i> ${escapeHtml(c.skill || '—')}</span>
+          </div>
+          <div style="margin-top:6px;display:flex;gap:5px;flex-wrap:wrap;">
+            <span class="cert-flag ${relevanceFlag}">Relevance: ${relevanceText}</span>
+            <span class="cert-flag ${validityFlag}">${validityText}</span>
+            <span class="cert-flag ${strengthFlag}">Evidence: ${strengthText}</span>
+          </div>
+          ${issue ? `<div style="margin-top:7px;font-size:10px;color:#B7791F;line-height:1.5;"><i class="fa-solid fa-triangle-exclamation" style="color:#F59E0B;"></i> ${issue}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderExperienceAnalysis(profile) {
+  const container = document.getElementById('experienceList');
+  const exp = profile.experience || { total: 0, relevant: 0, internships: 0, apprenticeships: 0 };
+  const req = jobRequirements[profile.targetRole];
+  const required = (req && req.minExperience) || 2;
+  const gap = Math.max(0, required - (exp.relevant || 0));
+
+  container.innerHTML = `
+    <div class="stat-row">
+      <span class="stat-label"><i class="fa-solid fa-clock"></i> Total Experience</span>
+      <span class="stat-value">${(exp.total || 0).toFixed(1)} yrs</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label"><i class="fa-solid fa-bullseye"></i> Relevant Experience</span>
+      <span class="stat-value">${(exp.relevant || 0).toFixed(1)} yrs</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label"><i class="fa-solid fa-user-tie"></i> Internships</span>
+      <span class="stat-value">${(exp.internships || 0).toFixed(1)} yrs</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label"><i class="fa-solid fa-helmet-safety"></i> Apprenticeships</span>
+      <span class="stat-value">${(exp.apprenticeships || 0).toFixed(1)} yrs</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label"><i class="fa-solid fa-folder-tree"></i> Projects</span>
+      <span class="stat-value">${(profile.projects || []).length}</span>
+    </div>
+    <div style="margin-top:12px;padding:11px 12px;border-radius:9px;background:${gap > 0 ? '#FEF3E0' : '#EAF7EE'};border:1px solid ${gap > 0 ? '#FDE68A' : '#BBF7D0'};">
+      <div style="font-size:10px;font-weight:700;color:${gap > 0 ? '#B7791F' : '#15803D'};text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">
+        <i class="fa-solid ${gap > 0 ? 'fa-triangle-exclamation' : 'fa-circle-check'}"></i>
+        ${gap > 0 ? 'Experience Gap' : 'Experience Meets Target'}
+      </div>
+      <div style="font-size:12px;color:var(--ink);font-weight:600;">
+        ${gap > 0
+          ? `<strong style="font-family:'Poppins',sans-serif;font-size:16px;">${gap.toFixed(1)} yrs</strong> short of ${required} yrs required for ${escapeHtml(profile.targetRole)}`
+          : `You meet the ${required} yrs requirement for ${escapeHtml(profile.targetRole)}`}
+      </div>
+    </div>
+  `;
+}
+
+function renderTrainingPerformance(profile) {
+  const container = document.getElementById('trainingList');
+  const training = profile.training || [];
+
+  if (!training.length) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:20px;color:var(--ink-faint);font-size:11px;">
+        <i class="fa-solid fa-graduation-cap" style="display:block;font-size:22px;margin-bottom:8px;opacity:.4;"></i>
+        No training modules recorded yet.
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = training.map(t => {
+    const score = Number(t.score) || 0;
+    let cls = 'mid', perf = 'Average';
+    if (score >= 75) { cls = 'strong'; perf = 'Strong'; }
+    else if (score < 50) { cls = 'weak'; perf = 'Needs Improvement'; }
+
+    return `
+      <div class="training-row">
+        <div class="tr-name">
+          ${escapeHtml(t.name || 'Untitled Module')}
+          <div class="tr-skills">${escapeHtml(t.skillsCovered || '—')} · ${escapeHtml(t.provider || '')}</div>
+        </div>
+        <div class="tr-score ${cls}">${score}%</div>
+        <div class="tr-perf ${cls}">${perf}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderRecommendations(recos) {
+  const grid = document.getElementById('recoGrid');
+
+  if (!recos.length) {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:28px;color:var(--ink-faint);font-size:11.5px;background:#fff;border:1px dashed var(--border);border-radius:var(--r-lg);">
+        <i class="fa-solid fa-circle-check" style="display:block;font-size:26px;margin-bottom:10px;color:var(--green);"></i>
+        You're on track! No critical recommendations at the moment.
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = recos.map(r => {
+    const catLabel = { course: 'Course', cert: 'Certification', project: 'Project' }[r.type];
+    const catIcon  = { course: 'fa-book', cert: 'fa-certificate', project: 'fa-diagram-project' }[r.type];
+
+    return `
+      <div class="reco-card ${r.type}">
+        <span class="reco-priority ${r.priority.toLowerCase()}">${r.priority}</span>
+        <div class="reco-head">
+          <div class="reco-ico"><i class="fa-solid ${catIcon}"></i></div>
+          <div class="reco-title-wrap">
+            <div class="reco-cat">${catLabel}</div>
+            <div class="reco-title">${escapeHtml(r.title)}</div>
+          </div>
+        </div>
+        <div class="reco-reason">${r.reason}</div>
+        <div class="reco-meta">
+          <span><i class="fa-solid fa-tag"></i> ${escapeHtml(r.skill)}</span>
+          <span><i class="fa-solid fa-arrow-trend-up"></i> ${r.current}% → ${r.required}%</span>
+        </div>
+        <button class="reco-cta" data-reco-type="${r.type}">
+          <i class="fa-solid ${r.type === 'course' ? 'fa-play' : r.type === 'cert' ? 'fa-award' : 'fa-rocket'}"></i>
+          ${r.type === 'course' ? 'Start Course' : r.type === 'cert' ? 'View Certification' : 'Start Project'}
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  grid.querySelectorAll('.reco-cta').forEach(btn => {
+    btn.addEventListener('click', () => showToast(`Opening ${btn.textContent.trim()}…`));
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   10. ROLE SEARCH — live suggestions
+   ═══════════════════════════════════════════════════════════════ */
+
+const roleSearchInput = document.getElementById('roleSearchInput');
+const roleSuggestions = document.getElementById('roleSuggestions');
+
+roleSearchInput.addEventListener('input', () => {
+  const q = roleSearchInput.value.trim().toLowerCase();
+  const roles = Object.keys(jobRequirements);
+  const matches = q
+    ? roles.filter(r => r.toLowerCase().includes(q))
+    : roles;
+
+  if (!matches.length && q) {
+    roleSuggestions.innerHTML = `
+      <div class="role-suggestion" data-custom="${q}">
+        <i class="fa-solid fa-plus" style="color:var(--orange);margin-right:6px;"></i>
+        Use custom role: <strong>${escapeHtml(roleSearchInput.value)}</strong>
+      </div>`;
+  } else {
+    roleSuggestions.innerHTML = matches.map(r => `
+      <div class="role-suggestion" data-role="${escapeHtml(r)}">${escapeHtml(r)}</div>
+    `).join('');
+  }
+  roleSuggestions.classList.add('open');
+});
+
+roleSearchInput.addEventListener('focus', () => {
+  roleSearchInput.dispatchEvent(new Event('input'));
+});
+
+document.addEventListener('click', e => {
+  if (!roleSuggestions.contains(e.target) && e.target !== roleSearchInput) {
+    roleSuggestions.classList.remove('open');
+  }
+});
+
+roleSuggestions.addEventListener('click', e => {
+  const suggestion = e.target.closest('.role-suggestion');
+  if (!suggestion) return;
+
+  const role = suggestion.dataset.role;
+  const custom = suggestion.dataset.custom;
+
+  if (role) {
+    selectTargetRole(role);
+  } else if (custom) {
+    /* Custom role — add it dynamically */
+    jobRequirements[roleSearchInput.value.trim()] = {
+      icon: 'fa-bullseye',
+      skills: {}, /* empty requirements — user must add via profile */
+      minExperience: 1
+    };
+    showToast('Custom role added — add required skills via Update Profile');
+    selectTargetRole(roleSearchInput.value.trim());
+  }
+  roleSuggestions.classList.remove('open');
+});
+
+function selectTargetRole(role) {
+  const profile = loadTraineeProfile() || {};
+  profile.targetRole = role;
+  saveTraineeProfile(profile);
+  roleSearchInput.value = '';
+  render();
+  showToast(`Target role set to ${role}`);
+  document.getElementById('targetRolePill').style.display = '';
+  document.getElementById('targetRolePillText').textContent = role;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   11. PROFILE EDIT DRAWER + SUB-MODALS
+   ═══════════════════════════════════════════════════════════════ */
+
+const overlay = document.getElementById('overlay');
+const drawer  = document.getElementById('profileDrawer');
+
+function openDrawer() {
+  const profile = loadTraineeProfile() || {};
+  /* Fill basic fields */
+  document.getElementById('pName').value = profile.name || '';
+  document.getElementById('pTargetRole').value = profile.targetRole || '';
+  document.getElementById('pEducation').value = profile.education || '';
+  document.getElementById('pExpTotal').value = profile.experience?.total || '';
+  document.getElementById('pExpRelevant').value = profile.experience?.relevant || '';
+  document.getElementById('pExpIntern').value = profile.experience?.internships || '';
+  document.getElementById('pExpAppr').value = profile.experience?.apprenticeships || '';
+
+  renderSkillsList();
+  renderCertsList();
+  renderProjectsList();
+  renderTrainingList();
+
+  overlay.classList.add('open');
+  drawer.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+document.getElementById('editProfileBtn').addEventListener('click', openDrawer);
+
+document.getElementById('drawerClose').addEventListener('click', () => {
+  overlay.classList.remove('open');
+  drawer.classList.remove('open');
+  document.body.style.overflow = '';
+});
+
+document.getElementById('cancelProfile').addEventListener('click', () => {
+  overlay.classList.remove('open');
+  drawer.classList.remove('open');
+  document.body.style.overflow = '';
+});
+
+overlay.addEventListener('click', () => {
+  overlay.classList.remove('open');
+  drawer.classList.remove('open');
+  document.body.style.overflow = '';
+});
+
+/* Editing buffer — sub-modal edits write here, then Save persists */
+let editingProfile = null;
+
+function ensureEditingProfile() {
+  if (!editingProfile) {
+    editingProfile = JSON.parse(JSON.stringify(loadTraineeProfile() || {
+      name: '', targetRole: '', education: '',
+      experience: { total: 0, relevant: 0, internships: 0, apprenticeships: 0 },
+      skills: [], certificates: [], projects: [], training: []
+    }));
+    editingProfile.experience = editingProfile.experience || { total: 0, relevant: 0, internships: 0, apprenticeships: 0 };
+    editingProfile.skills = editingProfile.skills || [];
+    editingProfile.certificates = editingProfile.certificates || [];
+    editingProfile.projects = editingProfile.projects || [];
+    editingProfile.training = editingProfile.training || [];
+  }
+  return editingProfile;
+}
+
+/* Skills list */
+function renderSkillsList() {
+  const list = document.getElementById('skillsList');
+  const p = ensureEditingProfile();
+  if (!p.skills.length) {
+    list.innerHTML = `<div style="text-align:center;padding:14px;color:var(--ink-faint);font-size:10.5px;">No skills added yet.</div>`;
+    return;
+  }
+  list.innerHTML = p.skills.map((s, i) => `
+    <div class="mini-item">
+      <div class="mini-item-body">
+        <div class="mini-item-title">${escapeHtml(s.name)} · ${s.percent}%</div>
+        <div class="mini-item-meta">${s.years || 0} yrs · last used ${escapeHtml(s.lastUsed || '—')}${s.viaProject ? ' · Project ✓' : ''}</div>
+      </div>
+      <button class="mini-item-remove" onclick="removeSkill(${i})"><i class="fa-solid fa-trash"></i></button>
+    </div>
+  `).join('');
+}
+
+window.removeSkill = function(i) {
+  const p = ensureEditingProfile();
+  p.skills.splice(i, 1);
+  renderSkillsList();
+};
+
+/* Certs list */
+function renderCertsList() {
+  const list = document.getElementById('certsList');
+  const p = ensureEditingProfile();
+  if (!p.certificates.length) {
+    list.innerHTML = `<div style="text-align:center;padding:14px;color:var(--ink-faint);font-size:10.5px;">No certificates added yet.</div>`;
+    return;
+  }
+  list.innerHTML = p.certificates.map((c, i) => `
+    <div class="mini-item">
+      <div class="mini-item-body">
+        <div class="mini-item-title">${escapeHtml(c.name)}</div>
+        <div class="mini-item-meta">${escapeHtml(c.issuer || '')} · ${escapeHtml(c.skill || '')}</div>
+      </div>
+      <button class="mini-item-remove" onclick="removeCert(${i})"><i class="fa-solid fa-trash"></i></button>
+    </div>
+  `).join('');
+}
+window.removeCert = function(i) {
+  const p = ensureEditingProfile();
+  p.certificates.splice(i, 1);
+  renderCertsList();
+};
+
+/* Projects list */
+function renderProjectsList() {
+  const list = document.getElementById('projectsList');
+  const p = ensureEditingProfile();
+  if (!p.projects.length) {
+    list.innerHTML = `<div style="text-align:center;padding:14px;color:var(--ink-faint);font-size:10.5px;">No projects added yet.</div>`;
+    return;
+  }
+  list.innerHTML = p.projects.map((pr, i) => `
+    <div class="mini-item">
+      <div class="mini-item-body">
+        <div class="mini-item-title">${escapeHtml(pr.name)}</div>
+        <div class="mini-item-meta">${escapeHtml(pr.tech || '')} · ${escapeHtml(pr.date || '')}</div>
+      </div>
+      <button class="mini-item-remove" onclick="removeProject(${i})"><i class="fa-solid fa-trash"></i></button>
+    </div>
+  `).join('');
+}
+window.removeProject = function(i) {
+  const p = ensureEditingProfile();
+  p.projects.splice(i, 1);
+  renderProjectsList();
+};
+
+/* Training list */
+function renderTrainingList() {
+  const list = document.getElementById('trainingList');
+  const p = ensureEditingProfile();
+  if (!p.training.length) {
+    list.innerHTML = `<div style="text-align:center;padding:14px;color:var(--ink-faint);font-size:10.5px;">No training added yet.</div>`;
+    return;
+  }
+  list.innerHTML = p.training.map((t, i) => `
+    <div class="mini-item">
+      <div class="mini-item-body">
+        <div class="mini-item-title">${escapeHtml(t.name)} · ${t.score}%</div>
+        <div class="mini-item-meta">${escapeHtml(t.provider || '')} · ${escapeHtml(t.skillsCovered || '')}</div>
+      </div>
+      <button class="mini-item-remove" onclick="removeTraining(${i})"><i class="fa-solid fa-trash"></i></button>
+    </div>
+  `).join('');
+}
+window.removeTraining = function(i) {
+  const p = ensureEditingProfile();
+  p.training.splice(i, 1);
+  renderTrainingList();
+};
+
+/* Sub-modal: skills */
+document.getElementById('addSkillBtn').addEventListener('click', () => {
+  document.getElementById('mSkillName').value = '';
+  document.getElementById('mSkillPercent').value = '';
+  document.getElementById('mSkillYears').value = '';
+  document.getElementById('mSkillLastUsed').value = '';
+  document.getElementById('mSkillViaTraining').checked = false;
+  document.getElementById('mSkillViaProject').checked = false;
+  document.getElementById('skillModalOverlay').classList.add('open');
+  document.getElementById('skillModal').classList.add('open');
+});
+
+function closeSkillModal() {
+  document.getElementById('skillModalOverlay').classList.remove('open');
+  document.getElementById('skillModal').classList.remove('open');
+}
+window.closeSkillModal = closeSkillModal;
+
+function saveSkillModal() {
+  const name = document.getElementById('mSkillName').value.trim();
+  if (!name) { showToast('Enter a skill name'); return; }
+
+  const p = ensureEditingProfile();
+  p.skills.push({
+    name,
+    percent: Number(document.getElementById('mSkillPercent').value) || 0,
+    years: Number(document.getElementById('mSkillYears').value) || 0,
+    lastUsed: document.getElementById('mSkillLastUsed').value || null,
+    viaTraining: document.getElementById('mSkillViaTraining').checked,
+    viaProject: document.getElementById('mSkillViaProject').checked
+  });
+  renderSkillsList();
+  closeSkillModal();
+}
+
+/* Sub-modal: certificates */
+document.getElementById('addCertBtn').addEventListener('click', () => {
+  document.getElementById('mCertName').value = '';
+  document.getElementById('mCertIssuer').value = '';
+  document.getElementById('mCertSkill').value = '';
+  document.getElementById('mCertIssue').value = '';
+  document.getElementById('mCertExpiry').value = '';
+  document.getElementById('certModalOverlay').classList.add('open');
+  document.getElementById('certModal').classList.add('open');
+});
+
+function closeCertModal() {
+  document.getElementById('certModalOverlay').classList.remove('open');
+  document.getElementById('certModal').classList.remove('open');
+}
+window.closeCertModal = closeCertModal;
+
+function saveCertModal() {
+  const name = document.getElementById('mCertName').value.trim();
+  if (!name) { showToast('Enter a certificate name'); return; }
+
+  const p = ensureEditingProfile();
+  p.certificates.push({
+    name,
+    issuer: document.getElementById('mCertIssuer').value.trim(),
+    skill: document.getElementById('mCertSkill').value.trim(),
+    issueDate: document.getElementById('mCertIssue').value || null,
+    expiryDate: document.getElementById('mCertExpiry').value || null
+  });
+  renderCertsList();
+  closeCertModal();
+}
+
+/* Sub-modal: projects */
+document.getElementById('addProjectBtn').addEventListener('click', () => {
+  document.getElementById('mProjectName').value = '';
+  document.getElementById('mProjectTech').value = '';
+  document.getElementById('mProjectDate').value = '';
+  document.getElementById('projectModalOverlay').classList.add('open');
+  document.getElementById('projectModal').classList.add('open');
+});
+
+function closeProjectModal() {
+  document.getElementById('projectModalOverlay').classList.remove('open');
+  document.getElementById('projectModal').classList.remove('open');
+}
+window.closeProjectModal = closeProjectModal;
+
+function saveProjectModal() {
+  const name = document.getElementById('mProjectName').value.trim();
+  if (!name) { showToast('Enter a project name'); return; }
+
+  const p = ensureEditingProfile();
+  p.projects.push({
+    name,
+    tech: document.getElementById('mProjectTech').value.trim(),
+    date: document.getElementById('mProjectDate').value || null
+  });
+  renderProjectsList();
+  closeProjectModal();
+}
+
+/* Sub-modal: training */
+document.getElementById('addTrainingBtn').addEventListener('click', () => {
+  document.getElementById('mTrainingName').value = '';
+  document.getElementById('mTrainingProvider').value = '';
+  document.getElementById('mTrainingScore').value = '';
+  document.getElementById('mTrainingDate').value = '';
+  document.getElementById('mTrainingSkills').value = '';
+  document.getElementById('trainingModalOverlay').classList.add('open');
+  document.getElementById('trainingModal').classList.add('open');
+});
+
+function closeTrainingModal() {
+  document.getElementById('trainingModalOverlay').classList.remove('open');
+  document.getElementById('trainingModal').classList.remove('open');
+}
+window.closeTrainingModal = closeTrainingModal;
+
+function saveTrainingModal() {
+  const name = document.getElementById('mTrainingName').value.trim();
+  if (!name) { showToast('Enter a training name'); return; }
+
+  const p = ensureEditingProfile();
+  p.training.push({
+    name,
+    provider: document.getElementById('mTrainingProvider').value.trim(),
+    score: Number(document.getElementById('mTrainingScore').value) || 0,
+    date: document.getElementById('mTrainingDate').value || null,
+    skillsCovered: document.getElementById('mTrainingSkills').value.trim()
+  });
+  renderTrainingList();
+  closeTrainingModal();
+}
+
+/* Save profile from drawer */
+document.getElementById('saveProfileBtn').addEventListener('click', () => {
+  const p = ensureEditingProfile();
+
+  p.name = document.getElementById('pName').value.trim() || p.name;
+  p.targetRole = document.getElementById('pTargetRole').value.trim() || p.targetRole;
+  p.education = document.getElementById('pEducation').value.trim();
+  p.experience = {
+    total: Number(document.getElementById('pExpTotal').value) || 0,
+    relevant: Number(document.getElementById('pExpRelevant').value) || 0,
+    internships: Number(document.getElementById('pExpIntern').value) || 0,
+    apprenticeships: Number(document.getElementById('pExpAppr').value) || 0
+  };
+
+  if (saveTraineeProfile(p)) {
+    showToast('Profile saved');
+    editingProfile = null;
+    overlay.classList.remove('open');
+    drawer.classList.remove('open');
+    document.body.style.overflow = '';
+    render();
+  } else {
+    showToast('Could not save profile');
+  }
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   12. DEMO PROFILE LOADER
+   ═══════════════════════════════════════════════════════════════ */
+
+function loadDemoProfile() {
+  if (!confirm('Load the demo profile? This will overwrite your current saved profile.')) return;
+  if (saveTraineeProfile(DEMO_PROFILE)) {
+    showToast('Demo profile loaded');
+    editingProfile = null;
+    render();
+  } else {
+    showToast('Could not load demo');
+  }
+}
+
+document.getElementById('loadDemoBtn').addEventListener('click', loadDemoProfile);
+document.getElementById('loadDemoBtn2').addEventListener('click', loadDemoProfile);
+
+/* ═══════════════════════════════════════════════════════════════
+   13. TOAST
+   ═══════════════════════════════════════════════════════════════ */
+
+let toastTimer;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastText').textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   14. INIT
+   ═══════════════════════════════════════════════════════════════ */
+
+document.addEventListener('DOMContentLoaded', () => {
+  render();
+  console.log('Horizon Skill Gap Engine ready.');
+});
+</script>
+
+</body>
+</html>
