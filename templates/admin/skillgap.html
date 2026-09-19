@@ -868,6 +868,7 @@
 (() => {
   'use strict';
   const STORAGE_KEY = 'horizon_trainee_data';
+  const BACKEND_TRAINEES = {{ trainees | tojson }};
   const INDUSTRY = {
     'Python': {demand:90, category:'Technical'},
     'SQL': {demand:88, category:'Data'},
@@ -898,31 +899,34 @@
     {branch:'CIVIL',batch:'2026',program:'Core',skills:['AutoCAD','Communication']}
   ];
   let uploadedRows = loadRows();
-  let useDemo = !uploadedRows.length;
-  let rows = useDemo ? DEMO : normalizeRows(uploadedRows);
+let useDemo = false;
+let rows = normalizeRows(uploadedRows);
   let activeFilter = {branch:'all',batch:'all',program:'all',type:'all',demand:'all',search:''};
   let categoryChart;
 
-  function loadRows(){
-    try { const raw = localStorage.getItem(STORAGE_KEY); const parsed = raw ? JSON.parse(raw) : []; return Array.isArray(parsed) ? parsed : []; }
-    catch(e){ return []; }
-  }
+  function loadRows() {
+  return Array.isArray(BACKEND_TRAINEES)
+    ? BACKEND_TRAINEES
+    : [];
+}
   function header(obj, candidates){
     const keys = Object.keys(obj || {});
     const normalized = keys.map(k => [k, String(k).toLowerCase().replace(/[\s_-]+/g,'')]);
     for(const c of candidates){ const nc = c.replace(/[\s_-]+/g,'').toLowerCase(); const hit = normalized.find(x => x[1].includes(nc)); if(hit) return hit[0]; }
     return null;
   }
-  function normalizeRows(raw){
-    return raw.map(obj => {
-      const branchKey = header(obj,['branch','department','dept']);
-      const batchKey = header(obj,['batch','year','cohort']);
-      const programKey = header(obj,['training program','program','course','training']);
-      const skillsKey = header(obj,['skills','skillset','skill set','competencies']);
-      const skills = parseSkills(skillsKey ? obj[skillsKey] : '');
-      return {branch:String(branchKey ? obj[branchKey] : 'Unknown').trim() || 'Unknown', batch:String(batchKey ? obj[batchKey] : 'Unknown').trim() || 'Unknown', program:String(programKey ? obj[programKey] : 'Unknown').trim() || 'Unknown', skills};
-    });
-  }
+function normalizeRows(raw) {
+  return raw.map(row => ({
+    branch: String(row.branch || 'Unknown'),
+    batch: String(row.batch || 'Unassigned'),
+
+    // Your database doesn't have a separate training program column.
+    // So we temporarily use training_status here.
+    program: String(row.training_status || 'Unknown'),
+
+    skills: parseSkills(row.skills || '')
+  }));
+}
   function parseSkills(value){
     if(Array.isArray(value)) return value.map(canon).filter(Boolean);
     return String(value || '').split(/[,;|\n\/]+/).map(canon).filter(Boolean);
@@ -956,8 +960,15 @@
     const data=compute();
     renderStatus(); renderKPIs(data); renderTopGaps(data); renderComparison(data); renderCritical(data); renderCategories(data); renderHeatmap(data); renderRecommendations(data); renderInsights(data); renderSnapshot(data);
   }
-  function renderStatus(){ const status=document.getElementById('dataStatus'); const text=document.getElementById('dataStatusText'); if(useDemo){status.className='data-status demo'; text.textContent='Demo Data · Upload Excel to see live skill gaps';} else {status.className='data-status live'; text.textContent='Live Data · Loaded from uploaded Excel';} }
-  function renderKPIs(data){ const avg=Math.round(data.skills.reduce((s,x)=>s+x.gap,0)/data.skills.length); const critical=data.skills.filter(x=>x.gap>=60).length; const match=Math.max(0,100-avg); document.getElementById('kpis').innerHTML=[
+function renderStatus() {
+  const status = document.getElementById('dataStatus');
+
+  if (rows.length > 0) {
+    status.textContent = `Live Data · ${rows.length} trainees`;
+  } else {
+    status.textContent = 'No Trainee Data · Upload Excel to see live skill gaps';
+  }
+}  function renderKPIs(data){ const avg=Math.round(data.skills.reduce((s,x)=>s+x.gap,0)/data.skills.length); const critical=data.skills.filter(x=>x.gap>=60).length; const match=Math.max(0,100-avg); document.getElementById('kpis').innerHTML=[
       ['fa-users','bg-blue','Total Trainees',data.total.toLocaleString(),useDemo?'Demo cohort':'Current cohort'],
       ['fa-layer-group','bg-violet','Skills Tracked',data.skills.length,'Across technical + soft skills'],
       ['fa-bullseye','bg-amber','Avg Skill Gap',avg+'%','Demand minus coverage'],
@@ -981,8 +992,16 @@
   function openDetail(skill,data){ const x=data.skills.find(s=>s.skill===skill); if(!x)return; const branches=[...new Set(data.rows.filter(r=>!r.skills.includes(skill)).map(r=>r.branch))]; document.getElementById('modalTitle').textContent=skill+' Skill Gap'; document.getElementById('modalBody').innerHTML=`<p>This view compares current trainee coverage with a configurable industry-demand benchmark. It is based on the skills present in the uploaded cohort.</p><div class="skill-detail"><div class="detail-box"><span>Industry demand</span><strong>${x.demand}%</strong></div><div class="detail-box"><span>Trainee coverage</span><strong>${x.coverage}%</strong></div><div class="detail-box"><span>Gap</span><strong style="color:var(--red)">${x.gap}%</strong></div><div class="detail-box"><span>Affected trainees</span><strong>${x.affected}</strong></div></div><div class="detail-box" style="margin-top:12px"><span>Most affected branches</span><strong style="font-size:14px;line-height:1.6">${branches.slice(0,6).join(', ')||'None'}</strong></div>`; document.getElementById('detailModal').classList.add('open'); }
   document.getElementById('modalClose').onclick=()=>document.getElementById('detailModal').classList.remove('open'); document.getElementById('detailModal').onclick=e=>{if(e.target.id==='detailModal')document.getElementById('detailModal').classList.remove('open')};
   document.getElementById('applyBtn').onclick=()=>{ activeFilter.branch=document.getElementById('branchFilter').value; activeFilter.batch=document.getElementById('batchFilter').value; activeFilter.program=document.getElementById('programFilter').value; activeFilter.type=document.getElementById('typeFilter').value; activeFilter.demand=document.getElementById('demandFilter').value; render(); };
-  document.getElementById('refreshBtn').onclick=()=>{uploadedRows=loadRows();useDemo=!uploadedRows.length;rows=useDemo?DEMO:normalizeRows(uploadedRows);setupFilters();render();};
-  document.getElementById('searchBox').addEventListener('input',e=>{activeFilter.search=e.target.value;render()});
+document.getElementById('refreshBtn').onclick = () => {
+  uploadedRows = loadRows();
+
+  useDemo = false;
+
+  rows = normalizeRows(uploadedRows);
+
+  setupFilters();
+  render();
+};  document.getElementById('searchBox').addEventListener('input',e=>{activeFilter.search=e.target.value;render()});
   document.getElementById('reportsLink').addEventListener('click',e=>{e.preventDefault();alert('Reports module can be connected here next.');});
   document.getElementById('exportBtn').onclick=()=>{ const data=compute(); const lines=['Skill,Category,Trainee Coverage %,Industry Demand %,Gap %,Affected Trainees']; data.skills.forEach(x=>lines.push([x.skill,x.category,x.coverage,x.demand,x.gap,x.affected].join(','))); const blob=new Blob([lines.join('\n')],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='horizon_skill_gap_report.csv'; a.click(); URL.revokeObjectURL(a.href); };
   setupFilters(); render();

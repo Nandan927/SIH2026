@@ -673,9 +673,12 @@
     <nav class="nav">
       <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
       <a class="nav-link active" href="#"><i class="fa-solid fa-code-branch"></i> Branch Analysis</a>
-      <a class="nav-link" href="#"><i class="fa-solid fa-user-group"></i> Trainee Management</a>
-      <a class="nav-link" href="#"><i class="fa-solid fa-bullseye"></i> Skill Gap</a>
-      <a class="nav-link" href="{{ url_for('admin_upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data</a>
+<a class="nav-link" href="{{ url_for('admin_trainees') }}">
+    Trainee Management
+</a>      
+<a class="nav-link" href="{{ url_for('admin_skillgap') }}">
+    Skill Gap
+</a>      <a class="nav-link" href="{{ url_for('admin_upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data</a>
       <a class="nav-link" href="#"><i class="fa-solid fa-chart-simple"></i> Reports</a>
     </nav>
 

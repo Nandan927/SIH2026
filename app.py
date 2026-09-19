@@ -1134,6 +1134,41 @@ def admin_branch_analysis():
 
     )
 
+@app.route("/admin/skillgap")
+def admin_skillgap():
+    if "admin_id" not in session:
+        return redirect(url_for("admin_signin"))
+
+    current_admin_id = session["admin_id"]
+
+    trainees = get_trainees_by_admin(current_admin_id)
+
+    if trainees is None:
+        trainees = []
+
+    return render_template(
+        "admin/skillgap.html",
+        trainees=trainees
+    )
+
+@app.route("/admin/trainees")
+def admin_trainees():
+
+    if "admin_id" not in session:
+        return redirect(url_for("admin_signin"))
+
+    current_admin_id = session["admin_id"]
+
+    trainees = get_trainees_by_admin(current_admin_id)
+
+    if trainees is None:
+        trainees = []
+
+    return render_template(
+        "admin/traineemng.html",
+        trainees=trainees
+    )
+
 
 # =========================================================
 # LOGOUT
@@ -1158,3 +1193,5 @@ if __name__ == "__main__":
     app.run(
         debug=True
     )
+
+

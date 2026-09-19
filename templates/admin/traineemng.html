@@ -791,11 +791,12 @@
 
     <div class="nav-group-label">MENU</div>
     <nav class="nav">
-      <a class="nav-link" href="{{ url_for('admin.dashboard') }}"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
-      <a class="nav-link" href="{{ url_for('admin.branch_analysis') }}"><i class="fa-solid fa-code-branch"></i> Branch Analysis</a>
-      <a class="nav-link active" href="#"><i class="fa-solid fa-user-group"></i> Trainee Management</a>
-      <a class="nav-link" href="#"><i class="fa-solid fa-bullseye"></i> Skill Gap</a>
-      <a class="nav-link" href="{{ url_for('admin.upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data</a>
+      <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+      <a class="nav-link" href="{{ url_for('admin_branch_analysis') }}"><i class="fa-solid fa-code-branch"></i> Branch Analysis</a>
+      <a class="nav-link active" href="{{ url_for('admin_trainees') }}"><i class="fa-solid fa-user-group"></i> Trainee Management</a>
+<a class="nav-link" href="{{ url_for('admin_skillgap') }}">
+    Skill Gap
+</a>      <a class="nav-link" href="{{ url_for('admin_upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data</a>
       <a class="nav-link" href="#"><i class="fa-solid fa-chart-simple"></i> Reports</a>
     </nav>
 
@@ -817,7 +818,7 @@
         <p>Trainee roster — <strong id="sbCount">0</strong> records</p>
       </div>
 
-      <a class="logout-link" href="{{ url_for('common.role_selection') }}"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+      <a class="logout-link" href="{{ url_for('role_selection') }}"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
     </div>
   </aside>
 
@@ -898,7 +899,7 @@
           Upload your trainee Excel sheet from the Upload Data page to populate this table.
           Once uploaded, all records will appear here automatically and you can search, filter, and manage them.
         </div>
-        <a class="empty-cta" href="{{ url_for('admin.upload') }}">
+        <a class="empty-cta" href="{{ url_for('admin_upload') }}">
           <i class="fa-solid fa-cloud-arrow-up"></i> Go to Upload Data
         </a>
       </div>
@@ -1007,8 +1008,7 @@
    - If data exists: renders the table with live filtering.
 ========================================================= */
 
-const STORAGE_KEY = 'horizon_trainee_data';
-
+const BACKEND_TRAINEES = {{ trainees | tojson }};
 /* =========================================================
    STATE
 ========================================================= */
@@ -1069,73 +1069,46 @@ function formatDate(raw){
    Returns an array (empty if no uploaded data).
 ========================================================= */
 function loadTrainees(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return [];
-    const rows = JSON.parse(raw);
-    if(!Array.isArray(rows) || rows.length === 0) return [];
 
-    const normalize = (obj) => {
-      const out = {};
-      Object.keys(obj).forEach(k => {
-        out[k.toLowerCase().trim().replace(/\s+/g,'_')] = obj[k];
-      });
-      return out;
-    };
+    return BACKEND_TRAINEES.map((trainee) => {
 
-    const normalized = rows.map(normalize);
-    const keys = Object.keys(normalized[0] || {});
-    const findKey = (cands) => {
-      for(const c of cands){
-        const found = keys.find(k => k.includes(c));
-        if(found) return found;
-      }
-      return null;
-    };
+        return {
 
-    const colId       = findKey(['trainee_id','id','roll']);
-    const colName     = findKey(['name','full_name','student']);
-    const colEmail    = findKey(['email','mail']);
-    const colBranch   = findKey(['branch','department','dept']);
-    const colBatch    = findKey(['batch','cohort','year']);
-    const colTraining = findKey(['training_status','trainingstatus','trained','training']);
-    const colOutcome  = findKey(['outcome_status','outcomestatus','outcome','status']);
-    const colUpdated  = findKey(['updated','last_updated','date']);
+            id: String(
+                trainee.trainee_id ?? ''
+            ),
 
-    return normalized.map((r, i) => {
-      const branchRaw = colBranch ? String(r[colBranch] || '').trim() : '';
-      const branch = branchRaw ? branchRaw.toUpperCase() : 'N/A';
+            name: String(
+                trainee.name ?? 'Unnamed Trainee'
+            ),
 
-      const tRaw = colTraining ? String(r[colTraining] || '').toLowerCase() : '';
-      let training = 'Non-Trained';
-      if(tRaw.includes('progress') || tRaw.includes('ongoing')) training = 'In Progress';
-      else if(tRaw.includes('train') && !tRaw.includes('non') && !tRaw.includes('not') && !tRaw.includes('un')) training = 'Trained';
+            email: String(
+                trainee.email ?? '—'
+            ),
 
-      const oRaw = colOutcome ? String(r[colOutcome] || '').toLowerCase() : '';
-      let outcome = 'Seeking Employment';
-      if(oRaw.includes('employ') && !oRaw.includes('seek') && !oRaw.includes('un')) outcome = 'Employed';
-      else if(oRaw.includes('higher') || oRaw.includes('stud')) outcome = 'Higher Studies';
-      else if(oRaw.includes('freelanc') || oRaw.includes('part')) outcome = 'Part-Time / Freelancing';
-      else if(oRaw.includes('intern')) outcome = 'Internships';
-      else if(oRaw.includes('seek')) outcome = 'Seeking Employment';
+            branch: String(
+                trainee.branch ?? 'N/A'
+            ).trim(),
 
-      return {
-        id:       colId     ? String(r[colId])     : `HZ-${String(i+1).padStart(3,'0')}`,
-        name:     colName   ? String(r[colName])   : 'Unnamed Trainee',
-        email:    colEmail  ? String(r[colEmail])  : '—',
-        branch,
-        batch:    colBatch  ? String(r[colBatch])  : 'Unassigned',
-        training,
-        outcome,
-        updated:  colUpdated ? formatDate(r[colUpdated]) : '—'
-      };
+            batch: String(
+                trainee.batch ?? 'Unassigned'
+            ).trim(),
+
+            training: String(
+                trainee.training_status ?? 'Non-Trained'
+            ).trim(),
+
+            outcome: String(
+                trainee.outcome_status ?? 'Seeking Employment'
+            ).trim(),
+
+            updated: '—'
+
+        };
+
     });
-  }catch(e){
-    console.warn('Horizon: could not parse uploaded trainee data.', e);
-    return [];
-  }
-}
 
+}
 /* =========================================================
    DYNAMIC FILTER OPTIONS
    Builds the Branch and Batch dropdowns from uploaded data.
@@ -1340,7 +1313,7 @@ function initRowActions(){
           TRAINEES.splice(idx, 1);
           // Persist the updated list back to localStorage
           try{
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(TRAINEES));
+
           }catch(err){
             console.warn('Horizon: could not persist deletion.', err);
           }
@@ -1415,21 +1388,6 @@ function showToast(msg){
    LISTEN FOR STORAGE CHANGES
    If the user uploads data in another tab, refresh this page's table.
 ========================================================= */
-function initStorageListener(){
-  window.addEventListener('storage', (e) => {
-    if(e.key === STORAGE_KEY){
-      TRAINEES = loadTrainees();
-      if(TRAINEES.length > 0){
-        buildFilterOptions();
-        setDataMode(true);
-        renderTable();
-        showToast('Trainee data updated from upload');
-      } else {
-        setDataMode(false);
-      }
-    }
-  });
-}
 
 /* =========================================================
    INIT
@@ -1448,7 +1406,7 @@ function init(){
   initFilters();
   initRowActions();
   initDrawer();
-  initStorageListener();
+  
 
   if(TRAINEES.length === 0){
     console.log('Horizon: No uploaded trainee data found. Showing upload prompt.');
