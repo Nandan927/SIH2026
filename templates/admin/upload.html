@@ -1,1484 +1,2746 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Admin · Upload Data · Horizon</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Admin · Upload Data · Horizon</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<style>
-  /* ═══════════════════════════════════════════════════════════
-     Horizon — Admin Upload & Skill Gap Analysis
-     ═══════════════════════════════════════════════════════════ */
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
 
-  :root {
-    --bg:        #fafafc;
-    --bg-2:      #f4f1ea;
-    --surface:   #ffffff;
-    --surface-2: #fefbf3;
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
 
-    --border:      #e2e8f0;
-    --border-2:    #e6dcc6;
-    --border-warm: rgba(234, 88, 12, 0.42);
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-    --text-0: #0f172a;
-    --text-1: #334155;
-    --text-2: #475569;
-    --text-3: #94a3b8;
+    <style>
+        :root {
+            --bg: #fafafc;
+            --bg-2: #f4f1ea;
+            --surface: #ffffff;
+            --surface-2: #fefbf3;
+            --border: #e2e8f0;
+            --border-2: #e6dcc6;
+            --border-warm: rgba(234, 88, 12, 0.42);
 
-    --orange:      #ea580c;
-    --orange-2:    #f97316;
-    --amber:       #f59e0b;
-    --amber-2:     #fbbf24;
-    --amber-soft:  #fef3c7;
-    --orange-soft: #fee7d4;
-    --emerald:     #16a34a;
-    --emerald-soft:#dcfce7;
-    --red:         #dc2626;
-    --red-soft:    #fee2e2;
-    --violet:      #7c3aed;
-    --violet-soft: #ede9fe;
+            --text-0: #0f172a;
+            --text-1: #334155;
+            --text-2: #475569;
+            --text-3: #94a3b8;
 
-    --accent-gradient:       linear-gradient(135deg, #fbbf24 0%, #ea580c 100%);
-    --accent-gradient-hover: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            --orange: #ea580c;
+            --orange-2: #f97316;
+            --amber: #f59e0b;
+            --amber-2: #fbbf24;
+            --amber-soft: #fef3c7;
+            --orange-soft: #fee7d4;
 
-    --sans:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --display: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --emerald: #16a34a;
+            --emerald-soft: #dcfce7;
 
-    --r-sm: 8px;
-    --r:    12px;
-    --r-lg: 16px;
-    --r-xl: 20px;
+            --red: #dc2626;
+            --red-soft: #fee2e2;
 
-    --shadow-sm:    0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.05);
-    --shadow-card:  0 10px 30px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
-    --shadow-amber: 0 10px 26px -6px rgba(234, 88, 12, 0.32);
-  }
+            --violet: #7c3aed;
+            --violet-soft: #ede9fe;
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+            --accent-gradient: linear-gradient(135deg, #fbbf24 0%, #ea580c 100%);
+            --accent-gradient-hover: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
 
-  html, body {
-    min-height: 100%;
-    background: var(--bg);
-    color: var(--text-1);
-    font-family: var(--sans);
-    font-size: 14px;
-    line-height: 1.55;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+            --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --display: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  body {
-    min-height: 100vh;
-    padding: 32px 24px 60px;
-    position: relative;
-    overflow-x: hidden;
-  }
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(ellipse 60% 45% at 50% -5%,  rgba(245, 158, 11, 0.20) 0%, transparent 62%),
-      radial-gradient(ellipse 55% 45% at 20% 40%,  rgba(234, 88, 12, 0.07) 0%, transparent 70%),
-      radial-gradient(ellipse 45% 35% at 88% 25%,  rgba(251, 191, 36, 0.08) 0%, transparent 65%),
-      linear-gradient(180deg, #fdfbf6 0%, #fafafc 40%, #f6f4ef 100%);
-  }
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image: radial-gradient(circle, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
-    background-size: 28px 28px;
-    mask-image: radial-gradient(ellipse 85% 70% at 50% 40%, #000 0%, transparent 78%);
-    -webkit-mask-image: radial-gradient(ellipse 85% 70% at 50% 40%, #000 0%, transparent 78%);
-    opacity: 0.9;
-  }
-  body > * { position: relative; z-index: 1; }
+            --r-sm: 8px;
+            --r: 12px;
+            --r-lg: 16px;
+            --r-xl: 20px;
 
-  .page-wrap {
-    max-width: 1180px;
-    margin: 0 auto;
-    animation: fadeUp 700ms 100ms ease both;
-  }
+            --shadow-sm:
+                0 1px 2px rgba(15, 23, 42, 0.04),
+                0 1px 3px rgba(15, 23, 42, 0.05);
 
-  /* ═══════════════ TOP HEADER ═══════════════ */
-  .page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-    padding: 16px 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 24px;
-  }
-  .brand-block { display: flex; align-items: center; gap: 14px; }
-  .brand-mark {
-    position: relative;
-    width: 44px;
-    height: 44px;
-    border-radius: 13px;
-    background: var(--accent-gradient);
-    display: grid;
-    place-items: center;
-    color: #ffffff;
-    font-family: var(--display);
-    font-weight: 800;
-    font-size: 19px;
-    letter-spacing: -0.04em;
-    box-shadow:
-      0 10px 22px -6px rgba(234, 88, 12, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-  .brand-mark::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.55), transparent 55%);
-  }
-  .brand-mark::before {
-    content: "";
-    position: absolute;
-    inset: -12px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(249, 168, 37, 0.32), transparent 70%);
-    z-index: -1;
-    filter: blur(9px);
-    animation: backGlow 3.4s ease-in-out infinite;
-  }
-  @keyframes backGlow {
-    0%, 100% { opacity: 0.7; transform: scale(1); }
-    50%      { opacity: 1;   transform: scale(1.08); }
-  }
-  .brand-text { line-height: 1.1; }
-  .brand-name {
-    font-family: var(--display);
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    background: linear-gradient(135deg, var(--text-0) 0%, var(--text-0) 55%, var(--orange) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    display: block;
-  }
-  .brand-tag {
-    font-size: 10.5px;
-    font-weight: 600;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--text-3);
-    margin-top: 3px;
-    display: block;
-  }
-  .badge-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 14px;
-    border-radius: 999px;
-    background: var(--amber-soft);
-    border: 1px solid rgba(234, 88, 12, 0.22);
-    font-size: 11.5px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #b45309;
-  }
-  .badge-pill::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--orange);
-    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.20);
-    animation: pulse 2.2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50%      { transform: scale(1.18); opacity: 0.7; }
-  }
-  .header-nav { display: flex; gap: 10px; align-items: center; }
-  .nav-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 16px;
-    border-radius: var(--r);
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-1);
-    text-decoration: none;
-    background: #fbfaf6;
-    border: 1px solid var(--border);
-    transition: all 200ms ease;
-  }
-  .nav-link:hover {
-    border-color: var(--border-warm);
-    color: var(--orange);
-    background: var(--surface);
-  }
-  .nav-link i { color: var(--orange); }
+            --shadow-card:
+                0 10px 30px rgba(15, 23, 42, 0.06),
+                0 4px 12px rgba(15, 23, 42, 0.04);
 
-  /* ═══════════════ CARDS ═══════════════ */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    box-shadow: var(--shadow-card);
-    padding: 24px 26px;
-    margin-bottom: 22px;
-    position: relative;
-    overflow: hidden;
-  }
-  .card::before {
-    content: "";
-    position: absolute;
-    top: -80px;
-    right: -80px;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(251, 191, 36, 0.10), transparent 70%);
-    pointer-events: none;
-  }
-  .card-heading {
-    font-family: var(--display);
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    color: var(--text-0);
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .card-heading i { color: var(--orange); font-size: 18px; }
-  .card-sub {
-    font-size: 13.5px;
-    color: var(--text-2);
-    line-height: 1.6;
-    max-width: 900px;
-    margin-bottom: 20px;
-  }
+            --shadow-amber:
+                0 10px 26px -6px rgba(234, 88, 12, 0.32);
+        }
 
-  /* ═══════════════ INFO GRID ═══════════════ */
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    margin-top: 20px;
-  }
-  .info-tile {
-    padding: 18px;
-    border-radius: var(--r);
-    border: 1px solid var(--border);
-    background: var(--surface-2);
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-    transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease;
-  }
-  .info-tile:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-sm);
-    border-color: var(--border-warm);
-  }
-  .info-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 11px;
-    display: grid;
-    place-items: center;
-    color: #fff;
-    flex-shrink: 0;
-    font-size: 16px;
-  }
-  .info-tile:nth-child(1) .info-icon { background: linear-gradient(135deg, #fbbf24, #f59e0b); box-shadow: 0 6px 14px -4px rgba(245, 158, 11, 0.5); }
-  .info-tile:nth-child(2) .info-icon { background: linear-gradient(135deg, #fb923c, #ea580c); box-shadow: 0 6px 14px -4px rgba(234, 88, 12, 0.5); }
-  .info-tile:nth-child(3) .info-icon { background: linear-gradient(135deg, #a78bfa, #7c3aed); box-shadow: 0 6px 14px -4px rgba(124, 58, 237, 0.5); }
-  .info-tile .t { font-family: var(--display); font-size: 14px; font-weight: 700; color: var(--text-0); margin-bottom: 4px; }
-  .info-tile .d { font-size: 12.5px; color: var(--text-2); line-height: 1.55; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-  /* ═══════════════ UPLOAD ROW ═══════════════ */
-  .upload-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2cm;
-    align-items: stretch;
-  }
-  @media (max-width: 900px) {
-    .upload-row { grid-template-columns: 1fr; gap: 22px; }
-  }
+        html,
+        body {
+            min-height: 100%;
+            background: var(--bg);
+            color: var(--text-1);
+            font-family: var(--sans);
+            font-size: 14px;
+            line-height: 1.55;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
 
-  .action-box {
-    padding: 22px;
-    border-radius: var(--r);
-    border: 1px solid var(--border);
-    background: var(--surface-2);
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  .action-title {
-    font-family: var(--display);
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-0);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .action-title i { color: var(--orange); }
+        body {
+            min-height: 100vh;
+            padding: 32px 24px 60px;
+            position: relative;
+            overflow-x: hidden;
+        }
 
-  /* ── Dropzone (FIXED) ── */
-  .dropzone {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 8px;
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
 
-    border: 2px dashed var(--border-2);
-    border-radius: var(--r);
-    background: #fffdf6;
-    padding: 30px 20px;
-    min-height: 230px;
-    cursor: pointer;
-    transition: border-color 220ms ease, background 220ms ease, transform 220ms ease;
-  }
-  .dropzone:hover {
-    border-color: var(--border-warm);
-    background: var(--amber-soft);
-  }
-  .dropzone.dragging {
-    border-color: var(--orange);
-    background: var(--amber-soft);
-    transform: scale(1.01);
-  }
+            background:
+                radial-gradient(
+                    ellipse 60% 45% at 50% -5%,
+                    rgba(245, 158, 11, 0.20) 0%,
+                    transparent 62%
+                ),
+                radial-gradient(
+                    ellipse 55% 45% at 20% 40%,
+                    rgba(234, 88, 12, 0.07) 0%,
+                    transparent 70%
+                ),
+                radial-gradient(
+                    ellipse 45% 35% at 88% 25%,
+                    rgba(251, 191, 36, 0.08) 0%,
+                    transparent 65%
+                ),
+                linear-gradient(
+                    180deg,
+                    #fdfbf6 0%,
+                    #fafafc 40%,
+                    #f6f4ef 100%
+                );
+        }
 
-  /* The invisible file input covers the whole dropzone */
-  .dropzone input[type="file"] {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-    z-index: 2;
-  }
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
 
-  /* Icon block — now a proper block so it sits on its own line */
-  .dz-icon {
-    display: grid;
-    place-items: center;
-    width: 54px;
-    height: 54px;
-    border-radius: 16px;
-    background: var(--accent-gradient);
-    color: #fff;
-    font-size: 22px;
-    margin: 0 auto 6px;
-    box-shadow: var(--shadow-amber);
-    pointer-events: none;
-  }
+            background-image:
+                radial-gradient(
+                    circle,
+                    rgba(15, 23, 42, 0.05) 1px,
+                    transparent 1px
+                );
 
-  .dz-title {
-    font-family: var(--display);
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text-0);
-    line-height: 1.35;
-    pointer-events: none;
-  }
-  .dz-sub {
-    font-size: 12.5px;
-    color: var(--text-2);
-    pointer-events: none;
-  }
-  .dz-browse {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 18px;
-    border-radius: var(--r);
-    background: var(--accent-gradient);
-    color: #fff;
-    font-family: var(--display);
-    font-size: 13px;
-    font-weight: 700;
-    box-shadow: var(--shadow-amber);
-    pointer-events: none;
-    margin-top: 4px;
-  }
-  .dz-hint {
-    font-size: 11.5px;
-    color: var(--text-3);
-    margin-top: 6px;
-    letter-spacing: 0.02em;
-    pointer-events: none;
-  }
+            background-size: 28px 28px;
 
-  /* ── File chip ── */
-  .file-chip {
-    display: none;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    border-radius: var(--r);
-    background: var(--emerald-soft);
-    border: 1px solid #a7f3d0;
-    color: #065f46;
-    font-size: 13px;
-    font-weight: 600;
-  }
-  .file-chip.show { display: flex; }
-  .file-chip i { color: var(--emerald); font-size: 16px; }
-  .file-chip .size { color: #059669; font-weight: 500; font-size: 12px; margin-left: auto; }
+            mask-image:
+                radial-gradient(
+                    ellipse 85% 70% at 50% 40%,
+                    #000 0%,
+                    transparent 78%
+                );
 
-  /* ── Format button ── */
-  .format-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 18px;
-    border-radius: var(--r);
-    background: #fff;
-    border: 1px solid var(--border);
-    color: var(--text-1);
-    font-family: var(--display);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 220ms ease;
-    width: fit-content;
-  }
-  .format-button:hover {
-    border-color: var(--border-warm);
-    color: var(--orange);
-    background: var(--surface-2);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
-  }
-  .format-button i:first-child { color: var(--orange); font-size: 15px; }
-  .format-button i:last-child { color: var(--text-3); margin-left: 4px; font-size: 12px; }
+            -webkit-mask-image:
+                radial-gradient(
+                    ellipse 85% 70% at 50% 40%,
+                    #000 0%,
+                    transparent 78%
+                );
 
-  .format-preview {
-    border-radius: var(--r);
-    border: 1px dashed var(--border);
-    background: #fff;
-    padding: 12px 14px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 12px;
-    color: var(--text-2);
-    line-height: 1.7;
-    overflow-x: auto;
-  }
-  .format-preview span { color: var(--orange); }
+            opacity: 0.9;
+        }
 
-  /* ═══════════════ CREDENTIALS CARD ═══════════════ */
-  .status-box {
-    display: none;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border-radius: var(--r);
-    background: var(--emerald-soft);
-    border: 1px solid #a7f3d0;
-    color: #065f46;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 18px;
-  }
-  .status-box.show { display: flex; }
-  .status-box.warn { background: var(--amber-soft); border-color: rgba(234, 88, 12, 0.28); color: #b45309; }
-  .status-box i { font-size: 16px; }
+        body > * {
+            position: relative;
+            z-index: 1;
+        }
 
-  .button-row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 6px;
-  }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    padding: 12px 22px;
-    border-radius: var(--r);
-    font-family: var(--display);
-    font-size: 13.5px;
-    font-weight: 700;
-    letter-spacing: -0.005em;
-    border: none;
-    cursor: pointer;
-    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
+        .page-wrap {
+            max-width: 1180px;
+            margin: 0 auto;
+            animation: fadeUp 700ms 100ms ease both;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+
+            padding: 16px 20px;
+
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            box-shadow: var(--shadow-sm);
+
+            margin-bottom: 24px;
+        }
+
+        .brand-block {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-mark {
+            position: relative;
+            width: 44px;
+            height: 44px;
+            border-radius: 13px;
+
+            background: var(--accent-gradient);
+
+            display: grid;
+            place-items: center;
+
+            color: #ffffff;
+            font-family: var(--display);
+            font-weight: 800;
+            font-size: 19px;
+            letter-spacing: -0.04em;
+
+            box-shadow:
+                0 10px 22px -6px rgba(234, 88, 12, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .brand-mark::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+
+            background:
+                radial-gradient(
+                    circle at 30% 25%,
+                    rgba(255, 255, 255, 0.55),
+                    transparent 55%
+                );
+        }
+
+        .brand-mark::before {
+            content: "";
+            position: absolute;
+            inset: -12px;
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(249, 168, 37, 0.32),
+                    transparent 70%
+                );
+
+            z-index: -1;
+            filter: blur(9px);
+
+            animation: backGlow 3.4s ease-in-out infinite;
+        }
+
+        @keyframes backGlow {
+            0%, 100% {
+                opacity: 0.7;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.08);
+            }
+        }
+
+        .brand-text {
+            line-height: 1.1;
+        }
+
+        .brand-name {
+            font-family: var(--display);
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--text-0) 0%,
+                    var(--text-0) 55%,
+                    var(--orange) 100%
+                );
+
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+
+            display: block;
+        }
+
+        .brand-tag {
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--text-3);
+            margin-top: 3px;
+            display: block;
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 7px 14px;
+            border-radius: 999px;
+
+            background: var(--amber-soft);
+            border: 1px solid rgba(234, 88, 12, 0.22);
+
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #b45309;
+        }
+
+        .badge-pill::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+
+            background: var(--orange);
+            box-shadow:
+                0 0 0 3px rgba(234, 88, 12, 0.20);
+
+            animation: pulse 2.2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.18);
+                opacity: 0.7;
+            }
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 9px 16px;
+            border-radius: var(--r);
+
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-1);
+
+            text-decoration: none;
+            background: #fbfaf6;
+            border: 1px solid var(--border);
+
+            transition: all 200ms ease;
+        }
+
+        .nav-link:hover {
+            border-color: var(--border-warm);
+            color: var(--orange);
+            background: var(--surface);
+        }
+
+        .nav-link i {
+            color: var(--orange);
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            box-shadow: var(--shadow-card);
+
+            padding: 24px 26px;
+            margin-bottom: 22px;
+
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(251, 191, 36, 0.10),
+                    transparent 70%
+                );
+
+            pointer-events: none;
+        }
+
+        .card-heading {
+            font-family: var(--display);
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            color: var(--text-0);
+
+            margin-bottom: 8px;
+
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-heading i {
+            color: var(--orange);
+            font-size: 18px;
+        }
+
+        .card-sub {
+            font-size: 13.5px;
+            color: var(--text-2);
+            line-height: 1.6;
+            max-width: 900px;
+            margin-bottom: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .info-tile {
+            padding: 18px;
+            border-radius: var(--r);
+
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+
+            transition:
+                transform 260ms ease,
+                box-shadow 260ms ease,
+                border-color 260ms ease;
+        }
+
+        .info-tile:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+            border-color: var(--border-warm);
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+
+            display: grid;
+            place-items: center;
+
+            color: #fff;
+            flex-shrink: 0;
+            font-size: 16px;
+        }
+
+        .info-tile:nth-child(1) .info-icon {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            box-shadow: 0 6px 14px -4px rgba(245, 158, 11, 0.5);
+        }
+
+        .info-tile:nth-child(2) .info-icon {
+            background: linear-gradient(135deg, #fb923c, #ea580c);
+            box-shadow: 0 6px 14px -4px rgba(234, 88, 12, 0.5);
+        }
+
+        .info-tile:nth-child(3) .info-icon {
+            background: linear-gradient(135deg, #a78bfa, #7c3aed);
+            box-shadow: 0 6px 14px -4px rgba(124, 58, 237, 0.5);
+        }
+
+        .info-tile .t {
+            font-family: var(--display);
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-0);
+            margin-bottom: 4px;
+        }
+
+        .info-tile .d {
+            font-size: 12.5px;
+            color: var(--text-2);
+            line-height: 1.55;
+        }
+
+        .upload-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 900px) {
+            .upload-row {
+                grid-template-columns: 1fr;
+                gap: 22px;
+            }
+        }
+
+        .action-box {
+            padding: 22px;
+            border-radius: var(--r);
+
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .action-title {
+            font-family: var(--display);
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-0);
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-title i {
+            color: var(--orange);
+        }
+
+        .dropzone {
+            position: relative;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 8px;
+
+            border: 2px dashed var(--border-2);
+            border-radius: var(--r);
+            background: #fffdf6;
+
+            padding: 30px 20px;
+            min-height: 230px;
+
+            cursor: pointer;
+
+            transition:
+                border-color 220ms ease,
+                background 220ms ease,
+                transform 220ms ease;
+        }
+
+        .dropzone:hover {
+            border-color: var(--border-warm);
+            background: var(--amber-soft);
+        }
+
+        .dropzone.dragging {
+            border-color: var(--orange);
+            background: var(--amber-soft);
+            transform: scale(1.01);
+        }
+
+        .dropzone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .dz-icon {
+            display: grid;
+            place-items: center;
+
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+
+            background: var(--accent-gradient);
+            color: #fff;
+            font-size: 22px;
+
+            margin: 0 auto 6px;
+
+            box-shadow: var(--shadow-amber);
+            pointer-events: none;
+        }
+
+        .dz-title {
+            font-family: var(--display);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-0);
+            line-height: 1.35;
+            pointer-events: none;
+        }
+
+        .dz-sub {
+            font-size: 12.5px;
+            color: var(--text-2);
+            pointer-events: none;
+        }
+
+        .dz-browse {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 9px 18px;
+            border-radius: var(--r);
+
+            background: var(--accent-gradient);
+            color: #fff;
+
+            font-family: var(--display);
+            font-size: 13px;
+            font-weight: 700;
+
+            box-shadow: var(--shadow-amber);
+            pointer-events: none;
+            margin-top: 4px;
+        }
+
+        .dz-hint {
+            font-size: 11.5px;
+            color: var(--text-3);
+            margin-top: 6px;
+            letter-spacing: 0.02em;
+            pointer-events: none;
+        }
+
+        .file-chip {
+            display: none;
+            align-items: center;
+            gap: 10px;
+
+            padding: 10px 14px;
+            border-radius: var(--r);
+
+            background: var(--emerald-soft);
+            border: 1px solid #a7f3d0;
+
+            color: #065f46;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .file-chip.show {
+            display: flex;
+        }
+
+        .file-chip i {
+            color: var(--emerald);
+            font-size: 16px;
+        }
+
+        .file-chip .size {
+            color: #059669;
+            font-weight: 500;
+            font-size: 12px;
+            margin-left: auto;
+        }
+
+        .format-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+
+            padding: 12px 18px;
+            border-radius: var(--r);
+
+            background: #fff;
+            border: 1px solid var(--border);
+            color: var(--text-1);
+
+            font-family: var(--display);
+            font-size: 13px;
+            font-weight: 600;
+
+            cursor: pointer;
+            transition: all 220ms ease;
+            width: fit-content;
+        }
+
+        .format-button:hover {
+            border-color: var(--border-warm);
+            color: var(--orange);
+            background: var(--surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .format-button i:first-child {
+            color: var(--orange);
+            font-size: 15px;
+        }
+
+        .format-button i:last-child {
+            color: var(--text-3);
+            margin-left: 4px;
+            font-size: 12px;
+        }
+
+        .format-preview {
+            border-radius: var(--r);
+            border: 1px dashed var(--border);
+            background: #fff;
+
+            padding: 12px 14px;
+
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 12px;
+            color: var(--text-2);
+            line-height: 1.7;
+
+            overflow-x: auto;
+        }
+
+        .format-preview span {
+            color: var(--orange);
+        }
+
+        .status-box {
+            display: none;
+            align-items: center;
+            gap: 12px;
+
+            padding: 12px 16px;
+            border-radius: var(--r);
+
+            background: var(--emerald-soft);
+            border: 1px solid #a7f3d0;
+
+            color: #065f46;
+            font-size: 13px;
+            font-weight: 600;
+
+            margin-bottom: 18px;
+        }
+
+        .status-box.show {
+            display: flex;
+        }
+
+        .status-box.warn {
+            background: var(--amber-soft);
+            border-color: rgba(234, 88, 12, 0.28);
+            color: #b45309;
+        }
+
+        .status-box i {
+            font-size: 16px;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+
+            padding: 12px 22px;
+            border-radius: var(--r);
+
+            font-family: var(--display);
+            font-size: 13.5px;
+            font-weight: 700;
+            letter-spacing: -0.005em;
+
+            border: none;
+            cursor: pointer;
+
+            transition:
+                transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
                 box-shadow 220ms ease,
                 background 220ms ease;
-    text-decoration: none;
-    position: relative;
-    overflow: hidden;
-  }
-  .btn-primary {
-    background: var(--accent-gradient);
-    color: #fff;
-    box-shadow: var(--shadow-amber);
-  }
-  .btn-primary::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
-    transform: translateX(-100%);
-    transition: transform 700ms ease;
-  }
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 32px -6px rgba(234, 88, 12, 0.48);
-    background: var(--accent-gradient-hover);
-  }
-  .btn-primary:hover::after { transform: translateX(100%); }
-  .btn-secondary {
-    background: #fff;
-    color: var(--text-1);
-    border: 1px solid var(--border);
-  }
-  .btn-secondary:hover {
-    border-color: var(--border-warm);
-    color: var(--orange);
-    background: var(--surface-2);
-    transform: translateY(-1px);
-  }
-  .btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none !important;
-    box-shadow: none !important;
-  }
 
-  /* ═══════════════ CREDENTIALS PREVIEW ═══════════════ */
-  .creds-wrap {
-    display: none;
-    margin-top: 18px;
-    border-radius: var(--r);
-    border: 1px solid var(--border);
-    overflow: hidden;
-  }
-  .creds-wrap.show { display: block; }
-  .creds-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    background: var(--surface-2);
-    border-bottom: 1px solid var(--border);
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--text-1);
-    letter-spacing: 0.02em;
-  }
-  .creds-head .count { color: var(--orange); }
-  .creds-scroll { max-height: 320px; overflow: auto; }
-  .creds-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  .creds-table thead th {
-    text-align: left;
-    padding: 11px 14px;
-    background: #fbfaf6;
-    color: var(--text-2);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-  }
-  .creds-table tbody td {
-    padding: 11px 14px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-1);
-    vertical-align: middle;
-  }
-  .creds-table tbody tr:last-child td { border-bottom: none; }
-  .creds-table tbody tr:hover { background: #fffaef; }
-  .creds-table .pw {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    color: var(--orange);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-  .creds-table .id {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    color: var(--text-2);
-  }
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
 
-  /* ═══════════════ DASHBOARD CTA ═══════════════ */
-  .cta-wrap {
-    text-align: center;
-    margin-top: 26px;
-  }
-  .cta-full {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    max-width: 640px;
-    height: 54px;
-    margin: 0 auto;
-    border-radius: var(--r);
-    background: var(--accent-gradient);
-    color: #fff;
-    font-family: var(--display);
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -0.005em;
-    text-decoration: none;
-    box-shadow: var(--shadow-amber);
-    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: var(--shadow-amber);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 32px -6px rgba(234, 88, 12, 0.48);
+            background: var(--accent-gradient-hover);
+        }
+
+        .btn-secondary {
+            background: #fff;
+            color: var(--text-1);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--border-warm);
+            color: var(--orange);
+            background: var(--surface-2);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .creds-wrap {
+            display: none;
+            margin-top: 18px;
+
+            border-radius: var(--r);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .creds-wrap.show {
+            display: block;
+        }
+
+        .creds-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 12px 16px;
+            background: var(--surface-2);
+            border-bottom: 1px solid var(--border);
+
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text-1);
+            letter-spacing: 0.02em;
+        }
+
+        .creds-head .count {
+            color: var(--orange);
+        }
+
+        .creds-scroll {
+            max-height: 320px;
+            overflow: auto;
+        }
+
+        .creds-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .creds-table thead th {
+            text-align: left;
+            padding: 11px 14px;
+
+            background: #fbfaf6;
+            color: var(--text-2);
+
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+        }
+
+        .creds-table tbody td {
+            padding: 11px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-1);
+            vertical-align: middle;
+        }
+
+        .creds-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .creds-table tbody tr:hover {
+            background: #fffaef;
+        }
+
+        .creds-table .pw {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            color: var(--orange);
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .creds-table .id {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            color: var(--text-2);
+        }
+
+        .cta-wrap {
+            text-align: center;
+            margin-top: 26px;
+        }
+
+        .cta-full {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+
+            width: 100%;
+            max-width: 640px;
+            height: 54px;
+            margin: 0 auto;
+
+            border-radius: var(--r);
+
+            background: var(--accent-gradient);
+            color: #fff;
+
+            font-family: var(--display);
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: -0.005em;
+
+            text-decoration: none;
+            box-shadow: var(--shadow-amber);
+
+            transition:
+                transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
                 box-shadow 220ms ease,
                 background 220ms ease,
                 filter 220ms ease,
                 opacity 220ms ease;
-    position: relative;
-    overflow: hidden;
-    border: none;
-    cursor: pointer;
-  }
-  .cta-full::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
-    transform: translateX(-100%);
-    transition: transform 800ms ease;
-  }
-  .cta-full:hover:not([disabled]) {
-    transform: translateY(-2px);
-    box-shadow: 0 18px 36px -6px rgba(234, 88, 12, 0.5);
-    background: var(--accent-gradient-hover);
-  }
-  .cta-full:hover:not([disabled])::after { transform: translateX(100%); }
 
-  .cta-full[disabled],
-  .cta-full[aria-disabled="true"] {
-    cursor: not-allowed;
-    filter: grayscale(0.45);
-    opacity: 0.55;
-    box-shadow: none;
-    transform: none !important;
-    pointer-events: none;
-  }
+            position: relative;
+            overflow: hidden;
 
-  .cta-note {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 12px;
-    padding: 8px 14px;
-    border-radius: 999px;
-    background: var(--amber-soft);
-    border: 1px solid rgba(234, 88, 12, 0.22);
-    font-size: 12px;
-    font-weight: 600;
-    color: #b45309;
-    letter-spacing: 0.01em;
-  }
-  .cta-note i { font-size: 12px; }
-  .cta-note.ready {
-    background: var(--emerald-soft);
-    border-color: #a7f3d0;
-    color: #065f46;
-  }
-  .cta-note.ready i { color: var(--emerald); }
+            border: none;
+            cursor: pointer;
+        }
 
-  /* ═══════════════ MODAL ═══════════════ */
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    background: rgba(15, 23, 42, 0.55);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 260ms ease;
-  }
-  .modal-backdrop.show { opacity: 1; pointer-events: auto; }
+        .cta-full:hover:not([disabled]) {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 36px -6px rgba(234, 88, 12, 0.5);
+            background: var(--accent-gradient-hover);
+        }
 
-  .modal {
-    width: 100%;
-    max-width: 720px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    box-shadow: 0 32px 60px -20px rgba(0, 0, 0, 0.4);
-    overflow: hidden;
-    transform: translateY(12px) scale(0.98);
-    transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
-    max-height: calc(100vh - 48px);
-    display: flex;
-    flex-direction: column;
-  }
-  .modal-backdrop.show .modal { transform: translateY(0) scale(1); }
+        .cta-full[disabled],
+        .cta-full[aria-disabled="true"] {
+            cursor: not-allowed;
+            filter: grayscale(0.45);
+            opacity: 0.55;
+            box-shadow: none;
+            transform: none !important;
+            pointer-events: none;
+        }
 
-  .modal-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 22px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface-2);
-  }
-  .modal-title {
-    font-family: var(--display);
-    font-size: 16px;
-    font-weight: 800;
-    color: var(--text-0);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .modal-title i { color: var(--orange); }
-  .modal-close {
-    width: 34px;
-    height: 34px;
-    border-radius: 9px;
-    border: 1px solid var(--border);
-    background: #fff;
-    color: var(--text-2);
-    cursor: pointer;
-    display: grid;
-    place-items: center;
-    transition: all 200ms ease;
-  }
-  .modal-close:hover {
-    color: var(--orange);
-    border-color: var(--border-warm);
-    background: var(--orange-soft);
-  }
-  .modal-body {
-    padding: 20px 22px;
-    overflow-y: auto;
-  }
-  .modal-body p { font-size: 13px; color: var(--text-2); line-height: 1.65; margin-bottom: 14px; }
+        .cta-note {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
 
-  .format-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    overflow: hidden;
-  }
-  .format-table thead th {
-    padding: 11px 14px;
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    color: #fff;
-    font-size: 11.5px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    text-align: left;
-    border-right: 1px solid rgba(255,255,255,0.2);
-  }
-  .format-table thead th:last-child { border-right: none; }
-  .format-table tbody td {
-    padding: 11px 14px;
-    border-top: 1px solid var(--border);
-    color: var(--text-1);
-    font-size: 12.5px;
-  }
-  .format-table tbody tr:nth-child(even) { background: #fffbf1; }
+            margin-top: 12px;
+            padding: 8px 14px;
+            border-radius: 999px;
 
-  .format-note {
-    margin-top: 14px;
-    padding: 12px 14px;
-    border-radius: var(--r);
-    background: var(--amber-soft);
-    border-left: 3px solid var(--amber);
-    font-size: 12.5px;
-    color: #78350f;
-    line-height: 1.55;
-  }
-  .modal-foot {
-    padding: 14px 22px;
-    border-top: 1px solid var(--border);
-    background: var(--surface-2);
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-  }
+            background: var(--amber-soft);
+            border: 1px solid rgba(234, 88, 12, 0.22);
 
-  /* ═══════════════ FOOTER ═══════════════ */
-  .page-footer {
-    margin-top: 30px;
-    text-align: center;
-    font-size: 11.5px;
-    color: var(--text-3);
-    letter-spacing: 0.03em;
-  }
-  .page-footer strong { color: var(--text-2); font-weight: 600; }
+            font-size: 12px;
+            font-weight: 600;
+            color: #b45309;
+            letter-spacing: 0.01em;
+        }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-  }
+        .cta-note.ready {
+            background: var(--emerald-soft);
+            border-color: #a7f3d0;
+            color: #065f46;
+        }
 
-  @media (max-width: 900px) {
-    .info-grid { grid-template-columns: 1fr; }
-    .page-header { padding: 14px 16px; }
-    .card { padding: 20px; }
-    .header-nav { width: 100%; }
-    .nav-link { flex: 1; justify-content: center; }
-  }
-</style>
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 24px;
+
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 260ms ease;
+        }
+
+        .modal-backdrop.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 720px;
+
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+
+            box-shadow: 0 32px 60px -20px rgba(0, 0, 0, 0.4);
+
+            overflow: hidden;
+
+            transform: translateY(12px) scale(0.98);
+            transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+
+            max-height: calc(100vh - 48px);
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-backdrop.show .modal {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 18px 22px;
+
+            border-bottom: 1px solid var(--border);
+            background: var(--surface-2);
+        }
+
+        .modal-title {
+            font-family: var(--display);
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-0);
+
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-title i {
+            color: var(--orange);
+        }
+
+        .modal-close {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-2);
+
+            cursor: pointer;
+
+            display: grid;
+            place-items: center;
+
+            transition: all 200ms ease;
+        }
+
+        .modal-close:hover {
+            color: var(--orange);
+            border-color: var(--border-warm);
+            background: var(--orange-soft);
+        }
+
+        .modal-body {
+            padding: 20px 22px;
+            overflow-y: auto;
+        }
+
+        .modal-body p {
+            font-size: 13px;
+            color: var(--text-2);
+            line-height: 1.65;
+            margin-bottom: 14px;
+        }
+
+        .format-table {
+            width: 100%;
+            border-collapse: collapse;
+
+            font-size: 13px;
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            overflow: hidden;
+        }
+
+        .format-table thead th {
+            padding: 11px 14px;
+
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #fff;
+
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            text-align: left;
+
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .format-table tbody td {
+            padding: 11px 14px;
+            border-top: 1px solid var(--border);
+            color: var(--text-1);
+            font-size: 12.5px;
+        }
+
+        .format-table tbody tr:nth-child(even) {
+            background: #fffbf1;
+        }
+
+        .format-note {
+            margin-top: 14px;
+            padding: 12px 14px;
+
+            border-radius: var(--r);
+            background: var(--amber-soft);
+            border-left: 3px solid var(--amber);
+
+            font-size: 12.5px;
+            color: #78350f;
+            line-height: 1.55;
+        }
+
+        .modal-foot {
+            padding: 14px 22px;
+
+            border-top: 1px solid var(--border);
+            background: var(--surface-2);
+
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .page-footer {
+            margin-top: 30px;
+            text-align: center;
+
+            font-size: 11.5px;
+            color: var(--text-3);
+            letter-spacing: 0.03em;
+        }
+
+        .page-footer strong {
+            color: var(--text-2);
+            font-weight: 600;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                padding: 14px 16px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .header-nav {
+                width: 100%;
+            }
+
+            .nav-link {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
 <div class="page-wrap">
 
-  <!-- A. HEADER -->
-  <header class="page-header">
-    <div class="brand-block">
-      <span class="brand-mark">H</span>
-      <span class="brand-text">
-        <span class="brand-name">Horizon</span>
-        <span class="brand-tag">Skill Gap Analysis</span>
-      </span>
-    </div>
-    <div class="header-nav">
-      <span class="badge-pill">Admin Portal · Longitudinal Skill Gap &amp; Outcome Tracking</span>
-      <a href="#" class="nav-link" id="dashboardLink" title="Enter Admin Dashboard" aria-disabled="true" style="pointer-events:none;opacity:0.55;">
-        <i class="fa-solid fa-gauge-high"></i> Dashboard
-      </a>
-    </div>
-  </header>
+    <!-- HEADER -->
 
-  <!-- B. PROBLEM STATEMENT -->
-  <section class="card">
-    <h1 class="card-heading">
-      <i class="fa-solid fa-compass-drafting"></i>
-      Trainee Longitudinal Outcome &amp; Skill Gap Analysis
-    </h1>
-    <p class="card-sub">
-      Upload cohort data to bridge the tracking gap between training completion, employment,
-      self-employment, and job retention. The system automatically categorizes placed vs. non-placed
-      trainees to highlight skill gaps and reason for attrition.
-    </p>
-    <div class="info-grid">
-      <div class="info-tile">
-        <div class="info-icon"><i class="fa-solid fa-chart-column"></i></div>
-        <div>
-          <div class="t">Skill Gap Analytics</div>
-          <div class="d">Automatic breakdown of core skills comparing placed vs. non-placed trainees.</div>
-        </div>
-      </div>
-      <div class="info-tile">
-        <div class="info-icon"><i class="fa-solid fa-signal"></i></div>
-        <div>
-          <div class="t">Outcome Signal Tracking</div>
-          <div class="d">Monitor wage progression, retention, and self-employment signals.</div>
-        </div>
-      </div>
-      <div class="info-tile">
-        <div class="info-icon"><i class="fa-solid fa-key"></i></div>
-        <div>
-          <div class="t">Automated Credentials</div>
-          <div class="d">Auto-generate unique login credentials for every trainee in the uploaded sheet.</div>
-        </div>
-      </div>
-    </div>
-  </section>
+    <header class="page-header">
 
-  <!-- C. UPLOAD + FORMAT -->
-  <section class="card">
-    <h2 class="card-heading">
-      <i class="fa-solid fa-file-arrow-up"></i>
-      Upload Cohort Data
-    </h2>
-    <p class="card-sub">
-      Drop an Excel sheet with trainee records. Columns must match the required format below —
-      we'll parse and categorize them for outcome tracking.
-    </p>
+        <div class="brand-block">
 
-    <div class="upload-row">
+            <span class="brand-mark">H</span>
 
-      <div class="action-box">
-        <div class="action-title">
-          <i class="fa-solid fa-cloud-arrow-up"></i>
-          Upload Excel Sheet
+            <span class="brand-text">
+                <span class="brand-name">Horizon</span>
+                <span class="brand-tag">Skill Gap Analysis</span>
+            </span>
+
         </div>
 
-        <form
-          id="uploadForm"
-          action="{{ url_for('admin_upload') }}"
-          method="POST"
-          enctype="multipart/form-data"
+        <div class="header-nav">
+
+            <span class="badge-pill">
+                Admin Portal · Longitudinal Skill Gap &amp; Outcome Tracking
+            </span>
+
+            <a
+                href="#"
+                class="nav-link"
+                id="dashboardLink"
+                title="Upload data first"
+                aria-disabled="true"
+                style="pointer-events:none;opacity:0.55;"
+            >
+                <i class="fa-solid fa-gauge-high"></i>
+                Dashboard
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- PROBLEM STATEMENT -->
+
+    <section class="card">
+
+        <h1 class="card-heading">
+            <i class="fa-solid fa-compass-drafting"></i>
+            Trainee Longitudinal Outcome &amp; Skill Gap Analysis
+        </h1>
+
+        <p class="card-sub">
+            Upload cohort data to bridge the tracking gap between training completion,
+            employment, self-employment, and job retention. The system automatically
+            categorizes placed vs. non-placed trainees to highlight skill gaps and
+            reason for attrition.
+        </p>
+
+        <div class="info-grid">
+
+            <div class="info-tile">
+                <div class="info-icon">
+                    <i class="fa-solid fa-chart-column"></i>
+                </div>
+
+                <div>
+                    <div class="t">Skill Gap Analytics</div>
+                    <div class="d">
+                        Automatic breakdown of core skills comparing placed vs.
+                        non-placed trainees.
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-tile">
+                <div class="info-icon">
+                    <i class="fa-solid fa-signal"></i>
+                </div>
+
+                <div>
+                    <div class="t">Outcome Signal Tracking</div>
+                    <div class="d">
+                        Monitor wage progression, retention, and self-employment signals.
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-tile">
+                <div class="info-icon">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+
+                <div>
+                    <div class="t">Automated Credentials</div>
+                    <div class="d">
+                        Auto-generate unique login credentials for every trainee in
+                        the uploaded sheet.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- UPLOAD + FORMAT -->
+
+    <section class="card">
+
+        <h2 class="card-heading">
+            <i class="fa-solid fa-file-arrow-up"></i>
+            Upload Cohort Data
+        </h2>
+
+        <p class="card-sub">
+            Drop an Excel sheet with trainee records. Columns must match the required
+            format below — we'll parse and categorize them for outcome tracking.
+        </p>
+
+        <div class="upload-row">
+
+            <div class="action-box">
+
+                <div class="action-title">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    Upload Excel Sheet
+                </div>
+
+                <form
+                    id="uploadForm"
+                    action="{{ url_for('admin_upload') }}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+
+                    <label
+                        class="dropzone"
+                        id="dropzone"
+                        for="fileInput"
+                    >
+
+                        <input
+                            type="file"
+                            id="fileInput"
+                            name="excel_file"
+                            accept=".xlsx,.xls"
+                        />
+
+                        <span class="dz-icon">
+                            <i class="fa-solid fa-file-excel"></i>
+                        </span>
+
+                        <span class="dz-title">
+                            Drag &amp; drop your Excel file here
+                        </span>
+
+                        <span class="dz-sub">
+                            or
+                        </span>
+
+                        <span class="dz-browse">
+                            <i class="fa-solid fa-folder-open"></i>
+                            Browse Files
+                        </span>
+
+                        <span class="dz-hint">
+                            Supported formats: .xlsx, .xls · max 20 MB
+                        </span>
+
+                    </label>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="uploadButton"
+                        style="margin-top:14px;"
+                    >
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        Upload to Server
+                    </button>
+
+                </form>
+
+                <div class="file-chip" id="fileChip">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    <span class="name" id="fileName">
+                        trainees.xlsx
+                    </span>
+
+                    <span class="size" id="fileSize">
+                        0 KB
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="action-box">
+
+                <div class="action-title">
+                    <i class="fa-solid fa-table-columns"></i>
+                    View Excel Sheet Format
+                </div>
+
+                <button
+                    type="button"
+                    class="format-button"
+                    id="openFormatModal"
+                >
+                    <i class="fa-solid fa-circle-info"></i>
+                    See required column structure
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+
+                <div class="format-preview">
+                    <span>Trainee ID</span> · Name · Email · Branch · Batch ·<br />
+                    Training Status · Outcome Status · Skills
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CREDENTIALS -->
+
+    <section class="card">
+
+        <h2 class="card-heading">
+            <i class="fa-solid fa-id-card-clip"></i>
+            Trainee Credentials Generation
+        </h2>
+
+        <p class="card-sub">
+            The preview below is generated in your browser only.
+            The official credentials are generated securely by Flask during server upload.
+        </p>
+
+        <div class="status-box" id="statusBox">
+
+            <i
+                class="fa-solid fa-circle-check"
+                id="statusIcon"
+            ></i>
+
+            <span id="statusText">
+                Select an Excel file to begin.
+            </span>
+
+        </div>
+
+        <div class="button-row">
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                id="generateBtn"
+                disabled
+            >
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                Generate Preview Credentials
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-secondary"
+                id="downloadBtn"
+                disabled
+            >
+                <i class="fa-solid fa-file-arrow-down"></i>
+                Download Preview
+            </button>
+
+        </div>
+
+        <div class="creds-wrap" id="credsWrap">
+
+            <div class="creds-head">
+
+                <span>
+                    Preview · Browser-generated credentials
+                </span>
+
+                <span>
+                    <span class="count" id="credsCount">0</span>
+                    rows
+                </span>
+
+            </div>
+
+            <div class="creds-scroll">
+
+                <table class="creds-table">
+
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">#</th>
+                            <th>Trainee ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="credsBody"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- DASHBOARD CTA -->
+
+    <div class="cta-wrap">
+
+        <button
+            type="button"
+            class="cta-full"
+            id="dashboardCta"
+            disabled
+            aria-disabled="true"
         >
-          <label class="dropzone" id="dropzone" for="fileInput">
-            <input
-              type="file"
-              id="fileInput"
-              name="excel_file"
-              accept=".xlsx,.xls"
-            />
-
-            <span class="dz-icon">
-              <i class="fa-solid fa-file-excel"></i>
-            </span>
-
-            <span class="dz-title">
-              Drag &amp; drop your Excel file here
-            </span>
-
-            <span class="dz-sub">or</span>
-
-            <span class="dz-browse">
-              <i class="fa-solid fa-folder-open"></i>
-              Browse Files
-            </span>
-
-            <span class="dz-hint">
-              Supported formats: .xlsx, .xls · max 20 MB
-            </span>
-          </label>
-
-          <button type="submit" class="btn btn-primary" style="margin-top:14px;">
-            <i class="fa-solid fa-cloud-arrow-up"></i>
-            Upload to Server
-          </button>
-        </form>
-
-        <div class="file-chip" id="fileChip">
-          <i class="fa-solid fa-circle-check"></i>
-          <span class="name" id="fileName">trainees.xlsx</span>
-          <span class="size" id="fileSize">0 KB</span>
-        </div>
-      </div>
-
-      <div class="action-box">
-        <div class="action-title">
-          <i class="fa-solid fa-table-columns"></i>
-          View Excel Sheet Format
-        </div>
-
-        <button type="button" class="format-button" id="openFormatModal">
-          <i class="fa-solid fa-circle-info"></i>
-          See required column structure
-          <i class="fa-solid fa-chevron-right"></i>
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            Enter Admin Dashboard
+            <i class="fa-solid fa-arrow-right"></i>
         </button>
 
-        <div class="format-preview">
-          <span>Trainee ID</span> · Name · Email · Branch · Batch ·<br />
-          Training Status · Outcome Status · Skills
+        <div class="cta-note" id="ctaNote">
+            <i class="fa-solid fa-lock"></i>
+            Upload the Excel sheet to the server first
         </div>
-      </div>
 
     </div>
-  </section>
 
-  <!-- D. CREDENTIALS -->
-  <section class="card">
-    <h2 class="card-heading">
-      <i class="fa-solid fa-id-card-clip"></i>
-      Trainee Credentials Generation
-    </h2>
-    <p class="card-sub">
-      Generate unique random passwords for every trainee in the uploaded sheet, then export them as
-      a downloadable credential sheet.
-    </p>
 
-    <div class="status-box" id="statusBox">
-      <i class="fa-solid fa-circle-check" id="statusIcon"></i>
-      <span id="statusText">Upload successful. 0 trainees parsed.</span>
-    </div>
-
-    <div class="button-row">
-      <button type="button" class="btn btn-primary" id="generateBtn" disabled>
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
-        Generate Credential Sheet
-      </button>
-      <button type="button" class="btn btn-secondary" id="downloadBtn" disabled>
-        <i class="fa-solid fa-file-arrow-down"></i>
-        Download Credential Sheet
-      </button>
-    </div>
-
-    <div class="creds-wrap" id="credsWrap">
-      <div class="creds-head">
-        <span>Preview · Credential Sheet</span>
-        <span><span class="count" id="credsCount">0</span> rows</span>
-      </div>
-      <div class="creds-scroll">
-        <table class="creds-table">
-          <thead>
-            <tr>
-              <th style="width: 40px;">#</th>
-              <th>Trainee ID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Password</th>
-            </tr>
-          </thead>
-          <tbody id="credsBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- E. CTA -->
-  <div class="cta-wrap">
-    <button type="button" class="cta-full" id="dashboardCta" disabled aria-disabled="true">
-      <i class="fa-solid fa-arrow-right-to-bracket"></i>
-      Enter Admin Dashboard
-      <i class="fa-solid fa-arrow-right"></i>
-    </button>
-    <div class="cta-note" id="ctaNote">
-      <i class="fa-solid fa-lock"></i>
-      Upload a sheet and generate credentials to unlock
-    </div>
-  </div>
-
-  <footer class="page-footer">
-    <strong>Horizon</strong> · Admin Portal · Upload &amp; Skill Gap Analysis
-  </footer>
+    <footer class="page-footer">
+        <strong>Horizon</strong> · Admin Portal · Upload &amp; Skill Gap Analysis
+    </footer>
 
 </div>
 
-<!-- MODAL -->
-<div class="modal-backdrop" id="formatModal" role="dialog" aria-modal="true" aria-labelledby="formatModalTitle">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title" id="formatModalTitle">
-        <i class="fa-solid fa-table-columns"></i>
-        Required Excel Sheet Format
-      </div>
-      <button type="button" class="modal-close" id="closeFormatModal" aria-label="Close">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+
+<!-- FORMAT MODAL -->
+
+<div
+    class="modal-backdrop"
+    id="formatModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="formatModalTitle"
+>
+
+    <div class="modal">
+
+        <div class="modal-head">
+
+            <div
+                class="modal-title"
+                id="formatModalTitle"
+            >
+                <i class="fa-solid fa-table-columns"></i>
+                Required Excel Sheet Format
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="closeFormatModal"
+                aria-label="Close"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <p>
+                Your uploaded Excel sheet must contain a header row with the following
+                columns. Column order is not enforced, but
+                <strong>column names must match</strong>.
+            </p>
+
+            <table class="format-table">
+
+                <thead>
+                    <tr>
+                        <th>Trainee ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Branch</th>
+                        <th>Batch</th>
+                        <th>Training Status</th>
+                        <th>Outcome Status</th>
+                        <th>Skills</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>HZN-0001</td>
+                        <td>Aarav Reddy</td>
+                        <td>aarav@example.com</td>
+                        <td>Warangal</td>
+                        <td>B12</td>
+                        <td>Certified</td>
+                        <td>Placed</td>
+                        <td>Python, SQL</td>
+                    </tr>
+
+                    <tr>
+                        <td>HZN-0002</td>
+                        <td>Divya Iyer</td>
+                        <td>divya@example.com</td>
+                        <td>Warangal</td>
+                        <td>B12</td>
+                        <td>Certified</td>
+                        <td>Not Placed</td>
+                        <td>Python</td>
+                    </tr>
+
+                    <tr>
+                        <td>HZN-0003</td>
+                        <td>Karthik R.</td>
+                        <td>karthik@example.com</td>
+                        <td>Karimnagar</td>
+                        <td>B13</td>
+                        <td>In Progress</td>
+                        <td>—</td>
+                        <td>SQL, Communication</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <div class="format-note">
+                <strong>Tip:</strong>
+                Outcome Status can be
+                <em>Placed</em>,
+                <em>Not Placed</em>,
+                <em>Self-Employed</em>,
+                <em>Apprentice</em>,
+                or blank.
+                Skills should be comma-separated.
+                Trainee ID must be unique.
+            </div>
+
+        </div>
+
+        <div class="modal-foot">
+
+            <button
+                type="button"
+                class="btn btn-secondary"
+                id="closeFormatFooter"
+            >
+                <i class="fa-solid fa-check"></i>
+                Got it
+            </button>
+
+        </div>
+
     </div>
 
-    <div class="modal-body">
-      <p>
-        Your uploaded Excel sheet must contain a header row with the following columns. Column order
-        is not enforced, but <strong>column names must match</strong> (case-insensitive).
-      </p>
-
-      <table class="format-table">
-        <thead>
-          <tr>
-            <th>Trainee ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Branch</th>
-            <th>Batch</th>
-            <th>Training Status</th>
-            <th>Outcome Status</th>
-            <th>Skills</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>HZN-0001</td>
-            <td>Aarav Reddy</td>
-            <td>aarav@example.com</td>
-            <td>Warangal</td>
-            <td>B12</td>
-            <td>Certified</td>
-            <td>Placed</td>
-            <td>Python, SQL</td>
-          </tr>
-          <tr>
-            <td>HZN-0002</td>
-            <td>Divya Iyer</td>
-            <td>divya@example.com</td>
-            <td>Warangal</td>
-            <td>B12</td>
-            <td>Certified</td>
-            <td>Not Placed</td>
-            <td>Python</td>
-          </tr>
-          <tr>
-            <td>HZN-0003</td>
-            <td>Karthik R.</td>
-            <td>karthik@example.com</td>
-            <td>Karimnagar</td>
-            <td>B13</td>
-            <td>In Progress</td>
-            <td>—</td>
-            <td>SQL, Communication</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="format-note">
-        <strong>Tip:</strong> Outcome Status can be <em>Placed</em>, <em>Not Placed</em>,
-        <em>Self-Employed</em>, <em>Apprentice</em>, or blank. Skills should be comma-separated.
-        Trainee ID must be unique within the sheet.
-      </div>
-    </div>
-
-    <div class="modal-foot">
-      <button type="button" class="btn btn-secondary" id="closeFormatFooter">
-        <i class="fa-solid fa-check"></i> Got it
-      </button>
-    </div>
-  </div>
 </div>
+
 
 <script>
 (() => {
-  'use strict';
+    'use strict';
 
-  /* ═══════════════════════════════════════════════════════════
-     CONFIG
-     ═══════════════════════════════════════════════════════════ */
-  const ROUTES = {
-    dashboard: '/admin/dashboard'
-  };
+    const ROUTES = {
+        dashboard: '/admin/dashboard'
+    };
 
-  /* ═══════════════════════════════════════════════════════════
-     STATE
-     ═══════════════════════════════════════════════════════════ */
-  const state = {
-    fileName: null,
-    fileSize: 0,
-    rows: [],
-    headers: [],
-    credentials: []
-  };
+    const REQUIRED_COLUMNS = [
+        'Trainee ID',
+        'Name',
+        'Email',
+        'Branch',
+        'Batch',
+        'Training Status',
+        'Outcome Status',
+        'Skills'
+    ];
 
-  /* ═══════════════════════════════════════════════════════════
-     ELEMENTS
-     ═══════════════════════════════════════════════════════════ */
-  const dropzone    = document.getElementById('dropzone');
-  const fileInput   = document.getElementById('fileInput');
-  const fileChip    = document.getElementById('fileChip');
-  const fileNameEl  = document.getElementById('fileName');
-  const fileSizeEl  = document.getElementById('fileSize');
-  const statusBox   = document.getElementById('statusBox');
-  const statusText  = document.getElementById('statusText');
-  const statusIcon  = document.getElementById('statusIcon');
-  const generateBtn = document.getElementById('generateBtn');
-  const downloadBtn = document.getElementById('downloadBtn');
-  const credsWrap   = document.getElementById('credsWrap');
-  const credsBody   = document.getElementById('credsBody');
-  const credsCount  = document.getElementById('credsCount');
+    const state = {
+        fileName: null,
+        fileSize: 0,
+        rows: [],
+        headers: [],
+        credentials: [],
+        serverUploadSuccessful: false,
+        fileReadyForUpload: false
+    };
 
-  const dashboardLink = document.getElementById('dashboardLink');
-  const dashboardCta  = document.getElementById('dashboardCta');
-  const ctaNote       = document.getElementById('ctaNote');
+    const uploadForm = document.getElementById('uploadForm');
+    const uploadButton = document.getElementById('uploadButton');
 
-  const formatModal    = document.getElementById('formatModal');
-  const openFormatBtn  = document.getElementById('openFormatModal');
-  const closeModalBtns = [
-    document.getElementById('closeFormatModal'),
-    document.getElementById('closeFormatFooter')
-  ];
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
 
-  /* ═══════════════════════════════════════════════════════════
-     HELPERS
-     ═══════════════════════════════════════════════════════════ */
-  function formatBytes(bytes) {
-    if (!bytes) return '0 KB';
-    const units = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + units[i];
-  }
-  function escapeHTML(v) {
-    return String(v == null ? '' : v)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-  function randomPassword(length = 12) {
-    const upper  = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-    const lower  = 'abcdefghijkmnopqrstuvwxyz';
-    const digit  = '23456789';
-    const symbol = '@#$%&*!?';
-    const all = upper + lower + digit + symbol;
-    let pw = '';
-    pw += upper[Math.floor(Math.random() * upper.length)];
-    pw += lower[Math.floor(Math.random() * lower.length)];
-    pw += digit[Math.floor(Math.random() * digit.length)];
-    pw += symbol[Math.floor(Math.random() * symbol.length)];
-    for (let i = pw.length; i < length; i++) {
-      pw += all[Math.floor(Math.random() * all.length)];
-    }
-    const arr = pw.split('');
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr.join('');
-  }
-  function normHeader(h) {
-    return String(h || '').toLowerCase().replace(/[\s_\-]+/g, '');
-  }
-  function findColumn(headers, aliases) {
-    const normalized = headers.map(normHeader);
-    for (const a of aliases) {
-      const idx = normalized.indexOf(normHeader(a));
-      if (idx !== -1) return idx;
-    }
-    return -1;
-  }
+    const fileChip = document.getElementById('fileChip');
+    const fileNameEl = document.getElementById('fileName');
+    const fileSizeEl = document.getElementById('fileSize');
 
-  /* ═══════════════════════════════════════════════════════════
-     DASHBOARD GATE
-     ═══════════════════════════════════════════════════════════ */
-  function refreshDashboardGate() {
-    const hasSheet = state.rows.length > 0;
-    const hasCreds = state.credentials.length > 0;
-    const unlocked = hasSheet && hasCreds;
+    const statusBox = document.getElementById('statusBox');
+    const statusText = document.getElementById('statusText');
+    const statusIcon = document.getElementById('statusIcon');
 
-    dashboardCta.disabled = !unlocked;
-    dashboardCta.setAttribute('aria-disabled', String(!unlocked));
+    const generateBtn = document.getElementById('generateBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
 
-    if (unlocked) {
-      dashboardLink.setAttribute('href', ROUTES.dashboard);
-      dashboardLink.setAttribute('aria-disabled', 'false');
-      dashboardLink.style.pointerEvents = '';
-      dashboardLink.style.opacity = '';
-      dashboardLink.title = 'Enter Admin Dashboard';
-    } else {
-      dashboardLink.removeAttribute('href');
-      dashboardLink.setAttribute('aria-disabled', 'true');
-      dashboardLink.style.pointerEvents = 'none';
-      dashboardLink.style.opacity = '0.55';
-      dashboardLink.title = 'Upload a sheet and generate credentials first';
-    }
+    const credsWrap = document.getElementById('credsWrap');
+    const credsBody = document.getElementById('credsBody');
+    const credsCount = document.getElementById('credsCount');
 
-    if (unlocked) {
-      ctaNote.className = 'cta-note ready';
-      ctaNote.innerHTML = `<i class="fa-solid fa-circle-check"></i> Ready — you can enter the dashboard now`;
-    } else if (hasSheet && !hasCreds) {
-      ctaNote.className = 'cta-note';
-      ctaNote.innerHTML = `<i class="fa-solid fa-lock"></i> Sheet uploaded — now click <strong>Generate Credential Sheet</strong> to unlock`;
-    } else {
-      ctaNote.className = 'cta-note';
-      ctaNote.innerHTML = `<i class="fa-solid fa-lock"></i> Upload a sheet and generate credentials to unlock`;
-    }
-  }
+    const dashboardLink = document.getElementById('dashboardLink');
+    const dashboardCta = document.getElementById('dashboardCta');
+    const ctaNote = document.getElementById('ctaNote');
 
-  dashboardCta.addEventListener('click', () => {
-    if (dashboardCta.disabled) return;
-    window.location.href = ROUTES.dashboard;
-  });
+    const formatModal = document.getElementById('formatModal');
+    const openFormatBtn = document.getElementById('openFormatModal');
 
-  refreshDashboardGate();
+    const closeModalBtns = [
+        document.getElementById('closeFormatModal'),
+        document.getElementById('closeFormatFooter')
+    ];
 
-  /* ═══════════════════════════════════════════════════════════
-     DRAG & DROP
-     ═══════════════════════════════════════════════════════════ */
-  ['dragenter', 'dragover'].forEach((ev) => {
-    dropzone.addEventListener(ev, (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      dropzone.classList.add('dragging');
-    });
-  });
-  ['dragleave', 'drop'].forEach((ev) => {
-    dropzone.addEventListener(ev, (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      dropzone.classList.remove('dragging');
-    });
-  });
-  dropzone.addEventListener('drop', (e) => {
-    const dt = e.dataTransfer;
-    if (!dt || !dt.files || !dt.files.length) return;
-    handleFile(dt.files[0]);
-  });
-  fileInput.addEventListener('change', (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (file) handleFile(file);
-  });
 
-  /* ═══════════════════════════════════════════════════════════
-     FILE HANDLING
-     ═══════════════════════════════════════════════════════════ */
-  function handleFile(file) {
-    const nameLower = file.name.toLowerCase();
-    if (!nameLower.endsWith('.xlsx') && !nameLower.endsWith('.xls')) {
-      showStatus('Only .xlsx and .xls files are supported.', 'warn');
-      return;
-    }
+    /* ─────────────────────────────────────────────
+       BASIC HELPERS
+    ───────────────────────────────────────────── */
 
-    state.fileName = file.name;
-    state.fileSize = file.size;
-    fileNameEl.textContent = file.name;
-    fileSizeEl.textContent = formatBytes(file.size);
-    fileChip.classList.add('show');
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const aoa = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false });
-
-        if (!aoa.length) {
-          showStatus('The Excel sheet appears to be empty.', 'warn');
-          return;
+    function formatBytes(bytes) {
+        if (!bytes || bytes <= 0) {
+            return '0 KB';
         }
 
-        const headers = aoa[0].map((h) => String(h).trim());
-        const bodyRows = aoa.slice(1).filter((r) => r.some((c) => String(c).trim() !== ''));
+        const units = ['B', 'KB', 'MB', 'GB'];
 
-        state.headers = headers;
-        state.rows = bodyRows;
+        const i = Math.floor(
+            Math.log(bytes) / Math.log(1024)
+        );
 
+        return (
+            bytes / Math.pow(1024, i)
+        ).toFixed(1) + ' ' + units[i];
+    }
+
+
+    function escapeHTML(value) {
+        return String(value == null ? '' : value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+
+    function normHeader(header) {
+        return String(header || '')
+            .trim()
+            .toLowerCase()
+            .replace(/[\s_-]+/g, '');
+    }
+
+
+    function findColumn(headers, aliases) {
+        const normalizedHeaders = headers.map(normHeader);
+
+        for (const alias of aliases) {
+            const normalizedAlias = normHeader(alias);
+
+            const index = normalizedHeaders.indexOf(
+                normalizedAlias
+            );
+
+            if (index !== -1) {
+                return index;
+            }
+        }
+
+        return -1;
+    }
+
+
+    function showStatus(text, kind = 'ok') {
+        statusBox.classList.add('show');
+
+        statusBox.classList.toggle(
+            'warn',
+            kind === 'warn'
+        );
+
+        statusText.textContent = text;
+
+        statusIcon.className =
+            kind === 'warn'
+                ? 'fa-solid fa-triangle-exclamation'
+                : 'fa-solid fa-circle-check';
+    }
+
+
+    function randomPassword(length = 12) {
+        const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+        const lower = 'abcdefghijkmnopqrstuvwxyz';
+        const digit = '23456789';
+        const symbol = '@#$%&*!?';
+
+        const all = upper + lower + digit + symbol;
+
+        let password = '';
+
+        password += upper[
+            Math.floor(Math.random() * upper.length)
+        ];
+
+        password += lower[
+            Math.floor(Math.random() * lower.length)
+        ];
+
+        password += digit[
+            Math.floor(Math.random() * digit.length)
+        ];
+
+        password += symbol[
+            Math.floor(Math.random() * symbol.length)
+        ];
+
+        for (
+            let i = password.length;
+            i < length;
+            i++
+        ) {
+            password += all[
+                Math.floor(Math.random() * all.length)
+            ];
+        }
+
+        const characters = password.split('');
+
+        for (
+            let i = characters.length - 1;
+            i > 0;
+            i--
+        ) {
+            const j = Math.floor(
+                Math.random() * (i + 1)
+            );
+
+            [
+                characters[i],
+                characters[j]
+            ] = [
+                characters[j],
+                characters[i]
+            ];
+        }
+
+        return characters.join('');
+    }
+
+
+    /* ─────────────────────────────────────────────
+       DASHBOARD ACCESS CONTROL
+    ───────────────────────────────────────────── */
+
+    function refreshDashboardGate() {
+        const unlocked = state.serverUploadSuccessful;
+
+        dashboardCta.disabled = !unlocked;
+
+        dashboardCta.setAttribute(
+            'aria-disabled',
+            String(!unlocked)
+        );
+
+        if (unlocked) {
+            dashboardLink.href = ROUTES.dashboard;
+
+            dashboardLink.setAttribute(
+                'aria-disabled',
+                'false'
+            );
+
+            dashboardLink.style.pointerEvents = '';
+            dashboardLink.style.opacity = '';
+            dashboardLink.title = 'Enter Admin Dashboard';
+
+            ctaNote.className = 'cta-note ready';
+
+            ctaNote.innerHTML =
+                '<i class="fa-solid fa-circle-check"></i> ' +
+                'Upload successful — dashboard is ready';
+
+        } else {
+            dashboardLink.removeAttribute('href');
+
+            dashboardLink.setAttribute(
+                'aria-disabled',
+                'true'
+            );
+
+            dashboardLink.style.pointerEvents = 'none';
+            dashboardLink.style.opacity = '0.55';
+            dashboardLink.title = 'Upload the Excel sheet first';
+
+            ctaNote.className = 'cta-note';
+
+            ctaNote.innerHTML =
+                '<i class="fa-solid fa-lock"></i> ' +
+                'Upload the Excel sheet to the server first';
+        }
+    }
+
+
+    dashboardCta.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        if (!state.serverUploadSuccessful) {
+            showStatus(
+                'Please upload the Excel file successfully first.',
+                'warn'
+            );
+
+            return;
+        }
+
+        window.location.assign(ROUTES.dashboard);
+    });
+
+
+    dashboardLink.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        if (
+            dashboardLink.getAttribute('aria-disabled') === 'true'
+        ) {
+            showStatus(
+                'Please upload the Excel file successfully first.',
+                'warn'
+            );
+
+            return;
+        }
+
+        window.location.assign(ROUTES.dashboard);
+    });
+
+
+    refreshDashboardGate();
+
+
+    /* ─────────────────────────────────────────────
+       DRAG AND DROP
+    ───────────────────────────────────────────── */
+
+    ['dragenter', 'dragover'].forEach((eventName) => {
+        dropzone.addEventListener(eventName, (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            dropzone.classList.add('dragging');
+        });
+    });
+
+
+    ['dragleave', 'drop'].forEach((eventName) => {
+        dropzone.addEventListener(eventName, (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            dropzone.classList.remove('dragging');
+        });
+    });
+
+
+    dropzone.addEventListener('drop', (event) => {
+        const files = event.dataTransfer.files;
+
+        if (!files || files.length === 0) {
+            return;
+        }
+
+        const file = files[0];
+
+        handleFile(file);
+
+        try {
+            const dataTransfer = new DataTransfer();
+
+            dataTransfer.items.add(file);
+
+            fileInput.files = dataTransfer.files;
+        } catch (error) {
+            console.warn(
+                'Could not assign dropped file to input.',
+                error
+            );
+        }
+    });
+
+
+    fileInput.addEventListener('change', (event) => {
+        const file =
+            event.target.files &&
+            event.target.files[0];
+
+        if (file) {
+            handleFile(file);
+        }
+    });
+
+
+    /* ─────────────────────────────────────────────
+       EXCEL FILE READING
+    ───────────────────────────────────────────── */
+
+    function handleFile(file) {
+        const fileName = String(file.name || '')
+            .toLowerCase();
+
+        if (
+            !fileName.endsWith('.xlsx') &&
+            !fileName.endsWith('.xls')
+        ) {
+            showStatus(
+                'Only .xlsx and .xls files are supported.',
+                'warn'
+            );
+
+            fileInput.value = '';
+            state.fileReadyForUpload = false;
+
+            generateBtn.disabled = true;
+            downloadBtn.disabled = true;
+
+            refreshDashboardGate();
+
+            return;
+        }
+
+        if (file.size > 20 * 1024 * 1024) {
+            showStatus(
+                'File size exceeds the 20 MB limit.',
+                'warn'
+            );
+
+            fileInput.value = '';
+            state.fileReadyForUpload = false;
+
+            generateBtn.disabled = true;
+            downloadBtn.disabled = true;
+
+            refreshDashboardGate();
+
+            return;
+        }
+
+        state.fileName = file.name;
+        state.fileSize = file.size;
+        state.serverUploadSuccessful = false;
+        state.fileReadyForUpload = false;
+        state.rows = [];
+        state.headers = [];
         state.credentials = [];
+
+        fileNameEl.textContent = file.name;
+        fileSizeEl.textContent = formatBytes(file.size);
+
+        fileChip.classList.add('show');
+
+        generateBtn.disabled = true;
+        downloadBtn.disabled = true;
+
         credsWrap.classList.remove('show');
         credsBody.innerHTML = '';
         credsCount.textContent = '0';
-        downloadBtn.disabled = true;
-        generateBtn.disabled = bodyRows.length === 0;
 
-        showStatus(`Upload successful. ${bodyRows.length} trainee${bodyRows.length === 1 ? '' : 's'} parsed.`, 'ok');
         refreshDashboardGate();
-      } catch (err) {
-        console.error(err);
-        showStatus('Could not read the Excel file. Please check the format.', 'warn');
-      }
-    };
-    reader.readAsArrayBuffer(file);
-  }
 
-  function showStatus(text, kind) {
-    statusBox.classList.add('show');
-    statusBox.classList.toggle('warn', kind === 'warn');
-    statusText.textContent = text;
-    statusIcon.className = kind === 'warn'
-      ? 'fa-solid fa-triangle-exclamation'
-      : 'fa-solid fa-circle-check';
-  }
+        showStatus(
+            'Reading Excel file. Please wait...',
+            'ok'
+        );
 
-  /* ═══════════════════════════════════════════════════════════
-     MODAL
-     ═══════════════════════════════════════════════════════════ */
-  function openModal() { formatModal.classList.add('show'); }
-  function closeModal() { formatModal.classList.remove('show'); }
-  openFormatBtn.addEventListener('click', openModal);
-  closeModalBtns.forEach((b) => b && b.addEventListener('click', closeModal));
-  formatModal.addEventListener('click', (e) => {
-    if (e.target === formatModal) closeModal();
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && formatModal.classList.contains('show')) closeModal();
-  });
+        const reader = new FileReader();
 
-  /* ═══════════════════════════════════════════════════════════
-     GENERATE CREDENTIALS
-     ═══════════════════════════════════════════════════════════ */
-  generateBtn.addEventListener('click', () => {
-    if (!state.rows.length) return;
+        reader.onload = (event) => {
+            try {
+                const data = new Uint8Array(
+                    event.target.result
+                );
 
-    const headers = state.headers;
-    const colTraineeId = findColumn(headers, ['Trainee ID', 'TraineeId', 'ID', 'Trainee_ID']);
-    const colName      = findColumn(headers, ['Name', 'Full Name', 'Trainee Name']);
-    const colEmail     = findColumn(headers, ['Email', 'Email Address', 'Work Email']);
+                const workbook = XLSX.read(
+                    data,
+                    {
+                        type: 'array'
+                    }
+                );
 
-    if (colTraineeId === -1 && colName === -1) {
-      showStatus('Could not find "Trainee ID" or "Name" columns in the sheet.', 'warn');
-      return;
+                if (
+                    !workbook.SheetNames ||
+                    workbook.SheetNames.length === 0
+                ) {
+                    throw new Error(
+                        'No worksheet found.'
+                    );
+                }
+
+                const firstSheet =
+                    workbook.SheetNames[0];
+
+                const worksheet =
+                    workbook.Sheets[firstSheet];
+
+                const rows =
+                    XLSX.utils.sheet_to_json(
+                        worksheet,
+                        {
+                            header: 1,
+                            defval: '',
+                            raw: false
+                        }
+                    );
+
+                if (!rows || rows.length === 0) {
+                    showStatus(
+                        'The Excel sheet appears to be empty.',
+                        'warn'
+                    );
+
+                    return;
+                }
+
+                const headers = rows[0].map((header) =>
+                    String(header || '').trim()
+                );
+
+                const bodyRows = rows
+                    .slice(1)
+                    .filter((row) =>
+                        row.some((cell) =>
+                            String(cell || '').trim() !== ''
+                        )
+                    );
+
+                if (bodyRows.length === 0) {
+                    showStatus(
+                        'The Excel sheet contains headers but no trainee records.',
+                        'warn'
+                    );
+
+                    return;
+                }
+
+                const missingColumns =
+                    REQUIRED_COLUMNS.filter((requiredColumn) => {
+                        return findColumn(
+                            headers,
+                            [requiredColumn]
+                        ) === -1;
+                    });
+
+                if (missingColumns.length > 0) {
+                    showStatus(
+                        'Missing required columns: ' +
+                        missingColumns.join(', '),
+                        'warn'
+                    );
+
+                    state.fileReadyForUpload = false;
+                    generateBtn.disabled = true;
+
+                    return;
+                }
+
+                state.headers = headers;
+                state.rows = bodyRows;
+                state.fileReadyForUpload = true;
+
+                generateBtn.disabled = false;
+
+                showStatus(
+                    `Excel selected successfully. ${bodyRows.length} trainee${bodyRows.length === 1 ? '' : 's'} detected. Required columns are valid. Click "Upload to Server" to save them.`,
+                    'ok'
+                );
+
+            } catch (error) {
+                console.error(
+                    'Excel reading error:',
+                    error
+                );
+
+                state.fileReadyForUpload = false;
+
+                generateBtn.disabled = true;
+
+                showStatus(
+                    'Could not read the Excel file. Please check the Excel format.',
+                    'warn'
+                );
+            }
+        };
+
+        reader.onerror = () => {
+            state.fileReadyForUpload = false;
+
+            generateBtn.disabled = true;
+
+            showStatus(
+                'Failed to read the selected file.',
+                'warn'
+            );
+        };
+
+        reader.readAsArrayBuffer(file);
     }
 
-    const seen = new Set();
-    state.credentials = state.rows.map((row, i) => {
-      let traineeId = colTraineeId !== -1 ? String(row[colTraineeId] || '').trim() : '';
-      if (!traineeId) traineeId = 'HZN-' + String(i + 1).padStart(4, '0');
 
-      const name  = colName  !== -1 ? String(row[colName]  || '').trim() : '';
-      const email = colEmail !== -1 ? String(row[colEmail] || '').trim() : '';
+    /* ─────────────────────────────────────────────
+       REAL SERVER UPLOAD
+    ───────────────────────────────────────────── */
 
-      let password;
-      let guard = 0;
-      do {
-        password = randomPassword(12);
-        guard++;
-      } while (seen.has(password) && guard < 20);
-      seen.add(password);
+    uploadForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
 
-      return { traineeId, name, email, password };
+        if (
+            !fileInput.files ||
+            fileInput.files.length === 0
+        ) {
+            showStatus(
+                'Please select an Excel file first.',
+                'warn'
+            );
+
+            return;
+        }
+
+        if (!state.fileReadyForUpload) {
+            showStatus(
+                'Please select a valid Excel file with all required columns.',
+                'warn'
+            );
+
+            return;
+        }
+
+        const selectedFile = fileInput.files[0];
+
+        const formData = new FormData();
+
+        formData.append(
+            'excel_file',
+            selectedFile
+        );
+
+        uploadButton.disabled = true;
+
+        uploadButton.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
+
+        showStatus(
+            'Uploading Excel to server and saving trainees. Please wait...',
+            'ok'
+        );
+
+        try {
+            const response = await fetch(
+                uploadForm.action,
+                {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin',
+                    redirect: 'follow'
+                }
+            );
+
+            /*
+             * If Flask redirects to a login page,
+             * the response will be HTML.
+             */
+            const contentType =
+                response.headers.get('content-type') || '';
+
+            if (contentType.includes('text/html')) {
+                const htmlResponse = await response.text();
+
+                console.error(
+                    'Server returned HTML instead of Excel:',
+                    htmlResponse
+                );
+
+                showStatus(
+                    'Server returned an HTML page instead of the credential Excel file. Check Flask login/session or upload route.',
+                    'warn'
+                );
+
+                uploadButton.disabled = false;
+
+                uploadButton.innerHTML =
+                    '<i class="fa-solid fa-cloud-arrow-up"></i> Upload to Server';
+
+                return;
+            }
+
+            if (!response.ok) {
+                const errorText = await response.text();
+
+                console.error(
+                    'Server upload failed:',
+                    response.status,
+                    errorText
+                );
+
+                throw new Error(
+                    'Server returned HTTP ' +
+                    response.status
+                );
+            }
+
+            const blob = await response.blob();
+
+            if (!blob || blob.size === 0) {
+                throw new Error(
+                    'Server returned an empty file.'
+                );
+            }
+
+            let downloadedFileName =
+                'trainee_credentials.xlsx';
+
+            const contentDisposition =
+                response.headers.get(
+                    'Content-Disposition'
+                );
+
+            if (contentDisposition) {
+                const match =
+                    contentDisposition.match(
+                        /filename\*?=(?:UTF-8'')?"?([^"]+)"?/i
+                    );
+
+                if (match && match[1]) {
+                    downloadedFileName =
+                        decodeURIComponent(
+                            match[1]
+                        );
+                }
+            }
+
+            const downloadUrl =
+                window.URL.createObjectURL(blob);
+
+            const downloadAnchor =
+                document.createElement('a');
+
+            downloadAnchor.href = downloadUrl;
+            downloadAnchor.download =
+                downloadedFileName;
+
+            document.body.appendChild(
+                downloadAnchor
+            );
+
+            downloadAnchor.click();
+
+            downloadAnchor.remove();
+
+            setTimeout(() => {
+                window.URL.revokeObjectURL(
+                    downloadUrl
+                );
+            }, 1000);
+
+            state.serverUploadSuccessful = true;
+
+            showStatus(
+                'Upload successful. Trainees were saved in the database and the official credential sheet was downloaded.',
+                'ok'
+            );
+
+            refreshDashboardGate();
+
+            uploadButton.innerHTML =
+                '<i class="fa-solid fa-circle-check"></i> Upload Successful';
+
+            /*
+             * Do not automatically redirect immediately.
+             * Let the admin click the dashboard button.
+             */
+            setTimeout(() => {
+                uploadButton.disabled = false;
+            }, 500);
+
+        } catch (error) {
+            console.error(
+                'Upload error:',
+                error
+            );
+
+            state.serverUploadSuccessful = false;
+
+            refreshDashboardGate();
+
+            showStatus(
+                'Upload failed. Check the Flask terminal for the exact error.',
+                'warn'
+            );
+
+            uploadButton.disabled = false;
+
+            uploadButton.innerHTML =
+                '<i class="fa-solid fa-cloud-arrow-up"></i> Upload to Server';
+        }
     });
 
-    renderCredentials(state.credentials);
-    downloadBtn.disabled = false;
 
-    showStatus(`Generated credentials for ${state.credentials.length} trainee${state.credentials.length === 1 ? '' : 's'}.`, 'ok');
-    refreshDashboardGate();
-  });
+    /* ─────────────────────────────────────────────
+       FORMAT MODAL
+    ───────────────────────────────────────────── */
 
-  function renderCredentials(list) {
-    credsBody.innerHTML = list.map((c, i) => `
-      <tr>
-        <td>${i + 1}</td>
-        <td class="id">${escapeHTML(c.traineeId)}</td>
-        <td>${escapeHTML(c.name)}</td>
-        <td>${escapeHTML(c.email)}</td>
-        <td class="pw">${escapeHTML(c.password)}</td>
-      </tr>
-    `).join('');
-    credsCount.textContent = String(list.length);
-    credsWrap.classList.add('show');
-  }
+    function openModal() {
+        formatModal.classList.add('show');
+    }
 
-  /* ═══════════════════════════════════════════════════════════
-     DOWNLOAD
-     ═══════════════════════════════════════════════════════════ */
-  downloadBtn.addEventListener('click', () => {
-    if (!state.credentials.length) return;
 
-    const aoa = [['Trainee ID', 'Name', 'Email', 'Password']];
-    state.credentials.forEach((c) => aoa.push([c.traineeId, c.name, c.email, c.password]));
+    function closeModal() {
+        formatModal.classList.remove('show');
+    }
 
-    const ws = XLSX.utils.aoa_to_sheet(aoa);
-    ws['!cols'] = [{ wch: 14 }, { wch: 22 }, { wch: 28 }, { wch: 16 }];
 
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Credentials');
-    XLSX.writeFile(wb, 'trainee_credentials.xlsx');
+    openFormatBtn.addEventListener(
+        'click',
+        openModal
+    );
 
-    showStatus('Credential sheet downloaded as trainee_credentials.xlsx.', 'ok');
-  });
+
+    closeModalBtns.forEach((button) => {
+        if (button) {
+            button.addEventListener(
+                'click',
+                closeModal
+            );
+        }
+    });
+
+
+    formatModal.addEventListener('click', (event) => {
+        if (event.target === formatModal) {
+            closeModal();
+        }
+    });
+
+
+    document.addEventListener('keydown', (event) => {
+        if (
+            event.key === 'Escape' &&
+            formatModal.classList.contains('show')
+        ) {
+            closeModal();
+        }
+    });
+
+
+    /* ─────────────────────────────────────────────
+       FRONTEND PREVIEW CREDENTIALS
+    ───────────────────────────────────────────── */
+
+    generateBtn.addEventListener('click', () => {
+        if (!state.rows.length) {
+            showStatus(
+                'No trainee rows available for preview.',
+                'warn'
+            );
+
+            return;
+        }
+
+        const headers = state.headers;
+
+        const colTraineeId = findColumn(
+            headers,
+            [
+                'Trainee ID',
+                'TraineeId',
+                'ID',
+                'Trainee_ID'
+            ]
+        );
+
+        const colName = findColumn(
+            headers,
+            [
+                'Name',
+                'Full Name',
+                'Trainee Name'
+            ]
+        );
+
+        const colEmail = findColumn(
+            headers,
+            [
+                'Email',
+                'Email Address',
+                'Work Email'
+            ]
+        );
+
+        if (
+            colTraineeId === -1 ||
+            colName === -1 ||
+            colEmail === -1
+        ) {
+            showStatus(
+                'Trainee ID, Name, and Email columns are required for preview generation.',
+                'warn'
+            );
+
+            return;
+        }
+
+        const usedPasswords = new Set();
+
+        state.credentials = state.rows.map(
+            (row, index) => {
+                let traineeId =
+                    String(
+                        row[colTraineeId] || ''
+                    ).trim();
+
+                if (!traineeId) {
+                    traineeId =
+                        'HZN-' +
+                        String(index + 1)
+                            .padStart(4, '0');
+                }
+
+                const name =
+                    String(
+                        row[colName] || ''
+                    ).trim();
+
+                const email =
+                    String(
+                        row[colEmail] || ''
+                    ).trim();
+
+                let password;
+                let attempts = 0;
+
+                do {
+                    password = randomPassword(12);
+                    attempts++;
+                } while (
+                    usedPasswords.has(password) &&
+                    attempts < 20
+                );
+
+                usedPasswords.add(password);
+
+                return {
+                    traineeId,
+                    name,
+                    email,
+                    password
+                };
+            }
+        );
+
+        renderCredentials(
+            state.credentials
+        );
+
+        downloadBtn.disabled = false;
+
+        showStatus(
+            `Preview credentials generated for ${state.credentials.length} trainees. These are only browser previews, not the official server credentials.`,
+            'ok'
+        );
+    });
+
+
+    function renderCredentials(list) {
+        credsBody.innerHTML = list
+            .map((credential, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+
+                    <td class="id">
+                        ${escapeHTML(credential.traineeId)}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(credential.name)}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(credential.email)}
+                    </td>
+
+                    <td class="pw">
+                        ${escapeHTML(credential.password)}
+                    </td>
+                </tr>
+            `)
+            .join('');
+
+        credsCount.textContent =
+            String(list.length);
+
+        credsWrap.classList.add('show');
+    }
+
+
+    /* ─────────────────────────────────────────────
+       DOWNLOAD FRONTEND PREVIEW
+    ───────────────────────────────────────────── */
+
+    downloadBtn.addEventListener('click', () => {
+        if (!state.credentials.length) {
+            showStatus(
+                'Generate preview credentials first.',
+                'warn'
+            );
+
+            return;
+        }
+
+        const aoa = [
+            [
+                'Trainee ID',
+                'Name',
+                'Email',
+                'Password'
+            ]
+        ];
+
+        state.credentials.forEach((credential) => {
+            aoa.push([
+                credential.traineeId,
+                credential.name,
+                credential.email,
+                credential.password
+            ]);
+        });
+
+        const worksheet =
+            XLSX.utils.aoa_to_sheet(aoa);
+
+        worksheet['!cols'] = [
+            { wch: 14 },
+            { wch: 22 },
+            { wch: 28 },
+            { wch: 16 }
+        ];
+
+        const workbook =
+            XLSX.utils.book_new();
+
+        XLSX.utils.book_append_sheet(
+            workbook,
+            worksheet,
+            'Credentials'
+        );
+
+        XLSX.writeFile(
+            workbook,
+            'trainee_credentials_preview.xlsx'
+        );
+
+        showStatus(
+            'Preview downloaded. Use the official credential file downloaded after server upload.',
+            'ok'
+        );
+    });
 
 })();
 </script>
+
 </body>
 </html>
