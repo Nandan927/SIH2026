@@ -1,0 +1,2826 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Opportunities · Horizon Trainee Portal</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+/* ══════════════════════════════════════════════════════════════
+   HORIZON — TRAINEE PORTAL · OPPORTUNITIES
+   Theme: cream / sunfire orange / amber gold
+══════════════════════════════════════════════════════════════ */
+
+:root{
+  --bg:          #FAF8F5;
+  --card:        #FFFFFF;
+  --border:      #EADEC9;
+  --border-2:    #F1EBDD;
+  --ink:         #0F172A;
+  --ink-soft:    #5B6472;
+  --ink-faint:   #94A0B0;
+
+  --orange:      #EA580C;
+  --orange-2:    #F97316;
+  --amber:       #F59E0B;
+  --amber-2:     #FBBF24;
+  --amber-soft:  #FEF3E0;
+
+  --grad:        linear-gradient(135deg, #F59E0B 0%, #EA580C 100%);
+  --grad-hover:  linear-gradient(135deg, #FBBF24 0%, #F97316 100%);
+  --grad-soft:   linear-gradient(135deg, rgba(245,158,11,.12) 0%, rgba(234,88,12,.12) 100%);
+
+  --green:  #16A34A;
+  --blue:   #2563EB;
+  --violet: #7C3AED;
+  --red:    #DC2626;
+  --teal:   #0D9488;
+
+  --sans:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --display: "Poppins", "Inter", sans-serif;
+
+  --r:     10px;
+  --r-lg:  14px;
+  --r-xl:  18px;
+
+  --shadow:       0 1px 2px rgba(15,23,42,.04), 0 8px 24px -12px rgba(15,23,42,.10);
+  --shadow-hover: 0 8px 28px -10px rgba(15,23,42,.14);
+  --shadow-amber: 0 8px 20px -6px rgba(234,88,12,.35);
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+html, body{
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:13px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+
+body{
+  position:relative;
+  overflow-x:hidden;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse 55% 45% at 50% -5%,  rgba(245,158,11,.16) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 35% at 15% 25%,  rgba(249,115,22,.06) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 35% at 88% 85%,  rgba(251,191,36,.08) 0%, transparent 70%),
+    linear-gradient(180deg, #FDFBF6 0%, #FAF8F5 45%, #F6F4EF 100%);
+}
+
+body > *{ position:relative; z-index:1; }
+
+button, input, select, textarea{ font-family:inherit; font-size:inherit; }
+button{ cursor:pointer; border:none; background:none; color:inherit; }
+a{ color:inherit; text-decoration:none; }
+
+h1, h2, h3, h4, .brand-name{ font-family:var(--display); letter-spacing:-0.02em; }
+
+::-webkit-scrollbar{ width:7px; height:7px; }
+::-webkit-scrollbar-thumb{ background:#E8DFCF; border-radius:7px; }
+::-webkit-scrollbar-track{ background:transparent; }
+
+/* ══════════════════════════════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════════════════════════════ */
+.shell{
+  display:grid;
+  grid-template-columns:228px 1fr;
+  min-height:100vh;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════════════════════════ */
+.sidebar{
+  background:#FFFFFF;
+  border-right:1px solid var(--border);
+  padding:18px 12px;
+  display:flex;
+  flex-direction:column;
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow-y:auto;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 8px 16px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:14px;
+}
+
+.brand-mark{
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  background:var(--grad);
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-family:var(--display);
+  font-weight:800;
+  font-size:15px;
+  box-shadow:0 8px 18px -6px rgba(234,88,12,.5), inset 0 1px 0 rgba(255,255,255,.4);
+  position:relative;
+  overflow:hidden;
+  flex-shrink:0;
+}
+.brand-mark::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.55), transparent 55%);
+}
+
+.brand-text{ line-height:1.1; }
+.brand-name{ font-size:15px; font-weight:800; color:var(--ink); }
+.brand-tag{
+  display:block;
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  margin-top:2px;
+}
+
+.nav-group-label{
+  font-size:9.5px;
+  font-weight:700;
+  color:var(--ink-faint);
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  padding:0 10px;
+  margin:14px 0 6px;
+}
+
+.nav{ display:flex; flex-direction:column; gap:2px; }
+
+.nav-link{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 11px;
+  border-radius:9px;
+  font-size:12px;
+  font-weight:500;
+  color:var(--ink-soft);
+  transition:all .18s ease;
+  position:relative;
+}
+.nav-link i{
+  width:16px;
+  text-align:center;
+  font-size:12px;
+  color:var(--ink-faint);
+  transition:color .18s ease;
+  flex-shrink:0;
+}
+.nav-link:hover{
+  background:#FBF3E8;
+  color:var(--ink);
+  transform:translateX(2px);
+}
+.nav-link:hover i{ color:var(--orange); }
+
+.nav-link.active{
+  background:var(--grad);
+  color:#fff;
+  font-weight:600;
+  box-shadow:0 6px 14px -5px rgba(234,88,12,.55);
+}
+.nav-link.active i{ color:#fff; }
+
+.nav-badge{
+  margin-left:auto;
+  font-size:9px;
+  font-weight:700;
+  padding:1px 6px;
+  border-radius:999px;
+  background:#FCEAEA;
+  color:var(--red);
+}
+.nav-link.active .nav-badge{
+  background:rgba(255,255,255,.28);
+  color:#fff;
+}
+
+.nav-divider{
+  height:1px;
+  background:var(--border);
+  margin:12px 8px;
+}
+
+.sidebar-spacer{ flex:1; min-height:14px; }
+
+.sidebar-foot{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding-top:10px;
+  border-top:1px solid var(--border);
+}
+
+.sidebar-widget{
+  border-radius:var(--r);
+  background:var(--grad-soft);
+  border:1px solid var(--border);
+  padding:11px 12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.sidebar-widget .w-icon{
+  width:28px; height:28px;
+  border-radius:8px;
+  background:var(--grad);
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-size:12px;
+  flex-shrink:0;
+  box-shadow:0 4px 10px -3px rgba(234,88,12,.5);
+}
+.sidebar-widget .w-text{
+  min-width:0;
+  flex:1;
+  line-height:1.25;
+}
+.sidebar-widget .w-label{
+  font-size:9.5px;
+  font-weight:600;
+  color:var(--ink-faint);
+  letter-spacing:.02em;
+}
+.sidebar-widget .w-value{
+  font-size:11.5px;
+  font-weight:700;
+  color:var(--ink);
+  font-family:var(--display);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.logout-link{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 11px;
+  border-radius:9px;
+  font-size:12px;
+  font-weight:500;
+  color:#B33A2A;
+  transition:background .15s ease;
+}
+.logout-link:hover{ background:#FDECEA; }
+.logout-link i{ width:16px; text-align:center; font-size:12px; }
+
+/* ══════════════════════════════════════════════════════════════
+   MAIN
+══════════════════════════════════════════════════════════════ */
+.main{ min-width:0; display:flex; flex-direction:column; }
+
+.topbar{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 26px;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:40;
+  backdrop-filter:blur(10px);
+}
+
+.search-pill{
+  flex:1;
+  max-width:520px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  background:#FCFAF7;
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:8px 16px;
+  transition:all .2s ease;
+}
+.search-pill:focus-within{
+  border-color:var(--orange);
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(234,88,12,.10);
+}
+.search-pill i{ color:var(--ink-faint); font-size:12px; }
+.search-pill input{
+  border:none;
+  outline:none;
+  background:transparent;
+  font-size:12px;
+  width:100%;
+  color:var(--ink);
+}
+.search-pill input::placeholder{ color:var(--ink-faint); }
+
+.topbar-spacer{ flex:1; }
+
+.icon-btn{
+  width:34px; height:34px;
+  border-radius:9px;
+  border:1px solid var(--border);
+  background:#fff;
+  display:grid;
+  place-items:center;
+  color:var(--ink-soft);
+  font-size:12px;
+  position:relative;
+  transition:all .2s ease;
+  flex-shrink:0;
+}
+.icon-btn:hover{
+  border-color:var(--orange);
+  color:var(--orange);
+  transform:translateY(-1px);
+}
+.icon-btn .dot{
+  position:absolute;
+  top:7px; right:8px;
+  width:6px; height:6px;
+  border-radius:50%;
+  background:var(--orange);
+  box-shadow:0 0 0 2px #fff;
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{
+  0%,100%{ transform:scale(1); opacity:1; }
+  50%    { transform:scale(1.2); opacity:.7; }
+}
+
+.profile-trigger{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:4px 14px 4px 4px;
+  transition:all .2s ease;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.profile-trigger:hover{
+  border-color:var(--orange);
+  transform:translateY(-1px);
+  box-shadow:0 6px 14px -6px rgba(234,88,12,.25);
+}
+.avatar{
+  width:28px; height:28px;
+  border-radius:50%;
+  background:var(--grad);
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:700;
+  font-family:var(--display);
+  font-size:11px;
+  flex-shrink:0;
+  box-shadow:0 4px 10px -3px rgba(234,88,12,.5);
+  overflow:hidden;
+}
+.avatar.has-photo{ color:transparent; }
+
+.p-info{ line-height:1.15; }
+.p-name{ font-size:11.5px; font-weight:700; color:var(--ink); }
+.p-roll{ font-size:9.5px; color:var(--ink-faint); font-weight:500; margin-top:1px; }
+.profile-trigger .chev{ font-size:9px; color:var(--ink-faint); margin-left:2px; }
+
+/* ══════════════════════════════════════════════════════════════
+   CONTENT
+══════════════════════════════════════════════════════════════ */
+.content{
+  padding:22px 26px 60px;
+  max-width:1440px;
+  width:100%;
+}
+
+/* Page heading with back button */
+.page-head{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+}
+
+.back-btn{
+  width:36px; height:36px;
+  border-radius:10px;
+  background:#fff;
+  border:1px solid var(--border);
+  display:grid;
+  place-items:center;
+  color:var(--ink-soft);
+  font-size:13px;
+  transition:all .2s ease;
+  flex-shrink:0;
+  box-shadow:0 1px 2px rgba(15,23,42,.04);
+}
+.back-btn:hover{
+  border-color:var(--orange);
+  color:var(--orange);
+  transform:translateX(-2px);
+  background:var(--amber-soft);
+}
+
+.page-title-block{ flex:1; min-width:0; }
+.page-title{
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:-.025em;
+  margin-bottom:4px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.page-title i{
+  color:var(--orange);
+  font-size:16px;
+}
+.page-sub{
+  color:var(--ink-soft);
+  font-size:12px;
+  line-height:1.5;
+  max-width:760px;
+}
+
+.head-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-left:auto;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 14px;
+  border-radius:9px;
+  font-family:var(--display);
+  font-size:11.5px;
+  font-weight:700;
+  transition:all .2s ease;
+  white-space:nowrap;
+}
+.btn-ghost{
+  background:#fff;
+  color:var(--ink-soft);
+  border:1px solid var(--border);
+}
+.btn-ghost:hover{
+  border-color:var(--orange);
+  color:var(--orange);
+  background:var(--amber-soft);
+}
+.btn-primary{
+  background:var(--grad);
+  color:#fff;
+  box-shadow:var(--shadow-amber);
+  position:relative;
+  overflow:hidden;
+}
+.btn-primary::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,.3) 50%, transparent 70%);
+  transform:translateX(-100%);
+  transition:transform 700ms ease;
+}
+.btn-primary:hover{
+  transform:translateY(-1px);
+  box-shadow:0 12px 26px -6px rgba(234,88,12,.5);
+  background:var(--grad-hover);
+}
+.btn-primary:hover::after{ transform:translateX(100%); }
+
+/* ─── Metric grid ─── */
+.metric-grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.metric-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:14px 16px;
+  box-shadow:var(--shadow);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+  position:relative;
+  overflow:hidden;
+}
+.metric-card:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-hover);
+  border-color:rgba(234,88,12,.28);
+}
+
+.metric-icon{
+  width:38px; height:38px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-size:14px;
+  flex-shrink:0;
+}
+.icon-orange { background:var(--grad);             box-shadow:0 6px 14px -4px rgba(234,88,12,.45); }
+.icon-green  { background:linear-gradient(135deg,#16A34A,#22C55E); box-shadow:0 6px 14px -4px rgba(22,163,74,.4); }
+.icon-amber  { background:linear-gradient(135deg,#F59E0B,#FBBF24); box-shadow:0 6px 14px -4px rgba(245,158,11,.4); }
+.icon-blue   { background:linear-gradient(135deg,#2563EB,#3B82F6); box-shadow:0 6px 14px -4px rgba(37,99,235,.4); }
+
+.metric-body{ min-width:0; flex:1; }
+.metric-label{
+  font-size:10px;
+  font-weight:600;
+  color:var(--ink-faint);
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+.metric-value{
+  font-family:var(--display);
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:-.025em;
+  color:var(--ink);
+  line-height:1.15;
+  margin-top:2px;
+}
+.metric-note{
+  font-size:10px;
+  color:var(--ink-faint);
+  margin-top:1px;
+}
+
+/* ─── Filter toolbar ─── */
+.filter-bar{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:12px 16px;
+  box-shadow:var(--shadow);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+}
+
+.filter-label{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:10.5px;
+  font-weight:700;
+  color:var(--ink-faint);
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  margin-right:2px;
+  flex-shrink:0;
+}
+.filter-label i{ color:var(--orange); font-size:11px; }
+
+.filter-select{
+  border:1px solid var(--border);
+  border-radius:9px;
+  padding:7px 30px 7px 11px;
+  font-size:11.5px;
+  color:var(--ink);
+  background:#FCFAF7 url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%2394A0B0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 11px center;
+  appearance:none;
+  cursor:pointer;
+  font-weight:500;
+  transition:all .2s ease;
+  font-family:inherit;
+  min-width:150px;
+  outline:none;
+}
+.filter-select:hover{ border-color:var(--orange); background-color:#fff; }
+.filter-select:focus{
+  border-color:var(--orange);
+  background-color:#fff;
+  box-shadow:0 0 0 3px rgba(234,88,12,.10);
+}
+
+.filter-spacer{ flex:1; min-width:12px; }
+
+.result-count{
+  font-size:11px;
+  color:var(--ink-faint);
+  font-weight:600;
+  white-space:nowrap;
+}
+.result-count strong{ color:var(--ink); font-weight:700; font-family:var(--display); }
+
+/* ══════════════════════════════════════════════════════════════
+   OPPORTUNITIES GRID
+══════════════════════════════════════════════════════════════ */
+.opps-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));
+  gap:14px;
+}
+
+.opp-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:16px;
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+}
+.opp-card::before{
+  content:"";
+  position:absolute;
+  top:0; left:0;
+  width:100%;
+  height:3px;
+  background:var(--grad);
+  opacity:0;
+  transition:opacity .25s ease;
+}
+.opp-card:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-hover);
+  border-color:rgba(234,88,12,.30);
+}
+.opp-card:hover::before{ opacity:1; }
+
+.opp-head{
+  display:flex;
+  align-items:flex-start;
+  gap:11px;
+}
+
+.company-logo{
+  width:42px; height:42px;
+  border-radius:11px;
+  background:var(--grad);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-family:var(--display);
+  font-weight:800;
+  font-size:14px;
+  flex-shrink:0;
+  box-shadow:0 6px 14px -4px rgba(234,88,12,.5);
+  position:relative;
+  overflow:hidden;
+}
+.company-logo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.55), transparent 55%);
+}
+
+.company-info{ flex:1; min-width:0; }
+.company-name{
+  font-family:var(--display);
+  font-size:13.5px;
+  font-weight:700;
+  color:var(--ink);
+  line-height:1.2;
+  margin-bottom:2px;
+}
+.job-role{
+  font-size:11px;
+  font-weight:500;
+  color:var(--ink-soft);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.ctc-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:4px 9px;
+  border-radius:999px;
+  background:var(--amber-soft);
+  color:#B45309;
+  font-family:var(--display);
+  font-size:10.5px;
+  font-weight:700;
+  border:1px solid rgba(234,88,12,.18);
+  flex-shrink:0;
+  letter-spacing:.01em;
+}
+.ctc-badge i{ font-size:9px; color:var(--orange); }
+
+.opp-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  font-size:11px;
+  color:var(--ink-soft);
+}
+.opp-meta span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.opp-meta i{
+  color:var(--ink-faint);
+  font-size:10.5px;
+}
+
+/* Match bar */
+.match-block{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+.match-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.match-label{
+  font-size:10.5px;
+  font-weight:700;
+  color:var(--ink-faint);
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.match-value{
+  font-family:var(--display);
+  font-size:12px;
+  font-weight:800;
+  color:var(--green);
+}
+.match-value.medium{ color:#B7791F; }
+.match-value.low{ color:var(--red); }
+
+.match-track{
+  height:6px;
+  border-radius:999px;
+  background:#F1E7D8;
+  overflow:hidden;
+}
+.match-fill{
+  height:100%;
+  border-radius:999px;
+  background:var(--grad);
+  transition:width .8s cubic-bezier(.4,0,.2,1);
+}
+.match-fill.medium{ background:linear-gradient(90deg, #F59E0B, #FBBF24); }
+.match-fill.low{ background:linear-gradient(90deg, #DC2626, #F87171); }
+
+.skills-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+}
+.skill-chip{
+  font-size:10.5px;
+  font-weight:600;
+  padding:3px 9px;
+  border-radius:999px;
+  background:#FCFAF6;
+  border:1px solid var(--border);
+  color:var(--ink-soft);
+  white-space:nowrap;
+}
+.skill-chip.matched{
+  background:#EAF7EE;
+  border-color:#BBF7D0;
+  color:#15803D;
+}
+.skill-chip.missing{
+  background:#FEF3E0;
+  border-color:#FDE68A;
+  color:#B7791F;
+}
+
+/* Footer */
+.opp-foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding-top:11px;
+  border-top:1px dashed var(--border);
+  margin-top:auto;
+}
+
+.deadline-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:10.5px;
+  font-weight:600;
+  color:var(--ink-faint);
+}
+.deadline-badge i{ color:var(--orange); font-size:10.5px; }
+.deadline-badge.urgent{ color:var(--red); }
+.deadline-badge.urgent i{ color:var(--red); }
+.deadline-badge strong{ color:var(--ink); font-weight:700; }
+
+.opp-actions{
+  display:flex;
+  gap:7px;
+}
+
+.btn-sm{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:6px 11px;
+  border-radius:8px;
+  font-family:var(--display);
+  font-size:11px;
+  font-weight:700;
+  transition:all .2s ease;
+  white-space:nowrap;
+  border:1px solid transparent;
+}
+.btn-outline{
+  background:#fff;
+  color:var(--ink-soft);
+  border-color:var(--border);
+}
+.btn-outline:hover{
+  border-color:var(--orange);
+  color:var(--orange);
+  background:var(--amber-soft);
+}
+.btn-apply{
+  background:var(--grad);
+  color:#fff;
+  box-shadow:0 6px 14px -5px rgba(234,88,12,.5);
+}
+.btn-apply:hover{
+  filter:brightness(1.06);
+  transform:translateY(-1px);
+  box-shadow:0 10px 22px -6px rgba(234,88,12,.6);
+}
+.btn-applied{
+  background:#EAF7EE;
+  color:#15803D;
+  border-color:#BBF7D0;
+  pointer-events:none;
+}
+
+/* Empty state */
+.empty-state{
+  grid-column:1 / -1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:56px 24px;
+  text-align:center;
+  background:linear-gradient(135deg, #FFFDF8 0%, #FFF8ED 100%);
+  border:1px dashed var(--border);
+  border-radius:var(--r-lg);
+}
+.empty-state i{
+  font-size:30px;
+  color:var(--border);
+  margin-bottom:12px;
+}
+.empty-state h3{
+  font-size:15px;
+  font-weight:700;
+  margin-bottom:6px;
+  color:var(--ink);
+}
+.empty-state p{
+  font-size:12px;
+  color:var(--ink-soft);
+  max-width:400px;
+  line-height:1.55;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MODAL — Opportunity Details
+══════════════════════════════════════════════════════════════ */
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.5);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  z-index:200;
+  animation:fadeIn .22s ease;
+}
+.modal-backdrop.open{ display:flex; }
+
+@keyframes fadeIn{
+  from{ opacity:0; }
+  to{ opacity:1; }
+}
+
+.modal{
+  width:100%;
+  max-width:720px;
+  max-height:calc(100vh - 48px);
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:var(--r-xl);
+  box-shadow:0 32px 64px -20px rgba(15,23,42,.35);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  animation:slideUp .28s cubic-bezier(.4,0,.2,1);
+}
+@keyframes slideUp{
+  from{ transform:translateY(14px) scale(.98); opacity:0; }
+  to{ transform:translateY(0) scale(1); opacity:1; }
+}
+
+.modal-head{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:18px 22px;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg, #fff 0%, #FEFBF3 100%);
+  position:relative;
+}
+.modal-head::before{
+  content:"";
+  position:absolute;
+  top:0; left:0;
+  right:0;
+  height:3px;
+  background:var(--grad);
+}
+.modal-company-mark{
+  width:48px; height:48px;
+  border-radius:12px;
+  background:var(--grad);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-family:var(--display);
+  font-weight:800;
+  font-size:16px;
+  flex-shrink:0;
+  box-shadow:0 8px 18px -6px rgba(234,88,12,.5);
+  position:relative;
+  overflow:hidden;
+}
+.modal-company-mark::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.55), transparent 55%);
+}
+.modal-head-text{
+  flex:1;
+  min-width:0;
+  padding-top:2px;
+}
+.modal-title{
+  font-size:17px;
+  font-weight:800;
+  letter-spacing:-.02em;
+  color:var(--ink);
+  line-height:1.2;
+  margin-bottom:2px;
+}
+.modal-sub{
+  font-size:12px;
+  color:var(--ink-soft);
+  font-weight:500;
+}
+.modal-close{
+  width:32px;
+  height:32px;
+  border-radius:9px;
+  border:1px solid var(--border);
+  background:#fff;
+  display:grid;
+  place-items:center;
+  color:var(--ink-soft);
+  font-size:13px;
+  transition:all .2s ease;
+  flex-shrink:0;
+}
+.modal-close:hover{
+  background:#F7F2EA;
+  color:var(--orange);
+  transform:rotate(90deg);
+}
+
+.modal-body{
+  padding:20px 22px;
+  overflow-y:auto;
+  flex:1;
+}
+
+.detail-section{
+  margin-bottom:18px;
+}
+.detail-section:last-child{ margin-bottom:0; }
+
+.detail-label{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:10.5px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  margin-bottom:8px;
+}
+.detail-label i{ color:var(--orange); font-size:11px; }
+
+.detail-text{
+  font-size:12.5px;
+  color:var(--ink-soft);
+  line-height:1.65;
+}
+
+.detail-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:10px;
+}
+.detail-tile{
+  background:#FCFAF6;
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:11px 12px;
+}
+.detail-tile .dt-label{
+  font-size:10px;
+  font-weight:600;
+  color:var(--ink-faint);
+  letter-spacing:.02em;
+  margin-bottom:3px;
+}
+.detail-tile .dt-value{
+  font-family:var(--display);
+  font-size:13px;
+  font-weight:700;
+  color:var(--ink);
+  line-height:1.2;
+}
+
+/* Skill benchmark table */
+.bench-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+}
+.bench-table th{
+  text-align:left;
+  font-size:10px;
+  font-weight:700;
+  color:var(--ink-faint);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  padding:7px 10px;
+  background:#FCFAF6;
+  border-bottom:1px solid var(--border);
+}
+.bench-table td{
+  padding:9px 10px;
+  border-bottom:1px solid var(--border-2);
+  color:var(--ink-soft);
+}
+.bench-table tr:last-child td{ border-bottom:none; }
+.bench-table .skill-col{ color:var(--ink); font-weight:600; }
+.bench-table .num-col{
+  font-family:var(--display);
+  font-weight:700;
+  color:var(--ink);
+}
+.bench-table .ok{ color:var(--green); font-weight:700; }
+.bench-table .warn{ color:#B7791F; font-weight:700; }
+.bench-table .miss{ color:var(--red); font-weight:700; }
+
+/* Process steps */
+.process-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.process-step{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:10px 12px;
+  background:#FCFAF6;
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  font-size:12px;
+  color:var(--ink-soft);
+  line-height:1.5;
+}
+.process-step .step-num{
+  width:22px; height:22px;
+  border-radius:50%;
+  background:var(--grad);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-family:var(--display);
+  font-size:10.5px;
+  font-weight:800;
+  flex-shrink:0;
+  box-shadow:0 4px 10px -3px rgba(234,88,12,.5);
+}
+.process-step strong{ color:var(--ink); font-weight:700; }
+
+/* Modal footer */
+.modal-foot{
+  padding:14px 22px;
+  border-top:1px solid var(--border);
+  background:#FEFBF3;
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.modal-foot-note{
+  flex:1;
+  font-size:11px;
+  color:var(--ink-faint);
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.modal-foot-note i{ color:var(--green); font-size:11px; }
+
+.btn-apply-lg{
+  padding:11px 22px;
+  border-radius:11px;
+  font-size:12.5px;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:var(--grad);
+  color:#fff;
+  box-shadow:0 8px 20px -6px rgba(234,88,12,.55);
+  transition:all .2s ease;
+  font-family:var(--display);
+  position:relative;
+  overflow:hidden;
+}
+.btn-apply-lg:hover{
+  filter:brightness(1.06);
+  transform:translateY(-1px);
+  box-shadow:0 14px 28px -8px rgba(234,88,12,.6);
+}
+.btn-apply-lg::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,.3) 50%, transparent 70%);
+  transform:translateX(-100%);
+  transition:transform 700ms ease;
+}
+.btn-apply-lg:hover::after{ transform:translateX(100%); }
+.btn-apply-lg:disabled,
+.btn-apply-lg.applied{
+  background:#EAF7EE;
+  color:#15803D;
+  box-shadow:none;
+  cursor:not-allowed;
+  pointer-events:none;
+}
+.btn-apply-lg.applied::after{ display:none; }
+
+/* ══════════════════════════════════════════════════════════════
+   PROFILE DRAWER
+══════════════════════════════════════════════════════════════ */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.38);
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+  display:none;
+  z-index:190;
+}
+.overlay.open{ display:block; }
+
+.drawer{
+  position:fixed;
+  top:0; right:-440px;
+  width:420px;
+  max-width:94vw;
+  height:100vh;
+  background:#fff;
+  z-index:210;
+  box-shadow:-16px 0 44px rgba(15,23,42,.18);
+  transition:right .28s cubic-bezier(.4,0,.2,1);
+  display:flex;
+  flex-direction:column;
+}
+.drawer.open{ right:0; }
+
+.drawer-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 20px;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg, #fff 0%, #FEFBF3 100%);
+}
+.drawer-head h3{
+  margin:0;
+  font-size:15px;
+  font-weight:800;
+  font-family:var(--display);
+  color:var(--ink);
+  letter-spacing:-.02em;
+}
+.drawer-close{
+  width:30px; height:30px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:#fff;
+  display:grid;
+  place-items:center;
+  color:var(--ink-soft);
+  transition:all .2s ease;
+}
+.drawer-close:hover{
+  background:#F7F2EA;
+  color:var(--orange);
+  transform:rotate(90deg);
+}
+
+.drawer-body{
+  padding:20px;
+  overflow-y:auto;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.pic-upload{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.pic-upload .avatar-lg{
+  width:66px; height:66px;
+  border-radius:50%;
+  background:var(--grad);
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:700;
+  font-family:var(--display);
+  font-size:22px;
+  flex-shrink:0;
+  box-shadow:0 10px 24px -8px rgba(234,88,12,.5);
+  overflow:hidden;
+}
+.pic-upload .avatar-lg.has-photo{ color:transparent; }
+
+.pic-upload label{
+  font-size:12px;
+  font-weight:700;
+  padding:8px 12px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  cursor:pointer;
+  color:var(--ink-soft);
+  background:#FCFAF7;
+  transition:all .2s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-family:var(--display);
+}
+.pic-upload label:hover{
+  background:var(--amber-soft);
+  border-color:var(--orange);
+  color:var(--orange);
+}
+.pic-upload input[type=file]{
+  position:absolute;
+  width:1px; height:1px;
+  opacity:0;
+  overflow:hidden;
+}
+.upload-hint{
+  display:block;
+  font-size:10.5px;
+  color:var(--ink-faint);
+  margin-top:5px;
+}
+
+.field{ display:flex; flex-direction:column; gap:5px; }
+.field label{
+  font-size:11px;
+  font-weight:700;
+  color:var(--ink-soft);
+  font-family:var(--display);
+}
+.field input,
+.field textarea{
+  border:1px solid var(--border);
+  border-radius:9px;
+  padding:9px 12px;
+  font-size:12.5px;
+  font-family:var(--sans);
+  color:var(--ink);
+  background:#FCFAF7;
+  transition:all .2s ease;
+  resize:vertical;
+}
+.field textarea{ min-height:66px; }
+.field input:focus,
+.field textarea:focus{
+  outline:none;
+  border-color:var(--orange);
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(234,88,12,.10);
+}
+
+.field-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:11px;
+}
+
+.divider-label{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:10.5px;
+  font-weight:800;
+  color:var(--ink-faint);
+  margin-top:4px;
+  letter-spacing:.08em;
+  font-family:var(--display);
+}
+.divider-label::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:var(--border);
+}
+
+.drawer-foot{
+  padding:14px 20px;
+  border-top:1px solid var(--border);
+  display:flex;
+  gap:10px;
+  background:#FEFBF3;
+}
+.btn-soft{
+  flex:1;
+  padding:10px;
+  border-radius:10px;
+  font-size:12.5px;
+  font-weight:700;
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--ink-soft);
+  transition:all .2s ease;
+  font-family:var(--display);
+}
+.btn-soft:hover{
+  background:#F7F2EA;
+  border-color:var(--orange);
+  color:var(--orange);
+}
+.btn-save{
+  flex:1.2;
+  padding:10px;
+  border-radius:10px;
+  font-size:12.5px;
+  font-weight:700;
+  border:none;
+  background:var(--grad);
+  color:#fff;
+  box-shadow:0 6px 16px -6px rgba(234,88,12,.5);
+  transition:all .2s ease;
+  font-family:var(--display);
+}
+.btn-save:hover{
+  filter:brightness(1.05);
+  transform:translateY(-1px);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════════════ */
+.toast{
+  position:fixed;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%) translateY(16px);
+  background:var(--ink);
+  color:#fff;
+  padding:11px 18px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:500;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .22s ease, transform .22s ease;
+  z-index:300;
+  box-shadow:0 16px 34px rgba(15,23,42,.28);
+  font-family:var(--display);
+  max-width:90vw;
+}
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+  pointer-events:auto;
+}
+.toast i{ color:var(--amber); font-size:12px; }
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════════════ */
+@media (max-width: 1180px){
+  .metric-grid{ grid-template-columns:repeat(2, 1fr); }
+}
+@media (max-width: 980px){
+  .shell{ grid-template-columns:1fr; }
+  .sidebar{
+    position:relative;
+    height:auto;
+    border-right:none;
+    border-bottom:1px solid var(--border);
+  }
+  .filter-bar{ flex-direction:column; align-items:stretch; }
+  .filter-select{ width:100%; }
+  .filter-spacer{ display:none; }
+}
+@media (max-width: 720px){
+  .topbar{ padding:12px 16px; }
+  .search-pill{ max-width:none; }
+  .profile-trigger .p-info{ display:none; }
+  .profile-trigger{ padding:4px; }
+  .content{ padding:18px 16px 44px; }
+  .page-title{ font-size:17px; }
+  .metric-grid{ grid-template-columns:1fr; }
+  .detail-grid{ grid-template-columns:1fr; }
+  .field-row{ grid-template-columns:1fr; }
+  .modal-foot{ flex-direction:column; align-items:stretch; }
+  .modal-foot-note{ justify-content:center; }
+  .btn-apply-lg{ justify-content:center; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ══════════════════ SIDEBAR ══════════════════ -->
+  <aside class="sidebar">
+
+    <div class="brand">
+      <div class="brand-mark">H</div>
+      <div class="brand-text">
+        <div class="brand-name">Horizon</div>
+        <span class="brand-tag">Trainee Portal</span>
+      </div>
+    </div>
+
+    <div class="nav-group-label">MY DASHBOARD</div>
+    <nav class="nav">
+      <a class="nav-link" href="{{ url_for('trainee.dashboard') }}"><i class="fa-solid fa-house"></i> Overview</a>
+      <a class="nav-link" href="{{ url_for('trainee.profile') }}"><i class="fa-solid fa-user"></i> My Profile</a>
+      <a class="nav-link" href="{{ url_for('trainee.training') }}"><i class="fa-solid fa-graduation-cap"></i> My Training</a>
+      <a class="nav-link" href="{{ url_for('trainee.employment') }}"><i class="fa-solid fa-briefcase"></i> Employment</a>
+      <a class="nav-link" href="{{ url_for('trainee.skill_gap') }}"><i class="fa-solid fa-brain"></i> Skill Gap</a>
+      <a class="nav-link" href="{{ url_for('trainee.career') }}"><i class="fa-solid fa-arrow-trend-up"></i> Career Growth</a>
+      <a class="nav-link active" href="{{ url_for('trainee.opportunities') }}"><i class="fa-solid fa-magnifying-glass-dollar"></i> Opportunities</a>
+    </nav>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-group-label">ACCOUNT</div>
+    <nav class="nav">
+      <a class="nav-link" href="#"><i class="fa-solid fa-list-check"></i> Follow-ups</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-shield-halved"></i> Privacy &amp; Consent</a>
+      <a class="nav-link" href="#">
+        <i class="fa-solid fa-bell"></i> Notifications
+        <span class="nav-badge">3</span>
+      </a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-circle-question"></i> Support</a>
+    </nav>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="sidebar-foot">
+      <div class="sidebar-widget">
+        <div class="w-icon"><i class="fa-solid fa-bolt"></i></div>
+        <div class="w-text">
+          <div class="w-label">Skill Score</div>
+          <div class="w-value" id="sidebarSkillScore">— / 100</div>
+        </div>
+      </div>
+
+      <a class="logout-link" href="{{ url_for('common.role_selection') }}">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+      </a>
+    </div>
+
+  </aside>
+
+  <!-- ══════════════════ MAIN ══════════════════ -->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="search-pill">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="topSearch" placeholder="Search companies, job roles, package (LPA), or required skills...">
+      </div>
+
+      <div class="topbar-spacer"></div>
+
+      <button class="icon-btn" aria-label="Notifications">
+        <i class="fa-regular fa-bell"></i>
+        <span class="dot"></span>
+      </button>
+
+      <button class="profile-trigger" id="profileTrigger">
+        <div class="avatar" id="topAvatar">?</div>
+        <div class="p-info">
+          <div class="p-name" id="topTraineeName">Trainee</div>
+          <div class="p-roll" id="topTraineeRoll">—</div>
+        </div>
+        <i class="fa-solid fa-chevron-down chev"></i>
+      </button>
+    </header>
+
+    <!-- CONTENT -->
+    <section class="content">
+
+      <!-- Page heading with BACK button -->
+      <div class="page-head">
+        <a class="back-btn" href="{{ url_for('trainee.dashboard') }}" title="Back to Dashboard" aria-label="Back to Dashboard">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+
+        <div class="page-title-block">
+          <h1 class="page-title">
+            <i class="fa-solid fa-magnifying-glass-dollar"></i>
+            Live Career Opportunities &amp; Recruiting Drives
+          </h1>
+          <p class="page-sub">
+            Browse active drives tailored to your branch and skill score. View salary packages,
+            job roles, required benchmarks, and apply instantly.
+          </p>
+        </div>
+
+        <div class="head-actions">
+          <button class="btn btn-ghost" id="refreshBtn">
+            <i class="fa-solid fa-rotate"></i> Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- KEY METRIC COUNTERS -->
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="metric-icon icon-orange"><i class="fa-solid fa-briefcase"></i></div>
+          <div class="metric-body">
+            <div class="metric-label">Active Drives</div>
+            <div class="metric-value" id="mActiveDrives">0</div>
+            <div class="metric-note">companies hiring</div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon icon-green"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="metric-body">
+            <div class="metric-label">Highly Eligible</div>
+            <div class="metric-value" id="mHighlyEligible">0</div>
+            <div class="metric-note">roles ≥ 80% match</div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon icon-amber"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+          <div class="metric-body">
+            <div class="metric-label">Highest Package</div>
+            <div class="metric-value" id="mHighestPackage">—</div>
+            <div class="metric-note">top CTC offered</div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon icon-blue"><i class="fa-solid fa-hourglass-half"></i></div>
+          <div class="metric-body">
+            <div class="metric-label">Applications</div>
+            <div class="metric-value" id="mApplications">0</div>
+            <div class="metric-note" id="mApplicationsNote">pending</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTER TOOLBAR -->
+      <div class="filter-bar">
+        <span class="filter-label"><i class="fa-solid fa-sliders"></i> Filters</span>
+
+        <select class="filter-select" id="fEligibility">
+          <option value="all">All Drives</option>
+          <option value="high">Highly Eligible (&gt; 75% Match)</option>
+          <option value="upgrade">Needs Skill Upgrade</option>
+        </select>
+
+        <select class="filter-select" id="fRole">
+          <option value="all">All Roles</option>
+          <option value="Full-Stack">Full-Stack Dev</option>
+          <option value="Cloud">Cloud / DevOps</option>
+          <option value="Data">Data Analyst</option>
+          <option value="QA">QA / Testing</option>
+          <option value="Systems">Systems Engineer</option>
+        </select>
+
+        <select class="filter-select" id="fPackage">
+          <option value="all">All Packages</option>
+          <option value="4-8">₹4 – 8 LPA</option>
+          <option value="8-12">₹8 – 12 LPA</option>
+          <option value="12+">₹12+ LPA</option>
+        </select>
+
+        <select class="filter-select" id="fSort">
+          <option value="match">Match Score: High to Low</option>
+          <option value="package">Package: High to Low</option>
+          <option value="deadline">Deadline: Ending Soon</option>
+        </select>
+
+        <div class="filter-spacer"></div>
+
+        <span class="result-count">
+          Showing <strong id="resultCount">0</strong> of <strong id="totalCount">0</strong> drives
+        </span>
+      </div>
+
+      <!-- OPPORTUNITIES GRID -->
+      <div class="opps-grid" id="oppsGrid"></div>
+
+    </section>
+  </main>
+</div>
+
+<!-- ══════════════════ MODAL — Opportunity Details ══════════════════ -->
+<div class="modal-backdrop" id="detailBackdrop">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <div class="modal-company-mark" id="modalLogo">?</div>
+      <div class="modal-head-text">
+        <div class="modal-title" id="modalTitle">Company</div>
+        <div class="modal-sub" id="modalSub">Role · Location</div>
+      </div>
+      <button class="modal-close" id="modalClose" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="modal-body" id="modalBody"><!-- filled by JS --></div>
+
+    <div class="modal-foot">
+      <div class="modal-foot-note" id="modalFootNote">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Your resume will be shared with the recruiter.</span>
+      </div>
+      <button class="btn-apply-lg" id="modalApplyBtn">
+        <i class="fa-solid fa-paper-plane"></i>
+        Confirm Application &amp; Send Resume
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ PROFILE DRAWER ══════════════════ -->
+<div class="overlay" id="overlay"></div>
+<div class="drawer" id="profileDrawer" role="dialog" aria-modal="true">
+  <div class="drawer-head">
+    <h3>My Profile</h3>
+    <button class="drawer-close" id="drawerClose" aria-label="Close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <div class="drawer-body">
+    <div class="pic-upload">
+      <div class="avatar-lg" id="drawerAvatar">?</div>
+      <div>
+        <label for="picInput">
+          <i class="fa-solid fa-camera"></i>
+          Change photo
+        </label>
+        <input type="file" id="picInput" accept="image/png,image/jpeg,image/jpg,image/webp">
+        <span class="upload-hint">PNG, JPG or WebP · Max 5 MB</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" placeholder="Enter your full name">
+    </div>
+
+    <div class="field">
+      <label for="emailAddr">Email Address</label>
+      <input type="email" id="emailAddr" placeholder="you@example.com">
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="branchField">Branch</label>
+        <input type="text" id="branchField" placeholder="e.g. CSE">
+      </div>
+      <div class="field">
+        <label for="batchField">Batch</label>
+        <input type="text" id="batchField" placeholder="e.g. 2022-2026">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="bioField">Academic Bio</label>
+      <textarea id="bioField" placeholder="Tell us about your interests, projects, and career goals..."></textarea>
+    </div>
+
+    <div class="divider-label">CHANGE PASSWORD</div>
+
+    <div class="field">
+      <label for="curPass">Current Password</label>
+      <input type="password" id="curPass" placeholder="••••••••">
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="newPass">New Password</label>
+        <input type="password" id="newPass" placeholder="••••••••">
+      </div>
+      <div class="field">
+        <label for="confPass">Confirm Password</label>
+        <input type="password" id="confPass" placeholder="••••••••">
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer-foot">
+    <button class="btn-soft" id="cancelProfile">Cancel</button>
+    <button class="btn-save" id="saveProfile">Save Changes</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <i class="fa-solid fa-circle-check"></i>
+  <span id="toastText">Saved</span>
+</div>
+
+<script>
+"use strict";
+
+/* ══════════════════════════════════════════════════════════════
+   HORIZON — TRAINEE · OPPORTUNITIES
+   Reads identity from localStorage['horizon_trainee_data'],
+   keyed by localStorage['horizon_current_user_id'].
+══════════════════════════════════════════════════════════════ */
+
+const STORAGE_KEY = 'horizon_trainee_data';
+const USER_KEY    = 'horizon_current_user_id';
+const PROFILE_KEY = 'horizon_trainee_profile';
+
+/* ══════════════════════════════════════════════════════════════
+   DATA — COMPANY TEMPLATES
+══════════════════════════════════════════════════════════════ */
+const COMPANIES = [
+  {
+    id: 'tcs-digital',
+    name: 'TCS Digital',
+    logo: 'TCS',
+    role: 'Full-Stack Developer',
+    roleType: 'Full-Stack',
+    packageMin: 7.0, packageMax: 9.5,
+    location: 'Bangalore · Hybrid',
+    jobType: 'Full-Time',
+    deadline: '2026-06-24',
+    requiredSkills: ['Python', 'SQL', 'React', 'REST APIs'],
+    mission: 'Empowering global enterprises with next-generation digital solutions across cloud, data, and product engineering.',
+    description: 'As a Full-Stack Developer at TCS Digital, you will design and ship web applications end-to-end — from REST APIs and databases to responsive UIs. You\'ll work alongside senior engineers in agile pods and get exposed to large-scale enterprise clients.',
+    perks: ['Health Insurance', 'Annual Bonus', 'Certification Sponsorship'],
+    eligibility: { cgpa: '6.0+', backlogs: '0 active', branches: 'CSE, IT, CSBS, ECE' },
+    process: [
+      { title: 'Round 1 · Online Assessment', desc: 'Aptitude + 2 coding problems (DSA, 90 mins)' },
+      { title: 'Round 2 · Technical Interview', desc: 'DSA + system design basics + one project deep-dive' },
+      { title: 'Round 3 · HR Interview', desc: 'Behavioural + culture fit' }
+    ]
+  },
+  {
+    id: 'infosys-power',
+    name: 'Infosys Power Programmer',
+    logo: 'INF',
+    role: 'Cloud Engineer',
+    roleType: 'Cloud',
+    packageMin: 9.5, packageMax: 12.0,
+    location: 'Pune · Hybrid',
+    jobType: 'Full-Time',
+    deadline: '2026-06-28',
+    requiredSkills: ['AWS', 'Docker', 'Linux', 'Kubernetes'],
+    mission: 'Helping clients navigate their digital transformation with cloud-native engineering and AI-first platforms.',
+    description: 'You will build and manage cloud infrastructure, containerise services with Docker and Kubernetes, and automate deployment pipelines for global clients.',
+    perks: ['Stock Options', 'Flexible Hours', 'Learning Stipend'],
+    eligibility: { cgpa: '7.0+', backlogs: '0', branches: 'CSE, IT, CSBS, ECE' },
+    process: [
+      { title: 'Round 1 · Online Assessment', desc: 'Cloud fundamentals + Linux + scripting (120 mins)' },
+      { title: 'Round 2 · Technical Panel', desc: 'AWS services, Docker, live infra problem' },
+      { title: 'Round 3 · HR Round', desc: 'Relocation, shift flexibility, culture fit' }
+    ]
+  },
+  {
+    id: 'horizon-tech',
+    name: 'Horizon Tech',
+    logo: 'HZ',
+    role: 'Backend Engineer',
+    roleType: 'Full-Stack',
+    packageMin: 10.5, packageMax: 14.0,
+    location: 'Hyderabad · On-site',
+    jobType: 'Full-Time',
+    deadline: '2026-07-02',
+    requiredSkills: ['Python', 'Flask', 'PostgreSQL', 'Docker'],
+    mission: 'Building products that turn workforce data into actionable career intelligence.',
+    description: 'Design, build and scale backend services that power Horizon\'s analytics pipeline. You\'ll own APIs, data models, and deployment workflows.',
+    perks: ['Health + Wellness', 'Stock Options', 'Annual Learning Budget'],
+    eligibility: { cgpa: '7.5+', backlogs: '0', branches: 'CSE, IT' },
+    process: [
+      { title: 'Round 1 · Take-home', desc: 'Build a small REST API — 48-hour window' },
+      { title: 'Round 2 · Code Review', desc: 'Walk through your solution + system design' },
+      { title: 'Round 3 · Culture Fit', desc: 'Founders interview — mission & values alignment' }
+    ]
+  },
+  {
+    id: 'accenture-analytics',
+    name: 'Accenture Analytics',
+    logo: 'ACN',
+    role: 'Data Analyst',
+    roleType: 'Data',
+    packageMin: 6.5, packageMax: 9.0,
+    location: 'Mumbai · Hybrid',
+    jobType: 'Full-Time',
+    deadline: '2026-07-08',
+    requiredSkills: ['SQL', 'Tableau', 'Statistics', 'Python'],
+    mission: 'Delivering measurable business outcomes through data, insight, and analytics-led transformation.',
+    description: 'You\'ll join a data practice that supports Fortune-500 clients — building dashboards, unearthing patterns, and translating metrics into business decisions.',
+    perks: ['Health Insurance', 'Certification Support', 'Travel Allowance'],
+    eligibility: { cgpa: '6.5+', backlogs: '≤ 1', branches: 'CSE, IT, CSBS, ECE' },
+    process: [
+      { title: 'Round 1 · Aptitude + SQL', desc: 'Quant + SQL query test (90 mins)' },
+      { title: 'Round 2 · Case Study', desc: 'Business case discussion + Tableau exercise' },
+      { title: 'Round 3 · HR', desc: 'Fitment and location discussion' }
+    ]
+  },
+  {
+    id: 'wipro-next',
+    name: 'Wipro Next',
+    logo: 'WIP',
+    role: 'Frontend Engineer',
+    roleType: 'Full-Stack',
+    packageMin: 5.5, packageMax: 8.0,
+    location: 'Chennai · Hybrid',
+    jobType: 'Full-Time',
+    deadline: '2026-06-30',
+    requiredSkills: ['React', 'TypeScript', 'CSS', 'Git'],
+    mission: 'Creating design-led digital products for some of the world\'s largest enterprises.',
+    description: 'You\'ll build modern, accessible interfaces with React and TypeScript, collaborating closely with product designers and backend teams.',
+    perks: ['Health Insurance', 'Referral Bonus', 'Skill Allowance'],
+    eligibility: { cgpa: '6.0+', backlogs: '≤ 1', branches: 'CSE, IT, CSBS, ECE, EEE' },
+    process: [
+      { title: 'Round 1 · Online Test', desc: 'JS + React fundamentals (75 mins)' },
+      { title: 'Round 2 · UI Challenge', desc: 'Build a small UI from a Figma mockup' },
+      { title: 'Round 3 · HR', desc: 'Team fit + availability' }
+    ]
+  },
+  {
+    id: 'zoho',
+    name: 'Zoho Corp',
+    logo: 'ZH',
+    role: 'Software Engineer',
+    roleType: 'Systems',
+    packageMin: 6.0, packageMax: 8.5,
+    location: 'Chennai · On-site',
+    jobType: 'Full-Time',
+    deadline: '2026-07-05',
+    requiredSkills: ['Java', 'DSA', 'SQL', 'Linux'],
+    mission: 'Building affordable, world-class software for businesses across 150+ countries.',
+    description: 'Work on high-scale systems that power Zoho\'s SaaS products — shipping production code from day one with mentor support.',
+    perks: ['Free Meals', 'Health Insurance', 'Learning Stipend'],
+    eligibility: { cgpa: '6.5+', backlogs: '0', branches: 'CSE, IT, CSBS' },
+    process: [
+      { title: 'Round 1 · Written Test', desc: 'DSA + Java + SQL MCQs' },
+      { title: 'Round 2 · Coding Round', desc: '2 problems in the IDE' },
+      { title: 'Round 3 · Technical + HR', desc: 'Project + culture fit' }
+    ]
+  },
+  {
+    id: 'cisco',
+    name: 'Cisco Systems',
+    logo: 'CSC',
+    role: 'Junior Cloud Architect',
+    roleType: 'Cloud',
+    packageMin: 14.0, packageMax: 18.5,
+    location: 'Bangalore · Hybrid',
+    jobType: 'Full-Time',
+    deadline: '2026-07-12',
+    requiredSkills: ['AWS', 'Kubernetes', 'Terraform', 'Networking'],
+    mission: 'Powering an inclusive future for all by connecting and protecting the digital world.',
+    description: 'Join a cloud-native team responsible for building scalable, secure infrastructure platforms that power Cisco\'s enterprise services.',
+    perks: ['Stock Options', 'Wellness Budget', 'Top-tier Health Plan', 'Relocation Support'],
+    eligibility: { cgpa: '8.0+', backlogs: '0', branches: 'CSE, IT, CSBS, ECE' },
+    process: [
+      { title: 'Round 1 · Online Assessment', desc: 'Systems + networking + 2 coding problems (120 mins)' },
+      { title: 'Round 2 · Deep Technical', desc: 'Cloud, containers, IaC, live scenario' },
+      { title: 'Round 3 · Manager + HR', desc: 'Team alignment, career goals' }
+    ]
+  },
+  {
+    id: 'aws-early',
+    name: 'Amazon Web Services',
+    logo: 'AWS',
+    role: 'Cloud Support Associate',
+    roleType: 'Cloud',
+    packageMin: 11.0, packageMax: 15.0,
+    location: 'Hyderabad · Hybrid',
+    jobType: 'Full-Time',
+    deadline: '2026-07-15',
+    requiredSkills: ['AWS', 'Linux', 'Networking', 'Python'],
+    mission: 'To be Earth\'s most customer-centric company, enabling builders to innovate faster on the cloud.',
+    description: 'You\'ll be the first line of technical support for AWS customers — diagnosing infrastructure issues, walking customers through cloud architectures, and collaborating with engineering teams.',
+    perks: ['Stock (RSUs)', 'Health + Wellness', 'Upskilling Budget', 'Career Growth'],
+    eligibility: { cgpa: '7.0+', backlogs: '0', branches: 'CSE, IT, CSBS, ECE, EEE' },
+    process: [
+      { title: 'Round 1 · Online Assessment', desc: 'AWS fundamentals + scripting + troubleshooting' },
+      { title: 'Round 2 · Technical Screen', desc: 'Linux, DNS, networking scenarios (45 mins)' },
+      { title: 'Round 3 · Loop Interviews', desc: '2 technical + 1 leadership-principles round' }
+    ]
+  },
+  {
+    id: 'cognizant-genc',
+    name: 'Cognizant GenC Next',
+    logo: 'CGT',
+    role: 'QA Automation Engineer',
+    roleType: 'QA',
+    packageMin: 5.0, packageMax: 7.5,
+    location: 'Coimbatore · Hybrid',
+    jobType: 'Full-Time',
+    deadline: '2026-06-27',
+    requiredSkills: ['Selenium', 'Java', 'SQL', 'Testing'],
+    mission: 'Engineering modern businesses with a focus on quality, speed, and digital trust.',
+    description: 'Build and maintain automation suites that ensure the reliability of enterprise applications. Work side-by-side with developers in a modern QA-first pipeline.',
+    perks: ['Health Insurance', 'Shift Allowance', 'Certification Support'],
+    eligibility: { cgpa: '6.0+', backlogs: '≤ 1', branches: 'CSE, IT, CSBS, ECE, EEE, MECH' },
+    process: [
+      { title: 'Round 1 · Online Test', desc: 'Aptitude + Java + testing basics' },
+      { title: 'Round 2 · Technical', desc: 'Selenium + test design + SQL' },
+      { title: 'Round 3 · HR', desc: 'Shift flexibility & fit' }
+    ]
+  },
+  {
+    id: 'freshworks',
+    name: 'Freshworks',
+    logo: 'FW',
+    role: 'Product Engineer',
+    roleType: 'Full-Stack',
+    packageMin: 12.0, packageMax: 16.0,
+    location: 'Chennai · Hybrid',
+    jobType: 'Full-Time',
+    deadline: '2026-07-10',
+    requiredSkills: ['Ruby on Rails', 'React', 'PostgreSQL', 'AWS'],
+    mission: 'Delighting customers with fresh, easy-to-use software that delivers instant value.',
+    description: 'Product Engineers at Freshworks own features end-to-end — from schema design to UI polish — in small autonomous teams.',
+    perks: ['Stock Options', 'Health Insurance', 'Annual Retreat', 'Learning Budget'],
+    eligibility: { cgpa: '7.5+', backlogs: '0', branches: 'CSE, IT, CSBS' },
+    process: [
+      { title: 'Round 1 · Online Assessment', desc: 'DSA + 2 coding problems' },
+      { title: 'Round 2 · System Design', desc: 'Design a small product — 60 mins' },
+      { title: 'Round 3 · Culture Fit', desc: 'Values-based interview' }
+    ]
+  },
+  {
+    id: 'mindtree-qa',
+    name: 'LTIMindtree',
+    logo: 'LTI',
+    role: 'Systems Engineer — QA',
+    roleType: 'QA',
+    packageMin: 4.0, packageMax: 6.5,
+    location: 'Pune · On-site',
+    jobType: 'Full-Time',
+    deadline: '2026-06-22',
+    requiredSkills: ['Manual Testing', 'SQL', 'JIRA', 'API Testing'],
+    mission: 'Enabling enterprises to reimagine business models through digital technologies.',
+    description: 'Ensure quality across web and mobile products — from manual testing to API validations and bug triage.',
+    perks: ['Health Insurance', 'Shift Allowance'],
+    eligibility: { cgpa: '6.0+', backlogs: '≤ 2', branches: 'CSE, IT, ECE, EEE, MECH, CIVIL' },
+    process: [
+      { title: 'Round 1 · Aptitude', desc: 'Quant + logical reasoning' },
+      { title: 'Round 2 · Technical', desc: 'Testing basics + SQL + API' },
+      { title: 'Round 3 · HR', desc: 'Relocation + shift fit' }
+    ]
+  },
+  {
+    id: 'qualcomm',
+    name: 'Qualcomm India',
+    logo: 'QCI',
+    role: 'Systems Engineer',
+    roleType: 'Systems',
+    packageMin: 13.0, packageMax: 17.5,
+    location: 'Hyderabad · On-site',
+    jobType: 'Full-Time',
+    deadline: '2026-07-18',
+    requiredSkills: ['C++', 'Linux', 'Embedded Systems', 'Python'],
+    mission: 'Inventing the breakthrough technologies that shape how the world connects, computes, and communicates.',
+    description: 'Join the engineering team building software for next-generation chipsets and embedded platforms.',
+    perks: ['RSUs', 'Health Insurance', 'Relocation Support', 'Upskilling'],
+    eligibility: { cgpa: '8.0+', backlogs: '0', branches: 'ECE, CSE, EEE' },
+    process: [
+      { title: 'Round 1 · Online Test', desc: 'C++ + OS + embedded fundamentals' },
+      { title: 'Round 2 · Technical Deep Dive', desc: '2 x 60-min technical panels' },
+      { title: 'Round 3 · Manager + HR', desc: 'Projects, goals, availability' }
+    ]
+  }
+];
+
+/* ══════════════════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════════════════ */
+function escapeHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function initials(name){
+  if(!name) return '?';
+  const p = String(name).trim().split(/\s+/);
+  if(p.length === 1) return p[0].charAt(0).toUpperCase();
+  return (p[0].charAt(0) + p[p.length - 1].charAt(0)).toUpperCase();
+}
+
+function firstName(name){
+  if(!name) return 'Trainee';
+  return String(name).trim().split(/\s+/)[0];
+}
+
+function daysUntil(iso){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d = new Date(iso + 'T00:00:00');
+  return Math.ceil((d - today) / (1000 * 60 * 60 * 24));
+}
+
+function deadlineLabel(iso){
+  const days = daysUntil(iso);
+  if(days < 0)  return { text: 'Closed', urgent: true };
+  if(days === 0) return { text: 'Closes today', urgent: true };
+  if(days === 1) return { text: 'Closes tomorrow', urgent: true };
+  if(days <= 5) return { text: `Closes in ${days} days`, urgent: true };
+  return { text: `Closes in ${days} days`, urgent: false };
+}
+
+function formatPackage(min, max){
+  return `₹${min.toFixed(1)} – ${max.toFixed(1)} LPA`;
+}
+
+function matchLevel(pct){
+  if(pct >= 75) return 'high';
+  if(pct >= 45) return 'medium';
+  return 'low';
+}
+
+/* ══════════════════════════════════════════════════════════════
+   IDENTITY BOOTSTRAP
+══════════════════════════════════════════════════════════════ */
+function loadTraineeIdentity(){
+  let record = null;
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const uid = localStorage.getItem(USER_KEY);
+    if(raw){
+      const rows = JSON.parse(raw);
+      if(Array.isArray(rows) && rows.length){
+        const match = uid
+          ? rows.find(r => String(r.trainee_id || r.id) === String(uid))
+          : null;
+        record = match || rows[0];
+      }
+    }
+  }catch(e){ console.warn('Horizon: could not read trainee data.', e); }
+
+  let overrides = {};
+  try{
+    const raw = localStorage.getItem(PROFILE_KEY);
+    if(raw) overrides = JSON.parse(raw) || {};
+  }catch{}
+
+  const skills = record
+    ? (Array.isArray(record.skills)
+        ? record.skills
+        : String(record.skills || '').split(',').map(s => s.trim()).filter(Boolean))
+    : [];
+
+  const skillScore = Math.min(100, 40 + skills.length * 8);
+
+  return {
+    id:     record?.trainee_id || record?.id || overrides.id || '—',
+    name:   overrides.name  || record?.name  || 'Trainee',
+    email:  overrides.email || record?.email || '',
+    branch: overrides.branch|| record?.branch|| '',
+    batch:  overrides.batch || record?.batch || '',
+    bio:    overrides.bio   || '',
+    photo:  overrides.photo || null,
+    skills,
+    skillScore,
+    training: record?.training || 'In Progress',
+    outcome:  record?.outcome  || 'Seeking Employment',
+  };
+}
+
+const IDENTITY = loadTraineeIdentity();
+
+/* ══════════════════════════════════════════════════════════════
+   AVATAR / PROFILE HELPERS
+══════════════════════════════════════════════════════════════ */
+function applyAvatar(el, photo, name){
+  if(!el) return;
+  if(photo){
+    el.style.backgroundImage    = `url(${photo})`;
+    el.style.backgroundSize     = 'cover';
+    el.style.backgroundPosition = 'center';
+    el.style.backgroundRepeat   = 'no-repeat';
+    el.textContent = '';
+    el.classList.add('has-photo');
+  }else{
+    el.style.backgroundImage = '';
+    el.textContent = initials(name);
+    el.classList.remove('has-photo');
+  }
+}
+
+function applyIdentityToShell(){
+  document.getElementById('topTraineeName').textContent = IDENTITY.name;
+  document.getElementById('topTraineeRoll').textContent = IDENTITY.id;
+  document.getElementById('sidebarSkillScore').textContent = `${IDENTITY.skillScore} / 100`;
+
+  applyAvatar(document.getElementById('topAvatar'),   IDENTITY.photo, IDENTITY.name);
+  applyAvatar(document.getElementById('drawerAvatar'),IDENTITY.photo, IDENTITY.name);
+
+  // Prefill drawer form
+  document.getElementById('fullName').value    = IDENTITY.name   || '';
+  document.getElementById('emailAddr').value   = IDENTITY.email  || '';
+  document.getElementById('branchField').value = IDENTITY.branch || '';
+  document.getElementById('batchField').value  = IDENTITY.batch  || '';
+  document.getElementById('bioField').value    = IDENTITY.bio    || '';
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MATCH SCORE PER COMPANY
+══════════════════════════════════════════════════════════════ */
+function computeMatch(company){
+  const lowerSkills = IDENTITY.skills.map(s => s.toLowerCase());
+  let matched = 0;
+  const skillDetails = company.requiredSkills.map(req => {
+    const r = req.toLowerCase();
+    const has = lowerSkills.some(s =>
+      s.includes(r) ||
+      (r === 'aws' && (s.includes('cloud') || s.includes('aws'))) ||
+      (r === 'postgresql' && (s.includes('sql') || s.includes('postgres'))) ||
+      (r === 'rest apis' && (s.includes('rest') || s.includes('api'))) ||
+      (r === 'ruby on rails' && s.includes('rails')) ||
+      (r === 'c++' && s.includes('c++')) ||
+      (r === 'qa' && s.includes('test'))
+    );
+    if(has) matched++;
+    return { name: req, has };
+  });
+  const pct = Math.round((matched / company.requiredSkills.length) * 100);
+  return { pct, skillDetails };
+}
+
+/* ══════════════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════════════ */
+const state = {
+  search: '',
+  eligibility: 'all',
+  role: 'all',
+  pkg: 'all',
+  sort: 'match',
+  appliedIds: new Set(JSON.parse(localStorage.getItem('horizon_applied_drives') || '[]')),
+};
+
+/* ══════════════════════════════════════════════════════════════
+   FILTER + SORT
+══════════════════════════════════════════════════════════════ */
+function filterCompanies(){
+  const q = state.search.trim().toLowerCase();
+
+  let list = COMPANIES.filter(c => {
+    const match = computeMatch(c).pct;
+
+    if(state.eligibility === 'high' && match < 75) return false;
+    if(state.eligibility === 'upgrade' && match >= 75) return false;
+
+    if(state.role !== 'all' && c.roleType !== state.role) return false;
+
+    if(state.pkg !== 'all'){
+      const min = c.packageMin, max = c.packageMax;
+      if(state.pkg === '4-8'   && !(min < 8  && max >= 4))  return false;
+      if(state.pkg === '8-12'  && !(min < 12 && max >= 8))  return false;
+      if(state.pkg === '12+'   && !(max >= 12))             return false;
+    }
+
+    if(q){
+      const hay = [
+        c.name, c.role, c.location, c.roleType,
+        c.requiredSkills.join(' '),
+        c.packageMin, c.packageMax
+      ].join(' ').toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+
+    return true;
+  });
+
+  // Attach match
+  list = list.map(c => ({ ...c, _match: computeMatch(c) }));
+
+  // Sort
+  if(state.sort === 'match'){
+    list.sort((a,b) => b._match.pct - a._match.pct);
+  } else if(state.sort === 'package'){
+    list.sort((a,b) => b.packageMax - a.packageMax);
+  } else if(state.sort === 'deadline'){
+    list.sort((a,b) => daysUntil(a.deadline) - daysUntil(b.deadline));
+  }
+
+  return list;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RENDER — METRIC CARDS
+══════════════════════════════════════════════════════════════ */
+function renderMetrics(){
+  const total = COMPANIES.length;
+  const withMatch = COMPANIES.map(c => computeMatch(c).pct);
+  const highly = withMatch.filter(p => p >= 80).length;
+  const highest = Math.max(...COMPANIES.map(c => c.packageMax));
+  const appliedCount = state.appliedIds.size;
+
+  document.getElementById('mActiveDrives').textContent   = total;
+  document.getElementById('mHighlyEligible').textContent = highly;
+  document.getElementById('mHighestPackage').textContent = `₹${highest.toFixed(1)} LPA`;
+  document.getElementById('mApplications').textContent   = appliedCount;
+  document.getElementById('mApplicationsNote').textContent =
+    appliedCount === 1 ? 'active application' : 'active applications';
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RENDER — OPPORTUNITIES GRID
+══════════════════════════════════════════════════════════════ */
+function renderGrid(){
+  const grid = document.getElementById('oppsGrid');
+  const list = filterCompanies();
+
+  document.getElementById('resultCount').textContent = list.length;
+  document.getElementById('totalCount').textContent  = COMPANIES.length;
+
+  if(!list.length){
+    grid.innerHTML = `
+      <div class="empty-state">
+        <i class="fa-solid fa-briefcase"></i>
+        <h3>No opportunities match your filters</h3>
+        <p>Try clearing the search or relaxing the eligibility / package filters to see more drives.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(c => {
+    const match = c._match;
+    const level = matchLevel(match.pct);
+    const deadline = deadlineLabel(c.deadline);
+    const isApplied = state.appliedIds.has(c.id);
+
+    const skillsHtml = c.requiredSkills.map(s => {
+      const hit = match.skillDetails.find(d => d.name === s)?.has;
+      return `<span class="skill-chip ${hit ? 'matched' : 'missing'}">${escapeHtml(s)}</span>`;
+    }).join('');
+
+    return `
+      <article class="opp-card" data-company-id="${escapeHtml(c.id)}">
+        <header class="opp-head">
+          <div class="company-logo">${escapeHtml(c.logo)}</div>
+          <div class="company-info">
+            <div class="company-name">${escapeHtml(c.name)}</div>
+            <div class="job-role">${escapeHtml(c.role)}</div>
+          </div>
+          <span class="ctc-badge">
+            <i class="fa-solid fa-indian-rupee-sign"></i>
+            ${c.packageMin.toFixed(1)}–${c.packageMax.toFixed(1)} LPA
+          </span>
+        </header>
+
+        <div class="opp-meta">
+          <span><i class="fa-solid fa-location-dot"></i>${escapeHtml(c.location)}</span>
+          <span><i class="fa-regular fa-clock"></i>${escapeHtml(c.jobType)}</span>
+        </div>
+
+        <div class="match-block">
+          <div class="match-row">
+            <span class="match-label">Match</span>
+            <span class="match-value ${level === 'high' ? '' : level}">${match.pct}% — ${level === 'high' ? 'Eligible' : level === 'medium' ? 'Borderline' : 'Needs Upgrade'}</span>
+          </div>
+          <div class="match-track">
+            <div class="match-fill ${level === 'high' ? '' : level}" style="width:${match.pct}%"></div>
+          </div>
+        </div>
+
+        <div class="skills-row">${skillsHtml}</div>
+
+        <footer class="opp-foot">
+          <span class="deadline-badge ${deadline.urgent ? 'urgent' : ''}">
+            <i class="fa-regular fa-clock"></i>
+            <strong>${escapeHtml(deadline.text)}</strong>
+          </span>
+
+          <div class="opp-actions">
+            <button class="btn-sm btn-outline" data-action="view" data-id="${escapeHtml(c.id)}">
+              <i class="fa-regular fa-eye"></i> View
+            </button>
+            <button class="btn-sm ${isApplied ? 'btn-applied' : 'btn-apply'}" data-action="apply" data-id="${escapeHtml(c.id)}">
+              <i class="fa-solid ${isApplied ? 'fa-circle-check' : 'fa-paper-plane'}"></i>
+              ${isApplied ? 'Applied' : 'Apply'}
+            </button>
+          </div>
+        </footer>
+      </article>
+    `;
+  }).join('');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CARD CLICK — Card opens modal, Apply button applies
+══════════════════════════════════════════════════════════════ */
+document.getElementById('oppsGrid').addEventListener('click', (e) => {
+  const actionBtn = e.target.closest('[data-action]');
+  if(actionBtn){
+    e.stopPropagation();
+    const id = actionBtn.dataset.id;
+    const action = actionBtn.dataset.action;
+    if(action === 'view')  openModal(id);
+    if(action === 'apply') applyToCompany(id, actionBtn);
+    return;
+  }
+  const card = e.target.closest('.opp-card');
+  if(card) openModal(card.dataset.companyId);
+});
+
+/* ══════════════════════════════════════════════════════════════
+   MODAL
+══════════════════════════════════════════════════════════════ */
+let currentCompanyId = null;
+
+function openModal(id){
+  const company = COMPANIES.find(c => c.id === id);
+  if(!company) return;
+
+  currentCompanyId = id;
+  const match = computeMatch(company);
+  const level = matchLevel(match.pct);
+  const isApplied = state.appliedIds.has(id);
+
+  document.getElementById('modalLogo').textContent  = company.logo;
+  document.getElementById('modalTitle').textContent = company.name;
+  document.getElementById('modalSub').textContent   = `${company.role} · ${company.location}`;
+
+  // Skill benchmark rows
+  const benchRows = match.skillDetails.map(d => {
+    // simulated user score: if has, high; if not, low
+    const userScore = d.has ? Math.min(95, 70 + Math.floor(Math.random() * 20)) : Math.max(25, 30 + Math.floor(Math.random() * 15));
+    const required = 75;
+    const status = userScore >= required ? 'ok' : (userScore >= required - 15 ? 'warn' : 'miss');
+    const statusIcon = status === 'ok' ? 'fa-circle-check' : (status === 'warn' ? 'fa-triangle-exclamation' : 'fa-circle-xmark');
+    const statusLabel = status === 'ok' ? 'Met' : (status === 'warn' ? 'Close' : 'Below');
+    return `
+      <tr>
+        <td class="skill-col">${escapeHtml(d.name)}</td>
+        <td class="num-col">${required}%</td>
+        <td class="num-col">${userScore}%</td>
+        <td class="${status}"><i class="fa-solid ${statusIcon}"></i> ${statusLabel}</td>
+      </tr>`;
+  }).join('');
+
+  const processRows = company.process.map((p, i) => `
+    <div class="process-step">
+      <div class="step-num">${i+1}</div>
+      <div><strong>${escapeHtml(p.title)}</strong><br>${escapeHtml(p.desc)}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="detail-section">
+      <div class="detail-label"><i class="fa-solid fa-bullseye"></i> About ${escapeHtml(company.name)}</div>
+      <p class="detail-text">${escapeHtml(company.mission)}</p>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-label"><i class="fa-solid fa-file-lines"></i> Role Overview</div>
+      <p class="detail-text">${escapeHtml(company.description)}</p>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-label"><i class="fa-solid fa-chart-simple"></i> Package &amp; Perks</div>
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <div class="dt-label">CTC Range</div>
+          <div class="dt-value">${formatPackage(company.packageMin, company.packageMax)}</div>
+        </div>
+        <div class="detail-tile">
+          <div class="dt-label">Job Type</div>
+          <div class="dt-value">${escapeHtml(company.jobType)}</div>
+        </div>
+        <div class="detail-tile">
+          <div class="dt-label">Location</div>
+          <div class="dt-value">${escapeHtml(company.location.split('·')[0].trim())}</div>
+        </div>
+      </div>
+      <div class="detail-text" style="margin-top:10px;">
+        <strong>Perks:</strong> ${company.perks.map(p => escapeHtml(p)).join(' · ')}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-label"><i class="fa-solid fa-crosshairs"></i> Skill Benchmarks — Your Match: ${match.pct}%</div>
+      <table class="bench-table">
+        <thead>
+          <tr>
+            <th>Skill</th>
+            <th>Required</th>
+            <th>Your Score</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>${benchRows}</tbody>
+      </table>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-label"><i class="fa-solid fa-diagram-project"></i> Selection Process</div>
+      <div class="process-list">${processRows}</div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-label"><i class="fa-solid fa-circle-info"></i> Eligibility Criteria</div>
+      <div class="detail-grid">
+        <div class="detail-tile">
+          <div class="dt-label">CGPA Cutoff</div>
+          <div class="dt-value">${escapeHtml(company.eligibility.cgpa)}</div>
+        </div>
+        <div class="detail-tile">
+          <div class="dt-label">Backlogs</div>
+          <div class="dt-value">${escapeHtml(company.eligibility.backlogs)}</div>
+        </div>
+        <div class="detail-tile">
+          <div class="dt-label">Deadline</div>
+          <div class="dt-value">${escapeHtml(new Date(company.deadline).toLocaleDateString('en-US', { month:'short', day:'numeric' }))}</div>
+        </div>
+      </div>
+      <div class="detail-text" style="margin-top:10px;">
+        <strong>Eligible branches:</strong> ${escapeHtml(company.eligibility.branches)}
+      </div>
+    </div>
+  `;
+
+  // Apply button state
+  const applyBtn = document.getElementById('modalApplyBtn');
+  const noteEl = document.getElementById('modalFootNote');
+  if(isApplied){
+    applyBtn.classList.add('applied');
+    applyBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Already Applied';
+    applyBtn.disabled = true;
+    noteEl.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--green);"></i><span>Your application is already registered.</span>';
+  } else {
+    applyBtn.classList.remove('applied');
+    applyBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Confirm Application &amp; Send Resume';
+    applyBtn.disabled = false;
+    noteEl.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--green);"></i><span>Your resume will be shared with the recruiter.</span>';
+  }
+
+  document.getElementById('detailBackdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(){
+  document.getElementById('detailBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+  currentCompanyId = null;
+}
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('detailBackdrop').addEventListener('click', e => {
+  if(e.target.id === 'detailBackdrop') closeModal();
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && document.getElementById('detailBackdrop').classList.contains('open')){
+    closeModal();
+  }
+});
+
+/* Modal apply button */
+document.getElementById('modalApplyBtn').addEventListener('click', () => {
+  if(!currentCompanyId) return;
+  applyToCompany(currentCompanyId, document.getElementById('modalApplyBtn'), true);
+});
+
+/* ══════════════════════════════════════════════════════════════
+   APPLY HANDLER
+══════════════════════════════════════════════════════════════ */
+function applyToCompany(id, btn, fromModal){
+  const company = COMPANIES.find(c => c.id === id);
+  if(!company || state.appliedIds.has(id)) return;
+
+  state.appliedIds.add(id);
+  try{
+    localStorage.setItem('horizon_applied_drives', JSON.stringify([...state.appliedIds]));
+  }catch(e){ console.warn('Horizon: could not persist applied drives.', e); }
+
+  showToast(`Application sent to ${company.name}`);
+
+  // Update button in card view
+  if(btn && !fromModal){
+    btn.classList.remove('btn-apply');
+    btn.classList.add('btn-applied');
+    btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Applied';
+  }
+
+  // Update modal button
+  if(fromModal){
+    const applyBtn = document.getElementById('modalApplyBtn');
+    applyBtn.classList.add('applied');
+    applyBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Already Applied';
+    applyBtn.disabled = true;
+    document.getElementById('modalFootNote').innerHTML =
+      '<i class="fa-solid fa-circle-check" style="color:var(--green);"></i><span>Your application is already registered.</span>';
+  }
+
+  // Update metric card
+  renderMetrics();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FILTER / SEARCH LISTENERS
+══════════════════════════════════════════════════════════════ */
+document.getElementById('topSearch').addEventListener('input', e => {
+  state.search = e.target.value;
+  renderGrid();
+});
+document.getElementById('fEligibility').addEventListener('change', e => {
+  state.eligibility = e.target.value;
+  renderGrid();
+});
+document.getElementById('fRole').addEventListener('change', e => {
+  state.role = e.target.value;
+  renderGrid();
+});
+document.getElementById('fPackage').addEventListener('change', e => {
+  state.pkg = e.target.value;
+  renderGrid();
+});
+document.getElementById('fSort').addEventListener('change', e => {
+  state.sort = e.target.value;
+  renderGrid();
+});
+document.getElementById('refreshBtn').addEventListener('click', () => {
+  renderMetrics();
+  renderGrid();
+  showToast('Opportunities refreshed');
+});
+
+/* ══════════════════════════════════════════════════════════════
+   PROFILE DRAWER
+══════════════════════════════════════════════════════════════ */
+(function initDrawer(){
+  const overlay = document.getElementById('overlay');
+  const drawer  = document.getElementById('profileDrawer');
+  const trigger = document.getElementById('profileTrigger');
+  const closeBtn = document.getElementById('drawerClose');
+  const cancelBtn = document.getElementById('cancelProfile');
+  const saveBtn   = document.getElementById('saveProfile');
+  const fileInput = document.getElementById('picInput');
+
+  let pendingPhoto = null;
+
+  function open(){
+    document.getElementById('fullName').value    = IDENTITY.name   || '';
+    document.getElementById('emailAddr').value   = IDENTITY.email  || '';
+    document.getElementById('branchField').value = IDENTITY.branch || '';
+    document.getElementById('batchField').value  = IDENTITY.batch  || '';
+    document.getElementById('bioField').value    = IDENTITY.bio    || '';
+    document.getElementById('curPass').value = '';
+    document.getElementById('newPass').value = '';
+    document.getElementById('confPass').value = '';
+    pendingPhoto = null;
+
+    overlay.classList.add('open');
+    drawer.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close(revert){
+    if(revert && pendingPhoto){
+      pendingPhoto = null;
+      applyAvatar(document.getElementById('drawerAvatar'), IDENTITY.photo, IDENTITY.name);
+      applyAvatar(document.getElementById('topAvatar'), IDENTITY.photo, IDENTITY.name);
+    }
+    overlay.classList.remove('open');
+    drawer.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  trigger.addEventListener('click', open);
+  closeBtn.addEventListener('click', () => close(true));
+  cancelBtn.addEventListener('click', () => close(true));
+  overlay.addEventListener('click', () => close(true));
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape' && drawer.classList.contains('open')) close(true);
+  });
+
+  // Photo picker
+  fileInput.addEventListener('change', e => {
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+
+    if(!file.type.startsWith('image/')){
+      showToast('Please choose an image file');
+      fileInput.value = '';
+      return;
+    }
+    if(file.size > 5 * 1024 * 1024){
+      showToast('Image too large — max 5 MB');
+      fileInput.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        const maxDim = 320;
+        let w = img.width, h = img.height;
+        if(w > h && w > maxDim){ h = Math.round(h * (maxDim / w)); w = maxDim; }
+        else if(h > maxDim){ w = Math.round(w * (maxDim / h)); h = maxDim; }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+        let url;
+        try{ url = canvas.toDataURL('image/jpeg', 0.85); }
+        catch{ url = ev.target.result; }
+
+        pendingPhoto = url;
+        applyAvatar(document.getElementById('drawerAvatar'), url, IDENTITY.name);
+        applyAvatar(document.getElementById('topAvatar'),    url, IDENTITY.name);
+        showToast('Photo ready — click Save Changes');
+      };
+      img.onerror = () => {
+        pendingPhoto = ev.target.result;
+        applyAvatar(document.getElementById('drawerAvatar'), pendingPhoto, IDENTITY.name);
+        applyAvatar(document.getElementById('topAvatar'),    pendingPhoto, IDENTITY.name);
+        showToast('Photo ready — click Save Changes');
+      };
+      img.src = ev.target.result;
+    };
+    reader.onerror = () => showToast('Could not read the selected file');
+    reader.readAsDataURL(file);
+  });
+
+  // Save
+  saveBtn.addEventListener('click', () => {
+    const name  = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('emailAddr').value.trim();
+    const branch= document.getElementById('branchField').value.trim();
+    const batch = document.getElementById('batchField').value.trim();
+    const bio   = document.getElementById('bioField').value.trim();
+
+    const curPass  = document.getElementById('curPass').value;
+    const newPass  = document.getElementById('newPass').value;
+    const confPass = document.getElementById('confPass').value;
+
+    if(newPass || confPass || curPass){
+      if(!curPass){ showToast('Enter your current password first'); return; }
+      if(newPass.length < 8){ showToast('New password must be at least 8 characters'); return; }
+      if(newPass !== confPass){ showToast('New passwords do not match'); return; }
+    }
+
+    const overrides = {};
+    if(name)   overrides.name   = name;
+    if(email)  overrides.email  = email;
+    if(branch) overrides.branch = branch;
+    if(batch)  overrides.batch  = batch;
+    if(bio)    overrides.bio    = bio;
+    if(pendingPhoto) overrides.photo = pendingPhoto;
+
+    try{
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(overrides));
+    }catch(e){
+      showToast('Could not save profile');
+      return;
+    }
+
+    Object.assign(IDENTITY, overrides);
+    applyIdentityToShell();
+    renderGrid();       // matches may have changed if skills updated
+    pendingPhoto = null;
+    showToast(newPass ? 'Profile + password updated' : 'Profile updated');
+    close(false);
+  });
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  document.getElementById('toastText').textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════════════ */
+(function init(){
+  applyIdentityToShell();
+  renderMetrics();
+  renderGrid();
+  console.log(IDENTITY.id !== '—'
+    ? `Horizon Opportunities: loaded for ${IDENTITY.name} (${IDENTITY.id}).`
+    : 'Horizon Opportunities: no trainee data — showing generic opportunities.');
+})();
+</script>
+
+</body>
+</html>
