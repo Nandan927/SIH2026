@@ -585,13 +585,13 @@ table.skill-table tbody tr:hover{background:#FDF7EC;}
 
     <div class="nav-group-label">My Dashboard</div>
     <nav class="nav">
-      <a class="nav-link" href="{{ url_for('trainee.dashboard') }}"><i class="fa-solid fa-house"></i> Overview</a>
-      <a class="nav-link" href="{{ url_for('trainee.profile') }}"><i class="fa-solid fa-user"></i> My Profile</a>
-      <a class="nav-link" href="{{ url_for('trainee.training') }}"><i class="fa-solid fa-graduation-cap"></i> My Training</a>
-      <a class="nav-link" href="{{ url_for('trainee.employment') }}"><i class="fa-solid fa-briefcase"></i> Employment</a>
-      <a class="nav-link active" href="{{ url_for('trainee.skill_gap') }}"><i class="fa-solid fa-brain"></i> Skill Gap</a>
-      <a class="nav-link" href="{{ url_for('trainee.career') }}"><i class="fa-solid fa-arrow-trend-up"></i> Career Growth</a>
-      <a class="nav-link" href="{{ url_for('trainee.opportunities') }}"><i class="fa-solid fa-magnifying-glass-dollar"></i> Opportunities</a>
+      <a class="nav-link" href="{{ url_for('trainee_dashboard') }}"><i class="fa-solid fa-house"></i> Overview</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-user"></i> My Profile</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-graduation-cap"></i> My Training</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-briefcase"></i> Employment</a>
+      <a class="nav-link active" href="#"><i class="fa-solid fa-brain"></i> Skill Gap</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-arrow-trend-up"></i> Career Growth</a>
+      <a class="nav-link" href="{{ url_for('trainee_opportunities') }}"><i class="fa-solid fa-magnifying-glass-dollar"></i> Opportunities</a>
     </nav>
 
     <div class="nav-divider"></div>
@@ -621,7 +621,7 @@ table.skill-table tbody tr:hover{background:#FDF7EC;}
         </svg>
         <p id="sidebarNote">Complete profile to analyse</p>
       </div>
-      <a class="logout-link" href="{{ url_for('common.role_selection') }}"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+      <a class="logout-link" href="{{ url_for('role_selection') }}"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
     </div>
   </aside>
 
@@ -648,7 +648,7 @@ table.skill-table tbody tr:hover{background:#FDF7EC;}
 
     <!-- PAGE HEADER -->
     <div class="page-head">
-      <a class="back-btn" href="{{ url_for('trainee.dashboard') }}" title="Back to Dashboard">
+      <a class="back-btn" href="{{ url_for('trainee_dashboard') }}" title="Back to Dashboard">
         <i class="fa-solid fa-arrow-left"></i>
       </a>
       <div class="page-title-block">

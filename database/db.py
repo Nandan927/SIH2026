@@ -333,6 +333,25 @@ def check_admin(
 
     return None
 
+def check_trainee(email, password):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM trainees
+        WHERE email = ?
+    """, (email,))
+
+    trainee = cursor.fetchone()
+
+    conn.close()
+
+    if trainee and check_password_hash(trainee["password"], password):
+        return dict(trainee)
+
+    return None
+
 
 # =========================================================
 # INSERT TRAINEE

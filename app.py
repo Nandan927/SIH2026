@@ -21,10 +21,12 @@ from database.db import (
     init_db,
     create_admin,
     check_admin,
+    check_trainee,
     insert_trainee,
     get_trainees_by_admin,
     get_all_trainees,
-    get_branch_analysis_trainees
+    get_branch_analysis_trainees,
+    get_trainee_by_trainee_id
 )
 
 
@@ -1187,6 +1189,99 @@ def admin_logout():
 # =========================================================
 # APPLICATION START
 # =========================================================
+
+@app.route("/trainee/login", methods=["GET", "POST"])
+def trainee_login():
+
+    if request.method == "POST":
+
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        trainee = check_trainee(email, password)
+
+        if trainee:
+            session["trainee_id"] = trainee["trainee_id"]
+            session["trainee_name"] = trainee["name"]
+            session["trainee_email"] = trainee["email"]
+
+            return redirect(url_for("trainee_dashboard"))
+
+        flash("Invalid email or password.", "error")
+
+    return render_template("trainee/login.html")
+
+
+@app.route("/trainee/dashboard")
+def trainee_dashboard():
+
+    # Make sure trainee is logged in
+    if "trainee_id" not in session:
+        return redirect(url_for("trainee_login"))
+
+    # Get the logged-in trainee's ID
+    trainee_id = session["trainee_id"]
+
+    # Get trainee data from database
+    trainee = get_trainee_by_trainee_id(trainee_id)
+
+    # If trainee doesn't exist, send back to login
+    if trainee is None:
+        session.clear()
+        return redirect(url_for("trainee_login"))
+
+    # Show dashboard
+    return render_template(
+        "trainee/trainee_dashborad.html",
+        trainee=trainee
+    )
+
+@app.route("/trainee/skill-gap")
+def trainee_skill_gap():
+    # Check whether trainee is logged in
+    if "trainee_id" not in session:
+        return redirect(url_for("trainee_login"))
+
+    # Get logged-in trainee ID from session
+    trainee_id = session["trainee_id"]
+
+    # Get trainee information from SQLite
+    trainee = get_trainee_by_trainee_id(trainee_id)
+
+    # If trainee no longer exists in database
+    if trainee is None:
+        session.clear()
+        return redirect(url_for("trainee_login"))
+
+    # Send trainee data to skill-gap HTML page
+    return render_template(
+        "trainee/traineeskill.html",
+        trainee=trainee
+    )
+
+@app.route("/trainee/opportunities")
+def trainee_opportunities():
+
+    # Check whether trainee is logged in
+    if "trainee_id" not in session:
+        return redirect(url_for("trainee_login"))
+
+    # Get logged-in trainee ID
+    trainee_id = session["trainee_id"]
+
+    # Get trainee information from database
+    trainee = get_trainee_by_trainee_id(trainee_id)
+
+    # If trainee doesn't exist in database
+    if trainee is None:
+        session.clear()
+        return redirect(url_for("trainee_login"))
+
+    # Open Opportunities page
+    return render_template(
+        "trainee/oppurtunities.html",
+        trainee=trainee
+    )
 
 if __name__ == "__main__":
 

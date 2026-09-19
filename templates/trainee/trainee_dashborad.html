@@ -1081,12 +1081,13 @@
     <div class="nav-group-label">My Dashboard</div>
     <nav class="nav">
       <a class="nav-link active" href="#"><i class="fa-solid fa-house"></i> Overview</a>
-      <a class="nav-link" href="{{ url_for('trainee.profile') }}"><i class="fa-solid fa-user"></i> My Profile</a>
-      <a class="nav-link" href="{{ url_for('trainee.training') }}"><i class="fa-solid fa-graduation-cap"></i> My Training</a>
-      <a class="nav-link" href="{{ url_for('trainee.employment') }}"><i class="fa-solid fa-briefcase"></i> Employment</a>
-      <a class="nav-link" href="{{ url_for('trainee.skill_gap') }}"><i class="fa-solid fa-brain"></i> Skill Gap</a>
-      <a class="nav-link" href="{{ url_for('trainee.career') }}"><i class="fa-solid fa-arrow-trend-up"></i> Career Growth</a>
-      <a class="nav-link" href="{{ url_for('trainee.opportunities') }}"><i class="fa-solid fa-magnifying-glass-dollar"></i> Opportunities</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-user"></i> My Profile</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-graduation-cap"></i> My Training</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-briefcase"></i> Employment</a>
+<a class="nav-link" href="{{ url_for('trainee_skill_gap') }}">
+    <i class="fa-solid fa-brain"></i> Skill Gap
+</a>      <a class="nav-link" href="#"><i class="fa-solid fa-arrow-trend-up"></i> Career Growth</a>
+      <a class="nav-link" href="{{ url_for('trainee_opportunities') }}"><i class="fa-solid fa-magnifying-glass-dollar"></i> Opportunities</a>
     </nav>
 
     <div class="nav-divider"></div>
@@ -1120,8 +1121,7 @@
         <p id="sidebarNote">Upload data to see insights</p>
       </div>
 
-      <a class="logout-link" href="{{ url_for('common.role_selection') }}"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
-    </div>
+<a class="logout-link" href="{{ url_for('trainee_login') }}">    </div>
   </aside>
 
   <!-- ============ MAIN ============ -->
@@ -1359,195 +1359,422 @@ function saveProfileOverrides(overrides){
 /* =========================================================
    DATA LOADER
 ========================================================= */
+
 function loadTraineeData(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return null;
 
-    const rows = JSON.parse(raw);
-    if(!Array.isArray(rows) || rows.length === 0) return null;
+    // Flask sends the logged-in trainee data to this page.
+    // Jinja converts the Python dictionary into a JavaScript object.
+    const traineeFromFlask = {{ trainee | tojson }};
 
-    const normalize = (obj) => {
-      const out = {};
-      Object.keys(obj).forEach(k => {
-        out[k.toLowerCase().trim().replace(/\s+/g,'_')] = obj[k];
-      });
-      return out;
-    };
-    const normalized = rows.map(normalize);
-    const keys = Object.keys(normalized[0] || {});
-    const findKey = (cands) => {
-      for(const c of cands){
-        const found = keys.find(k => k.includes(c));
-        if(found) return found;
-      }
-      return null;
-    };
-
-    const colId       = findKey(['trainee_id','id','roll']);
-    const colName     = findKey(['name','full_name','student']);
-    const colEmail    = findKey(['email','mail']);
-    const colBranch   = findKey(['branch','department','dept']);
-    const colBatch    = findKey(['batch','cohort','year']);
-    const colTraining = findKey(['training_status','trainingstatus','trained','training']);
-    const colOutcome  = findKey(['outcome_status','outcomestatus','outcome','status']);
-    const colSkills   = findKey(['skill','skills','tech']);
-    const colScore    = findKey(['score','skill_score','readiness']);
-
-    const currentId = localStorage.getItem(USER_KEY);
-    let row = null;
-    if(currentId){
-      row = normalized.find(r => colId && String(r[colId]) === String(currentId));
+    // If Flask did not send trainee data, return null.
+    if (!traineeFromFlask) {
+        return null;
     }
-    if(!row) row = normalized[0];
 
-    const id       = colId     ? String(row[colId])     : '—';
-    const name     = colName   ? String(row[colName])   : 'Trainee';
-    const email    = colEmail  ? String(row[colEmail])  : '—';
-    const branch   = colBranch ? String(row[colBranch] || '').trim().toUpperCase() : '—';
-    const batch    = colBatch  ? String(row[colBatch])  : '—';
+    // Get trainee skills from the database.
+    const skillsRaw = traineeFromFlask.skills || "";
 
-    const tRaw = colTraining ? String(row[colTraining] || '').toLowerCase() : '';
-    let trainingStatus = 'Non-Trained';
+    // Convert:
+    // "Python, SQL, C++"
+    //
+    // into:
+    // ["Python", "SQL", "C++"]
+    const skillList = String(skillsRaw)
+        .split(/[,;|]/)
+        .map(skill => skill.trim())
+        .filter(Boolean);
+
+
+    // -----------------------------
+    // TRAINING STATUS
+    // -----------------------------
+
+    const trainingRaw = String(
+        traineeFromFlask.training_status || ""
+    ).toLowerCase();
+
+    let trainingStatus = "Non-Trained";
     let trainingProgress = 0;
-    if(tRaw.includes('progress') || tRaw.includes('ongoing')){
-      trainingStatus = 'In Progress';
-      trainingProgress = 50;
-    } else if(tRaw.includes('train') && !tRaw.includes('non') && !tRaw.includes('not') && !tRaw.includes('un')){
-      trainingStatus = 'Trained';
-      trainingProgress = 100;
+
+    if (
+        trainingRaw.includes("progress") ||
+        trainingRaw.includes("ongoing")
+    ) {
+
+        trainingStatus = "In Progress";
+        trainingProgress = 50;
+
+    } else if (
+        trainingRaw.includes("train") &&
+        !trainingRaw.includes("non") &&
+        !trainingRaw.includes("not") &&
+        !trainingRaw.includes("un")
+    ) {
+
+        trainingStatus = "Trained";
+        trainingProgress = 100;
     }
 
-    const oRaw = colOutcome ? String(row[colOutcome] || '').toLowerCase() : '';
-    let outcome = 'Seeking Employment';
-    if(oRaw.includes('employ') && !oRaw.includes('seek') && !oRaw.includes('un')) outcome = 'Employed';
-    else if(oRaw.includes('higher') || oRaw.includes('stud')) outcome = 'Higher Studies';
-    else if(oRaw.includes('freelanc') || oRaw.includes('part')) outcome = 'Part-Time / Freelancing';
-    else if(oRaw.includes('intern')) outcome = 'Internships';
 
-    const skillsRaw = colSkills ? String(row[colSkills] || '') : '';
-    const skillList = skillsRaw.split(/[,;|]/).map(s => s.trim()).filter(Boolean);
+    // -----------------------------
+    // OUTCOME STATUS
+    // -----------------------------
 
-    let skillScore = 0;
-    if(colScore && row[colScore] !== undefined && !isNaN(Number(row[colScore]))){
-      skillScore = Math.min(100, Math.max(0, Math.round(Number(row[colScore]))));
-    } else {
-      skillScore = Math.min(100, skillList.length * 12);
+    const outcomeRaw = String(
+        traineeFromFlask.outcome_status || ""
+    ).toLowerCase();
+
+    let outcome = "Seeking Employment";
+
+    if (
+        outcomeRaw.includes("employ") &&
+        !outcomeRaw.includes("seek") &&
+        !outcomeRaw.includes("un")
+    ) {
+
+        outcome = "Employed";
+
+    } else if (
+        outcomeRaw.includes("higher") ||
+        outcomeRaw.includes("stud")
+    ) {
+
+        outcome = "Higher Studies";
+
+    } else if (
+        outcomeRaw.includes("freelanc") ||
+        outcomeRaw.includes("part")
+    ) {
+
+        outcome = "Part-Time / Freelancing";
+
+    } else if (
+        outcomeRaw.includes("intern")
+    ) {
+
+        outcome = "Internships";
     }
 
-    const lowerSkills = skillList.map(s => s.toLowerCase());
-    const benchmarkStatus = BENCHMARK_SKILLS.map(b => {
-      const has = lowerSkills.some(s => s.includes(b.name.toLowerCase().split(' ')[0]));
-      return {
-        name: b.name,
-        target: b.target,
-        current: has ? Math.min(95, b.target + 5) : Math.max(15, b.target - 40)
-      };
+
+    // -----------------------------
+    // SKILL SCORE
+    // -----------------------------
+    //
+    // Your Excel/database currently does not have a skill-score column.
+    // So for now we keep the existing dashboard calculation.
+    //
+    // Later we can create a proper skill-gap calculation.
+
+    const skillScore = Math.min(
+        100,
+        skillList.length * 12
+    );
+
+
+    // -----------------------------
+    // BENCHMARK SKILLS
+    // -----------------------------
+
+    const benchmarkStatus = BENCHMARK_SKILLS.map(benchmark => {
+
+        const hasSkill = skillList.some(skill =>
+            skill
+                .toLowerCase()
+                .includes(
+                    benchmark.name
+                        .toLowerCase()
+                        .split(" ")[0]
+                )
+        );
+
+        return {
+            name: benchmark.name,
+            target: benchmark.target,
+
+            current: hasSkill
+                ? Math.min(95, benchmark.target + 5)
+                : Math.max(15, benchmark.target - 40)
+        };
     });
 
-    const criticalGaps = benchmarkStatus.filter(b => b.current < b.target - 10).length;
+
+    // -----------------------------
+    // CRITICAL SKILL GAPS
+    // -----------------------------
+
+    const criticalGaps = benchmarkStatus.filter(
+        benchmark =>
+            benchmark.current <
+            benchmark.target - 10
+    ).length;
+
+
+    // -----------------------------
+    // COMPANY MATCHING
+    // -----------------------------
+    //
+    // Keeping your existing demo company
+    // logic for now.
+    //
+    // We will connect this to real data later.
 
     let eligibleCompanies = 0;
-    const companies = COMPANY_TEMPLATES.map(c => {
-      let matched = 0;
-      c.skills.forEach(s => {
-        const ls = s.toLowerCase();
-        const has = lowerSkills.some(x =>
-          x.includes(ls) ||
-          (ls === 'aws' && x.includes('cloud')) ||
-          (ls === 'docker' && x.includes('docker')) ||
-          (ls === 'dsa' && (x.includes('dsa') || x.includes('algorithm'))) ||
-          (ls === 'postgresql' && (x.includes('sql') || x.includes('postgres')))
-        );
-        if(has) matched++;
-      });
-      const matchPct = Math.round((matched / c.skills.length) * 100);
-      if(matchPct >= 66) eligibleCompanies++;
 
-      const skillDetails = c.skills.map(s => {
-        const ls = s.toLowerCase();
-        const has = lowerSkills.some(x =>
-          x.includes(ls) ||
-          (ls === 'aws' && x.includes('cloud')) ||
-          (ls === 'docker' && x.includes('docker'))
+    const companies = COMPANY_TEMPLATES.map(company => {
+
+        let matched = 0;
+
+        company.skills.forEach(requiredSkill => {
+
+            const required = requiredSkill.toLowerCase();
+
+            const hasSkill = skillList.some(userSkill => {
+
+                const user = userSkill.toLowerCase();
+
+                return (
+                    user.includes(required) ||
+
+                    (required === "aws" &&
+                     user.includes("cloud")) ||
+
+                    (required === "docker" &&
+                     user.includes("docker")) ||
+
+                    (required === "dsa" &&
+                     (
+                        user.includes("dsa") ||
+                        user.includes("algorithm")
+                     )) ||
+
+                    (required === "postgresql" &&
+                     (
+                        user.includes("sql") ||
+                        user.includes("postgres")
+                     ))
+                );
+            });
+
+            if (hasSkill) {
+                matched++;
+            }
+        });
+
+
+        const matchPct = Math.round(
+            (matched / company.skills.length) * 100
         );
+
+
+        if (matchPct >= 66) {
+            eligibleCompanies++;
+        }
+
+
+        const skillDetails = company.skills.map(
+            requiredSkill => {
+
+                const required =
+                    requiredSkill.toLowerCase();
+
+                const hasSkill = skillList.some(
+                    userSkill => {
+
+                        const user =
+                            userSkill.toLowerCase();
+
+                        return (
+                            user.includes(required) ||
+
+                            (required === "aws" &&
+                             user.includes("cloud")) ||
+
+                            (required === "docker" &&
+                             user.includes("docker"))
+                        );
+                    }
+                );
+
+                return {
+                    name: requiredSkill,
+
+                    user: hasSkill ? 80 : 40,
+
+                    gap: !hasSkill
+                };
+            }
+        );
+
+
         return {
-          name: s,
-          user: has ? Math.min(95, 70 + Math.floor(Math.random()*20)) : 40,
-          gap: !has
-        };
-      });
+            name: company.name,
+            role: company.role,
+            deadline: company.deadline,
 
-      return {
-        name: c.name,
-        role: c.role,
-        deadline: c.deadline,
-        match: matchPct,
-        matchLevel: matchPct >= 75 ? 'high' : matchPct >= 45 ? 'medium' : 'low',
-        skills: skillDetails
-      };
+            match: matchPct,
+
+            matchLevel:
+                matchPct >= 75
+                    ? "high"
+                    : matchPct >= 45
+                        ? "medium"
+                        : "low",
+
+            skills: skillDetails
+        };
     });
 
-    const modulesCompleted = Math.min(15, skillList.length + 3);
+
+    // -----------------------------
+    // MODULES
+    // -----------------------------
+
+    const modulesCompleted = Math.min(
+        15,
+        skillList.length + 3
+    );
+
     const modulesTotal = 15;
 
-    const recommendations = benchmarkStatus
-      .filter(b => b.current < b.target - 10)
-      .slice(0, 3)
-      .map(b => {
-        const level = b.current < b.target - 25 ? 'critical' : 'warn';
-        return {
-          level,
-          icon: b.name === 'Cloud & Docker' ? 'fa-docker'
-              : b.name === 'System Design' ? 'fa-diagram-project'
-              : b.name === 'Communication' ? 'fa-comments'
-              : b.name === 'SQL' ? 'fa-database'
-              : 'fa-code',
-          title: `Bridge Your Gap: ${b.name}`,
-          desc: `Your current score in <strong>${b.name}</strong> is <strong>${b.current}%</strong>, below the industry benchmark of <strong>${b.target}%</strong>. Complete targeted modules to close this gap.`,
-          meta: [
-            { icon: 'fa-clock', text: `<strong>${Math.floor(4 + Math.random()*8)} hrs</strong> estimated` },
-            { icon: 'fa-users', text: `<strong>${Math.floor(200 + Math.random()*1500)}</strong> peers enrolled` },
-            { icon: 'fa-star', text: `<strong>4.${Math.floor(5 + Math.random()*4)}</strong> rating` }
-          ],
-          cta: 'Start Module'
-        };
-      });
 
-    if(recommendations.length === 0){
-      recommendations.push({
-        level: 'info',
-        icon: 'fa-circle-check',
-        title: 'You Are On Track!',
-        desc: 'Your skill levels meet or exceed all benchmark targets. Continue to keep your edge by exploring <strong>advanced modules</strong> and <strong>mock interviews</strong>.',
-        meta: [
-          { icon: 'fa-clock', text: '<strong>Ongoing</strong>' },
-          { icon: 'fa-star', text: '<strong>Personalised</strong>' }
-        ],
-        cta: 'Explore'
-      });
+    // -----------------------------
+    // RECOMMENDATIONS
+    // -----------------------------
+
+    const recommendations = benchmarkStatus
+        .filter(
+            benchmark =>
+                benchmark.current <
+                benchmark.target - 10
+        )
+        .slice(0, 3)
+        .map(benchmark => {
+
+            const level =
+                benchmark.current <
+                benchmark.target - 25
+                    ? "critical"
+                    : "warn";
+
+            return {
+                level,
+
+                icon:
+                    benchmark.name === "Cloud & Docker"
+                        ? "fa-docker"
+
+                    : benchmark.name === "System Design"
+                        ? "fa-diagram-project"
+
+                    : benchmark.name === "Communication"
+                        ? "fa-comments"
+
+                    : benchmark.name === "SQL"
+                        ? "fa-database"
+
+                    : "fa-code",
+
+                title:
+                    `Bridge Your Gap: ${benchmark.name}`,
+
+                desc:
+                    `Your current score in <strong>${benchmark.name}</strong> is <strong>${benchmark.current}%</strong>, below the industry benchmark of <strong>${benchmark.target}%</strong>. Complete targeted modules to close this gap.`,
+
+                meta: [
+                    {
+                        icon: "fa-clock",
+                        text: "<strong>Targeted</strong>"
+                    },
+
+                    {
+                        icon: "fa-users",
+                        text: "<strong>Skill Development</strong>"
+                    },
+
+                    {
+                        icon: "fa-star",
+                        text: "<strong>Personalised</strong>"
+                    }
+                ],
+
+                cta: "Start Module"
+            };
+        });
+
+
+    // If there are no critical recommendations.
+    if (recommendations.length === 0) {
+
+        recommendations.push({
+
+            level: "info",
+
+            icon: "fa-circle-check",
+
+            title: "You Are On Track!",
+
+            desc:
+                "Your skill levels meet or exceed all benchmark targets. Continue to keep your edge by exploring <strong>advanced modules</strong> and <strong>mock interviews</strong>.",
+
+            meta: [
+                {
+                    icon: "fa-clock",
+                    text: "<strong>Ongoing</strong>"
+                },
+
+                {
+                    icon: "fa-star",
+                    text: "<strong>Personalised</strong>"
+                }
+            ],
+
+            cta: "Explore"
+        });
     }
 
+
+    // -----------------------------
+    // RETURN DASHBOARD DATA
+    // -----------------------------
+
     return {
-      hasData: true,
-      id, name, email, branch, batch,
-      targetRole: 'Full-Stack Engineer',
-      trainingStatus, trainingProgress, outcome,
-      skillList,
-      skillScore,
-      modulesCompleted, modulesTotal,
-      criticalGaps,
-      eligibleCompanies,
-      benchmarkStatus,
-      companies,
-      recommendations,
-      trend: null,
-      photo: null
+
+        hasData: true,
+
+        // REAL DATABASE DATA
+        id: traineeFromFlask.trainee_id,
+        name: traineeFromFlask.name,
+        email: traineeFromFlask.email,
+        branch: traineeFromFlask.branch || "—",
+        batch: traineeFromFlask.batch || "—",
+
+        // Dashboard information
+        targetRole: "Full-Stack Engineer",
+
+        trainingStatus,
+        trainingProgress,
+
+        outcome,
+
+        skillList,
+        skillScore,
+
+        modulesCompleted,
+        modulesTotal,
+
+        criticalGaps,
+        eligibleCompanies,
+
+        benchmarkStatus,
+
+        companies,
+
+        recommendations,
+
+        trend: null,
+
+        photo: null
     };
-  }catch(e){
-    console.warn('Horizon: could not parse trainee data.', e);
-    return null;
-  }
 }
 
 /* =========================================================
@@ -1798,7 +2025,7 @@ function renderCompanies(){
         <div class="empty-icon"><i class="fa-solid fa-briefcase"></i></div>
         <h3>No Opportunities Yet</h3>
         <p>Upload your trainee record to unlock live company drives and see your match percentage for each role.</p>
-        <a class="empty-cta" href="{{ url_for('admin.upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Trainee Data</a>
+        <a class="empty-cta" href="{{ url_for('admin_upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Trainee Data</a>
       </div>`;
     return;
   }
@@ -1848,7 +2075,7 @@ function renderRecommendations(){
         <div class="empty-icon"><i class="fa-solid fa-lightbulb"></i></div>
         <h3>No Recommendations Yet</h3>
         <p>Once your trainee data is uploaded, personalised learning paths and remedial modules will be generated here.</p>
-        <a class="empty-cta" href="{{ url_for('admin.upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Trainee Data</a>
+        <a class="empty-cta" href="{{ url_for('admin_upload') }}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Trainee Data</a>
       </div>`;
     return;
   }

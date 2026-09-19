@@ -1544,13 +1544,13 @@ h1, h2, h3, h4, .brand-name{ font-family:var(--display); letter-spacing:-0.02em;
 
     <div class="nav-group-label">MY DASHBOARD</div>
     <nav class="nav">
-      <a class="nav-link" href="{{ url_for('trainee.dashboard') }}"><i class="fa-solid fa-house"></i> Overview</a>
-      <a class="nav-link" href="{{ url_for('trainee.profile') }}"><i class="fa-solid fa-user"></i> My Profile</a>
-      <a class="nav-link" href="{{ url_for('trainee.training') }}"><i class="fa-solid fa-graduation-cap"></i> My Training</a>
-      <a class="nav-link" href="{{ url_for('trainee.employment') }}"><i class="fa-solid fa-briefcase"></i> Employment</a>
-      <a class="nav-link" href="{{ url_for('trainee.skill_gap') }}"><i class="fa-solid fa-brain"></i> Skill Gap</a>
-      <a class="nav-link" href="{{ url_for('trainee.career') }}"><i class="fa-solid fa-arrow-trend-up"></i> Career Growth</a>
-      <a class="nav-link active" href="{{ url_for('trainee.opportunities') }}"><i class="fa-solid fa-magnifying-glass-dollar"></i> Opportunities</a>
+      <a class="nav-link" href="{{ url_for('trainee_dashboard') }}"><i class="fa-solid fa-house"></i> Overview</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-user"></i> My Profile</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-graduation-cap"></i> My Training</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-briefcase"></i> Employment</a>
+      <a class="nav-link" href="{{ url_for('trainee_skill_gap') }}"><i class="fa-solid fa-brain"></i> Skill Gap</a>
+      <a class="nav-link" href="#"><i class="fa-solid fa-arrow-trend-up"></i> Career Growth</a>
+      <a class="nav-link active" href="{{ url_for('trainee_opportunities') }}"><i class="fa-solid fa-magnifying-glass-dollar"></i> Opportunities</a>
     </nav>
 
     <div class="nav-divider"></div>
@@ -1577,7 +1577,7 @@ h1, h2, h3, h4, .brand-name{ font-family:var(--display); letter-spacing:-0.02em;
         </div>
       </div>
 
-      <a class="logout-link" href="{{ url_for('common.role_selection') }}">
+      <a class="logout-link" href="{{ url_for('role_selection') }}">
         <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
       </a>
     </div>
@@ -1616,7 +1616,7 @@ h1, h2, h3, h4, .brand-name{ font-family:var(--display); letter-spacing:-0.02em;
 
       <!-- Page heading with BACK button -->
       <div class="page-head">
-        <a class="back-btn" href="{{ url_for('trainee.dashboard') }}" title="Back to Dashboard" aria-label="Back to Dashboard">
+        <a class="back-btn" href="{{ url_for('trainee_dashboard') }}" title="Back to Dashboard" aria-label="Back to Dashboard">
           <i class="fa-solid fa-arrow-left"></i>
         </a>
 
@@ -2196,8 +2196,7 @@ function loadTraineeIdentity(){
   };
 }
 
-const IDENTITY = loadTraineeIdentity();
-
+const traineeFromFlask = {{ trainee | tojson }};
 /* ══════════════════════════════════════════════════════════════
    AVATAR / PROFILE HELPERS
 ══════════════════════════════════════════════════════════════ */
